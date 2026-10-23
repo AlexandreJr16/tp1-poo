@@ -77,6 +77,7 @@ class PainelServiceTest {
 
         assertEquals(1, resultados.size());
         assertEquals(BuscaService.Tipo.TITULO, resultados.get(0).tipo());
+        assertEquals("Título", resultados.get(0).tipo().toString());
         assertEquals("Tubarão", resultados.get(0).rotulo());
         assertEquals("Blu-ray · 1975", resultados.get(0).detalhe());
     }

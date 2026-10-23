@@ -58,6 +58,12 @@ class FuncionarioTest {
     }
 
     @Test
+    void cargoTemRotuloParaTela() {
+        assertEquals("Gerente", Cargo.GERENTE.toString());
+        assertEquals("Atendente", Cargo.ATENDENTE.toString());
+    }
+
+    @Test
     void soCargoGerenteEhGerente() {
         assertTrue(funcionario(Cargo.GERENTE).gerente());
         assertFalse(funcionario(Cargo.ATENDENTE).gerente());

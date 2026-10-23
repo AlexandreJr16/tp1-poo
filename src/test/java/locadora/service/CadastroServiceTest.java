@@ -6,6 +6,7 @@ import locadora.model.Cargo;
 import locadora.model.Cd;
 import locadora.model.Cliente;
 import locadora.model.Estoque;
+import locadora.model.Exemplar;
 import locadora.model.Funcionario;
 import locadora.model.Locacao;
 import locadora.model.Titulo;
@@ -72,6 +73,29 @@ class CadastroServiceTest {
     @Test
     void tiposListaAsQuatroMidias() {
         assertEquals(List.of("Blu-ray", "DVD", "CD", "Fita"), TituloService.TIPOS);
+    }
+
+    @Test
+    void amostraDoTipoMostraOsValoresDaMidia() {
+        Titulo bluRay = banco.tituloService.amostra("Blu-ray");
+
+        assertInstanceOf(BluRay.class, bluRay);
+        assertEquals(new BigDecimal("5.00"), bluRay.valorMultaDiaria());
+        assertEquals(new BigDecimal("4.00"), banco.tituloService.amostra("Fita").valorLocacao());
+    }
+
+    @Test
+    void exemplaresNoAcervoDeixaDeForaOsPerdidos() {
+        Funcionario gerente = banco.logarGerente();
+        Titulo matrix = banco.dvd("Matrix");
+        Titulo duna = banco.dvd("Duna");
+        List<Exemplar> exemplares = banco.adquirir(matrix, 2, gerente);
+        banco.adquirir(duna, 1, gerente);
+        banco.perdaService.registrar(exemplares.get(0).getId(), "Riscado");
+
+        List<String> codigos = banco.tituloService.exemplaresNoAcervo().stream().map(Exemplar::getCodigo).toList();
+
+        assertEquals(List.of("T2-001", "T1-002"), codigos);
     }
 
     @Test

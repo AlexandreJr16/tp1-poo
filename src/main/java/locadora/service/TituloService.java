@@ -91,6 +91,14 @@ public class TituloService {
         return exemplares.listarPorTitulo(tituloId);
     }
 
+    public Titulo amostra(String tipo) {
+        return null;
+    }
+
+    public List<Exemplar> exemplaresNoAcervo() {
+        return List.of();
+    }
+
     public List<Evento> linhaDoTempo(int exemplarId) {
         List<Evento> eventos = new ArrayList<>();
         Aquisicao aquisicao = aquisicoes.buscarDoExemplar(exemplarId);
