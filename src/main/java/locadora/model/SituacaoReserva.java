@@ -1,8 +1,19 @@
 package locadora.model;
 
 public enum SituacaoReserva {
-    AGUARDANDO,
-    PRONTA,
-    ATENDIDA,
-    CANCELADA
+    AGUARDANDO("Aguardando"),
+    PRONTA("Pronta para retirada"),
+    ATENDIDA("Atendida"),
+    CANCELADA("Cancelada");
+
+    private final String rotulo;
+
+    SituacaoReserva(String rotulo) {
+        this.rotulo = rotulo;
+    }
+
+    @Override
+    public String toString() {
+        return rotulo;
+    }
 }

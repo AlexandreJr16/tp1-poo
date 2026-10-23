@@ -24,23 +24,42 @@ public class Reserva {
     }
 
     public static Reserva abrir(Titulo titulo, Cliente cliente, Funcionario funcionario, LocalDate data) {
-        return new Reserva(0, titulo, cliente, funcionario, data, SituacaoReserva.ATENDIDA, null);
+        return new Reserva(0, titulo, cliente, funcionario, data, SituacaoReserva.AGUARDANDO, null);
     }
 
     public boolean ativa() {
-        return false;
+        return situacao == SituacaoReserva.AGUARDANDO || situacao == SituacaoReserva.PRONTA;
     }
 
     public void preparar(Exemplar exemplar) {
+        exigir(situacao == SituacaoReserva.AGUARDANDO);
+        exemplar.reservar();
+        this.exemplar = exemplar;
+        situacao = SituacaoReserva.PRONTA;
     }
 
     public void atender() {
+        exigir(situacao == SituacaoReserva.PRONTA);
+        situacao = SituacaoReserva.ATENDIDA;
     }
 
     public void cancelar() {
+        exigir(ativa());
+        if (situacao == SituacaoReserva.PRONTA)
+            exemplar.liberar();
+        situacao = SituacaoReserva.CANCELADA;
     }
 
+    // usado quando o exemplar separado se perde: a reserva volta a esperar na mesma posicao
     public void voltarParaFila() {
+        exigir(situacao == SituacaoReserva.PRONTA);
+        exemplar = null;
+        situacao = SituacaoReserva.AGUARDANDO;
+    }
+
+    private void exigir(boolean permitido) {
+        if (!permitido)
+            throw new IllegalStateException("A reserva está " + situacao.toString().toLowerCase() + " e não permite esta operação.");
     }
 
     public int getId() {
