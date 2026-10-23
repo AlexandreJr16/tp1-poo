@@ -44,10 +44,11 @@ public class BuscaService {
         clientes.listar().stream()
                 .filter(c -> Formato.normalizar(c.getNome()).contains(termo) || digitos.length() >= MINIMO_DE_DIGITOS_DO_CPF && c.getCpf().contains(digitos))
                 .forEach(c -> resultados.add(new Resultado(Tipo.CLIENTE, c.getId(), c.getNome(), "CPF " + c.cpfFormatado())));
-        if (termo.matches("t\\d.*"))
+        if (termo.matches("t\\d.*")) {
             exemplares.listarPorCodigo(termo.toUpperCase(Locale.ROOT))
                     .forEach(e -> resultados.add(new Resultado(Tipo.EXEMPLAR, e.getTitulo().getId(), e.getCodigo(),
                             e.getTitulo().getNome() + " · " + e.getSituacao())));
+        }
         return resultados.stream().limit(LIMITE).toList();
     }
 }

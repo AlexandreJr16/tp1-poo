@@ -23,7 +23,7 @@ public class ArquivoService {
 
     private static final String SEPARADOR = ";";
     private static final String FIM_DE_LINHA = "\r\n";
-    private static final String BOM = "﻿";
+    private static final String BOM = "\uFEFF";
 
     private final Conexao conexao;
     private final Clock relogio;

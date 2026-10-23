@@ -14,13 +14,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 /* - Banco:
-     abrir: abre uma conexao com as chaves estrangeiras ligadas
      criarSchemaSeVazio: cria as tabelas do schema.sql quando o arquivo ainda nao tem tabelas
      executarScript: roda um arquivo .sql do classpath inteiro numa transacao
      copiarPara: grava uma copia do banco inteiro em outro arquivo (backup)
@@ -87,10 +85,10 @@ public class Conexao {
         }
     }
 
-    public Connection abrir() throws SQLException {
+    private Connection abrir() throws SQLException {
         Connection conexao = DriverManager.getConnection(url);
-        try (Statement comando = conexao.createStatement()) {
-            comando.execute("PRAGMA foreign_keys = ON");
+        try {
+            executar(conexao, "PRAGMA foreign_keys = ON");
         } catch (SQLException e) {
             conexao.close();
             throw e;
@@ -108,11 +106,9 @@ public class Conexao {
     public void executarScript(String recurso) {
         String script = lerRecurso(recurso).replaceAll("(?m)^\\s*--.*$", "");
         transacao(c -> {
-            try (Statement comando = c.createStatement()) {
-                for (String sql : script.split(";\\s*(\\r?\\n|$)")) {
-                    if (!sql.isBlank())
-                        comando.executeUpdate(sql);
-                }
+            for (String sql : script.split(";\\s*(\\r?\\n|$)")) {
+                if (!sql.isBlank())
+                    executar(c, sql);
             }
             return null;
         });
@@ -169,9 +165,7 @@ public class Conexao {
 
     static int inserir(Connection c, String sql, Object... parametros) throws SQLException {
         executar(c, sql, parametros);
-        try (Statement comando = c.createStatement(); ResultSet chave = comando.executeQuery("SELECT last_insert_rowid()")) {
-            return chave.getInt(1);
-        }
+        return buscar(c, "SELECT last_insert_rowid()", (rs, mesma) -> rs.getInt(1));
     }
 
     static void executar(Connection c, String sql, Object... parametros) throws SQLException {

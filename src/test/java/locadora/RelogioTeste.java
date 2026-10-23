@@ -8,8 +8,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 /* Relogio controlado pelos testes: comeca num dia fixo e so anda quando o teste manda.
-   avancar: pula N dias
-   hoje: dia atual do relogio */
+   avancar: pula N dias */
 public class RelogioTeste extends Clock {
 
     private Instant agora;
@@ -20,10 +19,6 @@ public class RelogioTeste extends Clock {
 
     public void avancar(int dias) {
         agora = agora.plus(Duration.ofDays(dias));
-    }
-
-    public LocalDate hoje() {
-        return LocalDate.ofInstant(agora, ZoneOffset.UTC);
     }
 
     @Override

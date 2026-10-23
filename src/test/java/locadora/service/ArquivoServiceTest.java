@@ -5,7 +5,6 @@ import locadora.model.Cliente;
 import locadora.model.Pessoa;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
@@ -14,8 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import static locadora.BancoTeste.assertRegra;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ArquivoServiceTest {
@@ -29,10 +28,6 @@ class ArquivoServiceTest {
     void abrir() {
         banco = new BancoTeste(dir);
         banco.logarGerente();
-    }
-
-    private static void assertRegra(String mensagem, Executable acao) {
-        assertEquals(mensagem, assertThrows(RegraException.class, acao).getMessage());
     }
 
     private List<String> nomesDosClientes() {
@@ -53,7 +48,7 @@ class ArquivoServiceTest {
         banco.arquivoService.exportarCsv(arquivo, List.of("Título"), List.of(List.of("Ação")));
 
         String conteudo = Files.readString(arquivo, StandardCharsets.UTF_8);
-        assertTrue(conteudo.startsWith("﻿Título\r\n"));
+        assertTrue(conteudo.startsWith("\uFEFFTítulo\r\n"));
         assertTrue(conteudo.contains("Ação"));
     }
 

@@ -17,14 +17,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 /* - Perda (so gerente):
-     previaCobranca: quanto o cliente pagaria se o exemplar alugado fosse dado como perdido hoje
      registrar: marca o exemplar como perdido; se estava alugado, encerra a locacao cobrando custo mais multa;
                 se estava separado para uma reserva, devolve a reserva para a fila
    - Consulta:
+     previaCobranca: quanto o cliente pagaria se o exemplar alugado fosse dado como perdido hoje
      listar: historico de perdas, da mais recente para a mais antiga */
 public class PerdaService {
-
-    private static final BigDecimal SEM_COBRANCA = new BigDecimal("0.00");
 
     private final PerdaDao perdas;
     private final ExemplarDao exemplares;
@@ -42,7 +40,7 @@ public class PerdaService {
 
     public BigDecimal previaCobranca(int exemplarId) {
         Locacao locacao = locacoes.ativaDoExemplar(exemplarId);
-        return locacao == null ? SEM_COBRANCA : locacao.multaAte(LocalDate.now(relogio)).add(locacao.getExemplar().getCusto());
+        return locacao == null ? Locacao.SEM_MULTA : locacao.multaAte(LocalDate.now(relogio)).add(locacao.getExemplar().getCusto());
     }
 
     public Perda registrar(int exemplarId, String motivo) {

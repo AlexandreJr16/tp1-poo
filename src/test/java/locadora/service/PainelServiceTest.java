@@ -65,8 +65,8 @@ class PainelServiceTest {
         assertEquals(new BigDecimal("28.00"), resumo.faturamentoMes());
         assertEquals(1, resumo.reservasProntas());
         assertEquals(List.of(daAna.getId()), banco.dashboardService.proximasDevolucoes().stream().map(Locacao::getId).toList());
-        assertEquals(List.of(doBruno.getId()), banco.dashboardService.atrasadas().stream().map(Locacao::getId).toList());
-        assertEquals("Bacurau", banco.dashboardService.reservasProntas().get(0).getTitulo().getNome());
+        assertEquals(List.of(doBruno.getId()), banco.locacaoService.atrasadas().stream().map(Locacao::getId).toList());
+        assertEquals("Bacurau", banco.reservaService.prontas().get(0).getTitulo().getNome());
     }
 
     @Test

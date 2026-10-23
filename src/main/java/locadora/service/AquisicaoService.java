@@ -23,7 +23,7 @@ import java.util.List;
      listar: historico de aquisicoes, da mais recente para a mais antiga */
 public class AquisicaoService {
 
-    public static final int QUANTIDADE_MAXIMA = 100;
+    private static final int QUANTIDADE_MAXIMA = 100;
 
     private final AquisicaoDao aquisicoes;
     private final TituloDao titulos;

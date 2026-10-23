@@ -27,11 +27,17 @@ import java.util.stream.Stream;
      renovar: estende o prazo uma vez, se nao estiver atrasada nem houver fila
    - Consulta:
      alugaveisPara: exemplares disponiveis mais os separados para o proprio cliente
-     buscar, listar, ativas, atrasadas, comMultaPendente
+     buscar: locacao pelo id
+     listar: todas as locacoes, da mais recente para a mais antiga
+     ativas: locacoes nao devolvidas, pela data prevista
+     atrasadas: locacoes ativas que ja passaram da data prevista
+     comMultaPendente: locacoes devolvidas com multa ainda nao paga
+     multasEmAberto: soma das multas nao pagas
+     faturamentoDoMes: locacoes feitas mais multas pagas no mes atual
      hoje: dia atual pelo relogio do sistema */
 public class LocacaoService {
 
-    public static final int LIMITE_LOCACOES_ATIVAS = 3;
+    private static final int LIMITE_LOCACOES_ATIVAS = 3;
 
     private final LocacaoDao locacoes;
     private final ExemplarDao exemplares;
@@ -128,6 +134,15 @@ public class LocacaoService {
 
     public List<Locacao> comMultaPendente() {
         return locacoes.comMultaPendente();
+    }
+
+    public BigDecimal multasEmAberto() {
+        return comMultaPendente().stream().map(Locacao::getMulta).reduce(Locacao.SEM_MULTA, BigDecimal::add);
+    }
+
+    public BigDecimal faturamentoDoMes() {
+        LocalDate hoje = hoje();
+        return locacoes.faturamentoEntre(hoje.withDayOfMonth(1), hoje.withDayOfMonth(hoje.lengthOfMonth()));
     }
 
     public LocalDate hoje() {

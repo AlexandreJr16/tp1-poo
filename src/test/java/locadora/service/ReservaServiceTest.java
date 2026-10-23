@@ -11,15 +11,14 @@ import locadora.model.SituacaoReserva;
 import locadora.model.Titulo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.List;
 
+import static locadora.BancoTeste.assertRegra;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ReservaServiceTest {
@@ -46,10 +45,6 @@ class ReservaServiceTest {
         ana = banco.cliente("Ana");
         bruno = banco.cliente("Bruno");
         locacaoDoBruno = banco.locacaoService.locar(bruno.getId(), exemplar.getId());
-    }
-
-    private static void assertRegra(String mensagem, Executable acao) {
-        assertEquals(mensagem, assertThrows(RegraException.class, acao).getMessage());
     }
 
     @Test

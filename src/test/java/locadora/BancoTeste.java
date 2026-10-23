@@ -27,13 +27,18 @@ import locadora.service.FuncionarioService;
 import locadora.service.LocacaoService;
 import locadora.service.PerdaService;
 import locadora.service.ReservaService;
+import locadora.service.RegraException;
 import locadora.service.TituloService;
+import org.junit.jupiter.api.function.Executable;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /* Banco de teste num arquivo temporario, com DAOs, services e um relogio controlado.
    - Dados:
@@ -43,7 +48,9 @@ import java.util.List;
      funcionario: grava um funcionario com a senha "123"
      adquirir: grava uma aquisicao com N exemplares disponiveis de custo 30,00
    - Sessao:
-     logarGerente, logarAtendente: entram com um funcionario do cargo, criando se preciso */
+     logarGerente, logarAtendente: entram com um funcionario do cargo, criando se preciso
+   - Verificacao:
+     assertRegra: confere que a acao quebra uma regra com a mensagem amigavel esperada */
 public class BancoTeste {
 
     public static final LocalDate HOJE = LocalDate.of(2026, 10, 1);
@@ -97,7 +104,7 @@ public class BancoTeste {
         aquisicaoService = new AquisicaoService(aquisicoes, titulos, exemplares, reservas, relogio);
         perdaService = new PerdaService(perdas, exemplares, locacoes, reservas, relogio);
         reservaService = new ReservaService(reservas, titulos, clientes, exemplares, locacoes, relogio);
-        dashboardService = new DashboardService(locacoes, titulos, reservas, relogio);
+        dashboardService = new DashboardService(locacaoService, reservaService, tituloService);
         buscaService = new BuscaService(titulos, clientes, exemplares);
         arquivoService = new ArquivoService(conexao, relogio);
     }
@@ -133,6 +140,10 @@ public class BancoTeste {
             novos.add(new Exemplar(0, Exemplar.codigo(titulo.getId(), sequencia + i), titulo, custo, Situacao.DISPONIVEL));
         aquisicoes.registrar(new Aquisicao(0, titulo, quantidade, custo, "Distribuidora Teste", HOJE, funcionario), novos, List.of());
         return novos;
+    }
+
+    public static void assertRegra(String mensagem, Executable acao) {
+        assertEquals(mensagem, assertThrows(RegraException.class, acao).getMessage());
     }
 
     public Funcionario logarGerente() {

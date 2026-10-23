@@ -94,9 +94,10 @@ public class TituloService {
     public List<Evento> linhaDoTempo(int exemplarId) {
         List<Evento> eventos = new ArrayList<>();
         Aquisicao aquisicao = aquisicoes.buscarDoExemplar(exemplarId);
-        if (aquisicao != null)
-            eventos.add(new Evento(aquisicao.getData(), "Adquirido de " + aquisicao.getFornecedor() + " por "
-                    + Formato.dinheiro(aquisicao.getCustoUnitario()), aquisicao.getFuncionario().getNome()));
+        if (aquisicao != null) {
+            String descricao = "Adquirido de " + aquisicao.getFornecedor() + " por " + Formato.dinheiro(aquisicao.getCustoUnitario());
+            eventos.add(new Evento(aquisicao.getData(), descricao, aquisicao.getFuncionario().getNome()));
+        }
         Perda perda = perdas.doExemplar(exemplarId);
         int locacaoPerdida = perda != null && perda.getLocacao() != null ? perda.getLocacao().getId() : 0;
         for (Locacao locacao : locacoes.doExemplar(exemplarId)) {

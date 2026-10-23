@@ -6,7 +6,7 @@ import java.time.temporal.ChronoUnit;
 
 public class Locacao {
 
-    private static final BigDecimal SEM_MULTA = new BigDecimal("0.00");
+    public static final BigDecimal SEM_MULTA = new BigDecimal("0.00");
 
     private int id;
     private final Exemplar exemplar;
