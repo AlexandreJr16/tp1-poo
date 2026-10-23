@@ -1,16 +1,25 @@
 package locadora;
 
+import locadora.dao.AquisicaoDao;
 import locadora.dao.ClienteDao;
 import locadora.dao.Conexao;
+import locadora.dao.ExemplarDao;
 import locadora.dao.FuncionarioDao;
+import locadora.dao.ReservaDao;
 import locadora.dao.TituloDao;
+import locadora.model.Aquisicao;
 import locadora.model.Cargo;
 import locadora.model.Cliente;
 import locadora.model.Dvd;
+import locadora.model.Exemplar;
 import locadora.model.Funcionario;
+import locadora.model.Situacao;
 import locadora.model.Titulo;
 
+import java.math.BigDecimal;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /* Banco de teste num arquivo temporario, com os DAOs prontos e atalhos para criar dados.
@@ -18,8 +27,11 @@ import java.util.List;
      cpf: devolve um cpf valido ainda nao usado neste banco
      dvd: grava um DVD com prazo de 5 dias
      cliente: grava um cliente ativo
-     funcionario: grava um funcionario com a senha "123" */
+     funcionario: grava um funcionario com a senha "123"
+     adquirir: grava uma aquisicao com N exemplares disponiveis de custo 30,00 */
 public class BancoTeste {
+
+    public static final LocalDate HOJE = LocalDate.of(2026, 10, 1);
 
     private static final List<String> CPFS = List.of(
             "239.159.970-64", "613.801.808-72", "624.734.278-01", "133.558.845-02",
@@ -31,6 +43,9 @@ public class BancoTeste {
     public final TituloDao titulos;
     public final ClienteDao clientes;
     public final FuncionarioDao funcionarios;
+    public final ExemplarDao exemplares;
+    public final ReservaDao reservas;
+    public final AquisicaoDao aquisicoes;
     private int proximoCpf;
 
     public BancoTeste(Path dir) {
@@ -39,6 +54,9 @@ public class BancoTeste {
         titulos = new TituloDao(conexao);
         clientes = new ClienteDao(conexao);
         funcionarios = new FuncionarioDao(conexao);
+        exemplares = new ExemplarDao(conexao, titulos);
+        reservas = new ReservaDao(conexao, titulos, clientes, funcionarios, exemplares);
+        aquisicoes = new AquisicaoDao(conexao, titulos, funcionarios, exemplares, reservas);
     }
 
     public String cpf() {
@@ -62,5 +80,15 @@ public class BancoTeste {
         funcionario.definirSenha("123");
         funcionarios.inserir(funcionario);
         return funcionario;
+    }
+
+    public List<Exemplar> adquirir(Titulo titulo, int quantidade, Funcionario funcionario) {
+        BigDecimal custo = new BigDecimal("30.00");
+        int sequencia = exemplares.proximaSequencia(titulo.getId());
+        List<Exemplar> novos = new ArrayList<>();
+        for (int i = 0; i < quantidade; i++)
+            novos.add(new Exemplar(0, Exemplar.codigo(titulo.getId(), sequencia + i), titulo, custo, Situacao.DISPONIVEL));
+        aquisicoes.registrar(new Aquisicao(0, titulo, quantidade, custo, "Distribuidora Teste", HOJE, funcionario), novos, List.of());
+        return novos;
     }
 }
