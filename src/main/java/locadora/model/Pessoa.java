@@ -33,6 +33,11 @@ public abstract class Pessoa {
         return resto < 2 ? 0 : 11 - resto;
     }
 
+    // o e-mail e opcional: vazio conta como valido
+    public static boolean emailValido(String email) {
+        return email == null || email.isBlank() || email.trim().matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+");
+    }
+
     private static String somenteDigitos(String texto) {
         return texto == null ? "" : texto.replaceAll("\\D", "");
     }
