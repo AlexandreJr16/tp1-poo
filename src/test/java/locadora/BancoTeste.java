@@ -5,6 +5,8 @@ import locadora.dao.ClienteDao;
 import locadora.dao.Conexao;
 import locadora.dao.ExemplarDao;
 import locadora.dao.FuncionarioDao;
+import locadora.dao.LocacaoDao;
+import locadora.dao.PerdaDao;
 import locadora.dao.ReservaDao;
 import locadora.dao.TituloDao;
 import locadora.model.Aquisicao;
@@ -46,6 +48,8 @@ public class BancoTeste {
     public final ExemplarDao exemplares;
     public final ReservaDao reservas;
     public final AquisicaoDao aquisicoes;
+    public final LocacaoDao locacoes;
+    public final PerdaDao perdas;
     private int proximoCpf;
 
     public BancoTeste(Path dir) {
@@ -57,6 +61,8 @@ public class BancoTeste {
         exemplares = new ExemplarDao(conexao, titulos);
         reservas = new ReservaDao(conexao, titulos, clientes, funcionarios, exemplares);
         aquisicoes = new AquisicaoDao(conexao, titulos, funcionarios, exemplares, reservas);
+        locacoes = new LocacaoDao(conexao, exemplares, clientes, funcionarios, reservas);
+        perdas = new PerdaDao(conexao, exemplares, funcionarios, locacoes, reservas);
     }
 
     public String cpf() {
