@@ -25,7 +25,7 @@ public class Aquisicao {
     }
 
     public BigDecimal custoTotal() {
-        return BigDecimal.ZERO;
+        return custoUnitario.multiply(BigDecimal.valueOf(quantidade));
     }
 
     public int getId() {
