@@ -19,26 +19,41 @@ public class Exemplar {
     }
 
     public static String codigo(int tituloId, int sequencia) {
-        return "";
+        return String.format("T%d-%03d", tituloId, sequencia);
     }
 
     public boolean disponivel() {
-        return false;
+        return situacao == Situacao.DISPONIVEL;
     }
 
     public void alugar() {
+        exigir(situacao == Situacao.DISPONIVEL || situacao == Situacao.RESERVADO, "alugado");
+        situacao = Situacao.ALUGADO;
     }
 
     public void devolver() {
+        exigir(situacao == Situacao.ALUGADO, "devolvido");
+        situacao = Situacao.DISPONIVEL;
     }
 
     public void reservar() {
+        exigir(situacao == Situacao.DISPONIVEL, "reservado");
+        situacao = Situacao.RESERVADO;
     }
 
     public void liberar() {
+        exigir(situacao == Situacao.RESERVADO, "liberado");
+        situacao = Situacao.DISPONIVEL;
     }
 
     public void perder() {
+        exigir(situacao != Situacao.PERDIDO, "dado como perdido");
+        situacao = Situacao.PERDIDO;
+    }
+
+    private void exigir(boolean permitido, String acao) {
+        if (!permitido)
+            throw new IllegalStateException("O exemplar " + codigo + " está " + situacao.toString().toLowerCase() + " e não pode ser " + acao + ".");
     }
 
     public int getId() {
