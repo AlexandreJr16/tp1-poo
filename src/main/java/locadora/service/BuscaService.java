@@ -17,7 +17,22 @@ public class BuscaService {
     private static final int MINIMO_DE_LETRAS = 2;
     private static final int MINIMO_DE_DIGITOS_DO_CPF = 3;
 
-    public enum Tipo { TITULO, CLIENTE, EXEMPLAR }
+    public enum Tipo {
+        TITULO("Título"),
+        CLIENTE("Cliente"),
+        EXEMPLAR("Exemplar");
+
+        private final String rotulo;
+
+        Tipo(String rotulo) {
+            this.rotulo = rotulo;
+        }
+
+        @Override
+        public String toString() {
+            return rotulo;
+        }
+    }
 
     public record Resultado(Tipo tipo, int id, String rotulo, String detalhe) {
     }

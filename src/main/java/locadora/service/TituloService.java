@@ -15,6 +15,7 @@ import locadora.model.Exemplar;
 import locadora.model.FitaVideo;
 import locadora.model.Locacao;
 import locadora.model.Perda;
+import locadora.model.Situacao;
 import locadora.model.Titulo;
 
 import java.time.Clock;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /* - Cadastro:
      salvar: valida e grava um titulo novo (id 0) ou editado, ja na subclasse do tipo escolhido
@@ -32,6 +34,8 @@ import java.util.Map;
      estoque: contagem por situacao dos exemplares de cada titulo
      estoqueDe: contagem de um titulo, vazia se ele ainda nao tem exemplares
      exemplares: exemplares de um titulo
+     exemplaresNoAcervo: exemplares que ainda nao foram perdidos, em ordem de titulo
+     amostra: titulo vazio de um tipo, para a tela mostrar os valores da midia
    - Historia:
      linhaDoTempo: aquisicao, locacoes, devolucoes e perda de um exemplar em ordem cronologica */
 public class TituloService {
@@ -91,12 +95,16 @@ public class TituloService {
         return exemplares.listarPorTitulo(tituloId);
     }
 
+    // titulo vazio do tipo, so para mostrar na tela a multa e o valor que cada midia cobra
     public Titulo amostra(String tipo) {
-        return null;
+        return TituloDao.instanciar(tipo, 0, "", "", ANO_MINIMO, 1);
     }
 
     public List<Exemplar> exemplaresNoAcervo() {
-        return List.of();
+        return Stream.of(Situacao.DISPONIVEL, Situacao.ALUGADO, Situacao.RESERVADO)
+                .flatMap(situacao -> exemplares.listarPorSituacao(situacao).stream())
+                .sorted(Comparator.comparing((Exemplar e) -> e.getTitulo().getNome(), String.CASE_INSENSITIVE_ORDER).thenComparing(Exemplar::getCodigo))
+                .toList();
     }
 
     public List<Evento> linhaDoTempo(int exemplarId) {
