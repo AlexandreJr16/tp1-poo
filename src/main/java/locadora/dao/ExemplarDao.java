@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
      buscar: exemplar pelo id, com o titulo
      buscarPorCodigo: exemplar pelo codigo (ex.: T12-004), ou nulo
      listarPorTitulo: exemplares de um titulo na ordem em que foram adquiridos
+     listarPorCodigo: exemplares cujo codigo comeca com o texto dado
      listarPorSituacao: exemplares numa situacao, em ordem de titulo
      estoquePorTitulo: contagem por situacao de cada titulo que tem exemplares
      proximaSequencia: numero do proximo exemplar do titulo
@@ -42,6 +43,10 @@ public class ExemplarDao {
 
     public List<Exemplar> listarPorTitulo(int tituloId) {
         return conexao.listar(SELECIONAR + " WHERE e.titulo_id = ? ORDER BY e.id", this::ler, tituloId);
+    }
+
+    public List<Exemplar> listarPorCodigo(String inicio) {
+        return conexao.listar(SELECIONAR + " WHERE e.codigo LIKE ? ORDER BY e.id", this::ler, inicio + "%");
     }
 
     public List<Exemplar> listarPorSituacao(Situacao situacao) {

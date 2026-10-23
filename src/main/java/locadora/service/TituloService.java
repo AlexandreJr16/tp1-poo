@@ -5,6 +5,7 @@ import locadora.dao.ExemplarDao;
 import locadora.dao.LocacaoDao;
 import locadora.dao.PerdaDao;
 import locadora.dao.TituloDao;
+import locadora.model.Aquisicao;
 import locadora.model.BluRay;
 import locadora.model.Cd;
 import locadora.model.Dvd;
@@ -12,10 +13,14 @@ import locadora.model.Estoque;
 import locadora.model.Evento;
 import locadora.model.Exemplar;
 import locadora.model.FitaVideo;
+import locadora.model.Locacao;
+import locadora.model.Perda;
 import locadora.model.Titulo;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +31,9 @@ import java.util.Map;
      listar: todos os titulos em ordem de nome
      estoque: contagem por situacao dos exemplares de cada titulo
      estoqueDe: contagem de um titulo, vazia se ele ainda nao tem exemplares
-     exemplares: exemplares de um titulo */
+     exemplares: exemplares de um titulo
+   - Historia:
+     linhaDoTempo: aquisicao, locacoes, devolucoes e perda de um exemplar em ordem cronologica */
 public class TituloService {
 
     public static final List<String> TIPOS = List.of(BluRay.TIPO, Dvd.TIPO, Cd.TIPO, FitaVideo.TIPO);
@@ -85,6 +92,34 @@ public class TituloService {
     }
 
     public List<Evento> linhaDoTempo(int exemplarId) {
-        throw new UnsupportedOperationException();
+        List<Evento> eventos = new ArrayList<>();
+        Aquisicao aquisicao = aquisicoes.buscarDoExemplar(exemplarId);
+        if (aquisicao != null)
+            eventos.add(new Evento(aquisicao.getData(), "Adquirido de " + aquisicao.getFornecedor() + " por "
+                    + Formato.dinheiro(aquisicao.getCustoUnitario()), aquisicao.getFuncionario().getNome()));
+        Perda perda = perdas.doExemplar(exemplarId);
+        int locacaoPerdida = perda != null && perda.getLocacao() != null ? perda.getLocacao().getId() : 0;
+        for (Locacao locacao : locacoes.doExemplar(exemplarId)) {
+            eventos.add(new Evento(locacao.getDataLocacao(), "Alugado para " + locacao.getCliente().getNome(),
+                    locacao.getFuncionarioLocacao().getNome()));
+            if (!locacao.ativa() && locacao.getId() != locacaoPerdida)
+                eventos.add(new Evento(locacao.getDataDevolucao(), descricaoDevolucao(locacao), locacao.getFuncionarioDevolucao().getNome()));
+        }
+        if (perda != null)
+            eventos.add(new Evento(perda.getData(), descricaoPerda(perda), perda.getFuncionario().getNome()));
+        eventos.sort(Comparator.comparing(Evento::data));
+        return eventos;
+    }
+
+    private static String descricaoDevolucao(Locacao locacao) {
+        String devolucao = "Devolvido por " + locacao.getCliente().getNome();
+        return locacao.getMulta().signum() > 0 ? devolucao + " com multa de " + Formato.dinheiro(locacao.getMulta()) : devolucao;
+    }
+
+    private static String descricaoPerda(Perda perda) {
+        String descricao = "Dado como perdido: " + perda.getMotivo();
+        Locacao locacao = perda.getLocacao();
+        return locacao == null ? descricao
+                : descricao + ". Cobrado " + Formato.dinheiro(locacao.getMulta()) + " de " + locacao.getCliente().getNome();
     }
 }
