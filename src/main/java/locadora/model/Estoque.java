@@ -5,10 +5,10 @@ public record Estoque(int disponiveis, int alugados, int reservados, int perdido
     public static final Estoque VAZIO = new Estoque(0, 0, 0, 0);
 
     public int total() {
-        return 0;
+        return disponiveis + alugados + reservados + perdidos;
     }
 
     public int noAcervo() {
-        return 0;
+        return total() - perdidos;
     }
 }
