@@ -6,7 +6,9 @@ import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -21,6 +23,9 @@ import java.util.List;
      abrir: abre uma conexao com as chaves estrangeiras ligadas
      criarSchemaSeVazio: cria as tabelas do schema.sql quando o arquivo ainda nao tem tabelas
      executarScript: roda um arquivo .sql do classpath inteiro numa transacao
+     copiarPara: grava uma copia do banco inteiro em outro arquivo (backup)
+     restaurarDe: troca o arquivo do banco por uma copia
+     ehBancoDaLocadora: confere se um arquivo e um banco SQLite com as tabelas da locadora
    - Atalhos dos DAOs (abrem e fecham a propria conexao):
      listar, buscar, inserir, executar: rodam um PreparedStatement com os parametros na ordem
      transacao: roda varios comandos na mesma conexao, com commit no fim ou rollback no erro
@@ -41,10 +46,45 @@ public class Conexao {
         T executar(Connection c) throws SQLException;
     }
 
+    private static final List<String> TABELAS = List.of("titulo", "exemplar", "cliente", "funcionario", "aquisicao", "locacao", "reserva", "perda");
+
+    private final Path arquivo;
     private final String url;
 
     public Conexao(Path arquivo) {
-        url = "jdbc:sqlite:" + arquivo.toAbsolutePath();
+        this.arquivo = arquivo.toAbsolutePath();
+        url = "jdbc:sqlite:" + this.arquivo;
+    }
+
+    // VACUUM nao roda dentro de transacao, por isso usa uma conexao em autocommit
+    public void copiarPara(Path destino) {
+        try (Connection c = abrir()) {
+            Files.deleteIfExists(destino);
+            executar(c, "VACUUM INTO ?", destino.toAbsolutePath().toString());
+        } catch (SQLException e) {
+            throw new BancoException(e);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public void restaurarDe(Path origem) {
+        try {
+            Files.copy(origem, arquivo, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public static boolean ehBancoDaLocadora(Path candidato) {
+        if (!Files.isRegularFile(candidato))
+            return false;
+        try {
+            List<String> tabelas = new Conexao(candidato).listar("SELECT name FROM sqlite_master WHERE type = 'table'", (rs, c) -> rs.getString(1));
+            return tabelas.containsAll(TABELAS);
+        } catch (BancoException e) {
+            return false;
+        }
     }
 
     public Connection abrir() throws SQLException {
