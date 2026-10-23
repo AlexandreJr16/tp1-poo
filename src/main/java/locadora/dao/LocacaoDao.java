@@ -23,6 +23,7 @@ import java.util.List;
      doExemplar: historico de um exemplar em ordem cronologica
      ativaDoExemplar: locacao em aberto de um exemplar, ou nulo
      comMultaPendente: devolvidas com multa ainda nao paga
+     multasPendentesDoCliente: soma do que um cliente ainda deve de multa
      faturamentoEntre: locacoes feitas mais multas pagas no periodo */
 public class LocacaoDao {
 
@@ -102,6 +103,11 @@ public class LocacaoDao {
 
     public List<Locacao> comMultaPendente() {
         return conexao.listar(SELECIONAR + " WHERE multa_centavos > 0 AND data_pagamento_multa IS NULL ORDER BY data_devolucao, id", this::ler);
+    }
+
+    public BigDecimal multasPendentesDoCliente(int clienteId) {
+        return conexao.buscar("SELECT COALESCE(SUM(multa_centavos), 0) FROM locacao WHERE cliente_id = ? AND data_pagamento_multa IS NULL",
+                (rs, c) -> Conexao.reais(rs.getLong(1)), clienteId);
     }
 
     public BigDecimal faturamentoEntre(LocalDate inicio, LocalDate fim) {

@@ -21,8 +21,6 @@ import java.util.List;
      reservas: reservas do cliente, da mais recente para a mais antiga */
 public class ClienteService {
 
-    private static final BigDecimal ZERO = new BigDecimal("0.00");
-
     private final ClienteDao clientes;
     private final LocacaoDao locacoes;
     private final ReservaDao reservas;
@@ -65,10 +63,7 @@ public class ClienteService {
     }
 
     public BigDecimal multasPendentes(int clienteId) {
-        return historico(clienteId).stream()
-                .filter(Locacao::multaPendente)
-                .map(Locacao::getMulta)
-                .reduce(ZERO, BigDecimal::add);
+        return locacoes.multasPendentesDoCliente(clienteId);
     }
 
     public List<Reserva> reservas(int clienteId) {

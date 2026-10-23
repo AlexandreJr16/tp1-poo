@@ -4,64 +4,157 @@ import locadora.dao.ClienteDao;
 import locadora.dao.ExemplarDao;
 import locadora.dao.LocacaoDao;
 import locadora.dao.ReservaDao;
+import locadora.model.Cliente;
 import locadora.model.Exemplar;
+import locadora.model.Funcionario;
 import locadora.model.Locacao;
+import locadora.model.Reserva;
+import locadora.model.Situacao;
+import locadora.model.SituacaoReserva;
 
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
+/* - Locacao:
+     locar: registra a locacao para o funcionario logado, se cliente e exemplar estiverem aptos
+     previaMulta: multa que a devolucao cobraria hoje
+     devolver: fecha a locacao com o funcionario logado e separa o exemplar para o primeiro da fila
+     pagarMulta: registra o pagamento da multa hoje
+     renovar: estende o prazo uma vez, se nao estiver atrasada nem houver fila
+   - Consulta:
+     alugaveisPara: exemplares disponiveis mais os separados para o proprio cliente
+     buscar, listar, ativas, atrasadas, comMultaPendente
+     hoje: dia atual pelo relogio do sistema */
 public class LocacaoService {
 
+    public static final int LIMITE_LOCACOES_ATIVAS = 3;
+
+    private final LocacaoDao locacoes;
+    private final ExemplarDao exemplares;
+    private final ClienteDao clientes;
+    private final ReservaDao reservas;
+    private final Clock relogio;
+
     public LocacaoService(LocacaoDao locacoes, ExemplarDao exemplares, ClienteDao clientes, ReservaDao reservas, Clock relogio) {
+        this.locacoes = locacoes;
+        this.exemplares = exemplares;
+        this.clientes = clientes;
+        this.reservas = reservas;
+        this.relogio = relogio;
     }
 
     public Locacao locar(int clienteId, int exemplarId) {
-        throw new UnsupportedOperationException();
+        Funcionario funcionario = AuthService.exigirLogado();
+        Cliente cliente = clienteApto(clienteId);
+        Exemplar exemplar = exemplares.buscar(exemplarId);
+        RegraException.se(exemplar == null, "Exemplar não encontrado.");
+        RegraException.se(exemplar.getSituacao() == Situacao.ALUGADO, "Este exemplar já está alugado.");
+        RegraException.se(exemplar.getSituacao() == Situacao.PERDIDO, "Este exemplar foi dado como perdido.");
+        Reserva reserva = exemplar.getSituacao() == Situacao.RESERVADO ? reservas.prontaDoExemplar(exemplarId) : null;
+        if (reserva != null) {
+            RegraException.se(reserva.getCliente().getId() != clienteId,
+                    "Este exemplar está separado para a reserva de " + reserva.getCliente().getNome() + ".");
+            reserva.atender();
+        }
+        Locacao locacao = Locacao.abrir(exemplar, cliente, funcionario, hoje());
+        locacoes.registrar(locacao, reserva);
+        return locacao;
     }
 
     public BigDecimal previaMulta(int locacaoId) {
-        throw new UnsupportedOperationException();
+        return ativa(locacaoId).multaAte(hoje());
     }
 
     public Locacao devolver(int locacaoId) {
-        throw new UnsupportedOperationException();
+        Funcionario funcionario = AuthService.exigirLogado();
+        Locacao locacao = ativa(locacaoId);
+        locacao.devolver(hoje(), funcionario);
+        Reserva proxima = reservas.fila(locacao.getExemplar().getTitulo().getId()).stream().findFirst().orElse(null);
+        if (proxima != null)
+            proxima.preparar(locacao.getExemplar());
+        locacoes.registrarDevolucao(locacao, proxima);
+        return locacao;
     }
 
     public void pagarMulta(int locacaoId) {
-        throw new UnsupportedOperationException();
+        AuthService.exigirLogado();
+        Locacao locacao = existente(locacaoId);
+        RegraException.se(!locacao.multaPendente(), "Esta locação não tem multa pendente.");
+        locacao.pagarMulta(hoje());
+        locacoes.atualizar(locacao);
     }
 
     public Locacao renovar(int locacaoId) {
-        throw new UnsupportedOperationException();
+        AuthService.exigirLogado();
+        Locacao locacao = ativa(locacaoId);
+        RegraException.se(locacao.isRenovada(), "Esta locação já foi renovada uma vez.");
+        RegraException.se(locacao.atrasada(hoje()), "Locação atrasada não pode ser renovada.");
+        RegraException.se(!reservas.fila(locacao.getExemplar().getTitulo().getId()).isEmpty(), "Há clientes na fila de reserva deste título.");
+        locacao.renovar(hoje());
+        locacoes.atualizar(locacao);
+        return locacao;
     }
 
     public List<Exemplar> alugaveisPara(int clienteId) {
-        throw new UnsupportedOperationException();
+        Stream<Exemplar> separados = reservas.doCliente(clienteId).stream()
+                .filter(r -> r.getSituacao() == SituacaoReserva.PRONTA)
+                .map(Reserva::getExemplar);
+        return Stream.concat(separados, exemplares.listarPorSituacao(Situacao.DISPONIVEL).stream())
+                .sorted(Comparator.comparing((Exemplar e) -> e.getTitulo().getNome(), String.CASE_INSENSITIVE_ORDER)
+                        .thenComparing(Exemplar::getCodigo))
+                .toList();
     }
 
     public Locacao buscar(int id) {
-        throw new UnsupportedOperationException();
+        return locacoes.buscar(id);
     }
 
     public List<Locacao> listar() {
-        throw new UnsupportedOperationException();
+        return locacoes.listar();
     }
 
     public List<Locacao> ativas() {
-        throw new UnsupportedOperationException();
+        return locacoes.ativas();
     }
 
     public List<Locacao> atrasadas() {
-        throw new UnsupportedOperationException();
+        LocalDate hoje = hoje();
+        return ativas().stream().filter(l -> l.atrasada(hoje)).toList();
     }
 
     public List<Locacao> comMultaPendente() {
-        throw new UnsupportedOperationException();
+        return locacoes.comMultaPendente();
     }
 
     public LocalDate hoje() {
-        throw new UnsupportedOperationException();
+        return LocalDate.now(relogio);
+    }
+
+    private Cliente clienteApto(int clienteId) {
+        Cliente cliente = clientes.buscar(clienteId);
+        RegraException.se(cliente == null, "Cliente não encontrado.");
+        RegraException.se(!cliente.isAtivo(), "Cliente inativo não pode alugar.");
+        BigDecimal devendo = locacoes.multasPendentesDoCliente(clienteId);
+        RegraException.se(devendo.signum() > 0,
+                "O cliente tem " + Formato.dinheiro(devendo) + " em multas pendentes. Registre o pagamento antes de alugar.");
+        long abertas = locacoes.doCliente(clienteId).stream().filter(Locacao::ativa).count();
+        RegraException.se(abertas >= LIMITE_LOCACOES_ATIVAS, "O cliente já tem " + LIMITE_LOCACOES_ATIVAS + " locações em aberto.");
+        return cliente;
+    }
+
+    private Locacao existente(int locacaoId) {
+        Locacao locacao = locacoes.buscar(locacaoId);
+        RegraException.se(locacao == null, "Locação não encontrada.");
+        return locacao;
+    }
+
+    private Locacao ativa(int locacaoId) {
+        Locacao locacao = existente(locacaoId);
+        RegraException.se(!locacao.ativa(), "Esta locação já foi devolvida.");
+        return locacao;
     }
 }
