@@ -20,6 +20,7 @@ import locadora.model.Titulo;
 import locadora.service.AuthService;
 import locadora.service.ClienteService;
 import locadora.service.FuncionarioService;
+import locadora.service.LocacaoService;
 import locadora.service.TituloService;
 
 import java.math.BigDecimal;
@@ -61,6 +62,7 @@ public class BancoTeste {
     public final TituloService tituloService;
     public final ClienteService clienteService;
     public final FuncionarioService funcionarioService;
+    public final LocacaoService locacaoService;
     private int proximoCpf;
 
     public BancoTeste(Path dir) {
@@ -79,6 +81,7 @@ public class BancoTeste {
         tituloService = new TituloService(titulos, exemplares, aquisicoes, locacoes, perdas, relogio);
         clienteService = new ClienteService(clientes, locacoes, reservas);
         funcionarioService = new FuncionarioService(funcionarios);
+        locacaoService = new LocacaoService(locacoes, exemplares, clientes, reservas, relogio);
     }
 
     public String cpf() {
