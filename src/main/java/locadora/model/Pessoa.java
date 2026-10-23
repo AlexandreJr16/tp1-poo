@@ -2,7 +2,7 @@ package locadora.model;
 
 public abstract class Pessoa {
 
-    private final int id;
+    private int id;
     private final String nome;
     private final String cpf;
     private final String telefone;
@@ -43,6 +43,10 @@ public abstract class Pessoa {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNome() {

@@ -8,7 +8,7 @@ public class Locacao {
 
     private static final BigDecimal SEM_MULTA = new BigDecimal("0.00");
 
-    private final int id;
+    private int id;
     private final Exemplar exemplar;
     private final Cliente cliente;
     private final Funcionario funcionarioLocacao;
@@ -112,6 +112,10 @@ public class Locacao {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Exemplar getExemplar() {

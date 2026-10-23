@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class Reserva {
 
-    private final int id;
+    private int id;
     private final Titulo titulo;
     private final Cliente cliente;
     private final Funcionario funcionario;
@@ -64,6 +64,10 @@ public class Reserva {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Titulo getTitulo() {

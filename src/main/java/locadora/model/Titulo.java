@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public abstract class Titulo {
 
-    private final int id;
+    private int id;
     private final String nome;
     private final String descricao;
     private final int ano;
@@ -26,6 +26,10 @@ public abstract class Titulo {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNome() {

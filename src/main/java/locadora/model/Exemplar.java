@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class Exemplar {
 
-    private final int id;
+    private int id;
     private final String codigo;
     private final Titulo titulo;
     private final BigDecimal custo;
@@ -58,6 +58,10 @@ public class Exemplar {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCodigo() {
