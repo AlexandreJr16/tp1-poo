@@ -26,6 +26,14 @@ public final class Formato {
         return data == null ? "" : data.format(DATA);
     }
 
+    public static BigDecimal lerDinheiro(String texto) {
+        return null;
+    }
+
+    public static String dataPorExtenso(LocalDate data) {
+        return "";
+    }
+
     public static String normalizar(String texto) {
         String semAcento = Normalizer.normalize(texto == null ? "" : texto.trim(), Normalizer.Form.NFD).replaceAll("\\p{M}", "");
         return semAcento.toLowerCase(BRASIL);
