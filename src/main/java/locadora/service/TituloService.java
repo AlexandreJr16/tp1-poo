@@ -9,6 +9,7 @@ import locadora.model.BluRay;
 import locadora.model.Cd;
 import locadora.model.Dvd;
 import locadora.model.Estoque;
+import locadora.model.Evento;
 import locadora.model.Exemplar;
 import locadora.model.FitaVideo;
 import locadora.model.Titulo;
@@ -81,5 +82,9 @@ public class TituloService {
 
     public List<Exemplar> exemplares(int tituloId) {
         return exemplares.listarPorTitulo(tituloId);
+    }
+
+    public List<Evento> linhaDoTempo(int exemplarId) {
+        throw new UnsupportedOperationException();
     }
 }

@@ -19,7 +19,9 @@ import locadora.model.Situacao;
 import locadora.model.Titulo;
 import locadora.service.AquisicaoService;
 import locadora.service.AuthService;
+import locadora.service.BuscaService;
 import locadora.service.ClienteService;
+import locadora.service.DashboardService;
 import locadora.service.FuncionarioService;
 import locadora.service.LocacaoService;
 import locadora.service.PerdaService;
@@ -69,6 +71,8 @@ public class BancoTeste {
     public final AquisicaoService aquisicaoService;
     public final PerdaService perdaService;
     public final ReservaService reservaService;
+    public final DashboardService dashboardService;
+    public final BuscaService buscaService;
     private int proximoCpf;
 
     public BancoTeste(Path dir) {
@@ -91,6 +95,8 @@ public class BancoTeste {
         aquisicaoService = new AquisicaoService(aquisicoes, titulos, exemplares, reservas, relogio);
         perdaService = new PerdaService(perdas, exemplares, locacoes, reservas, relogio);
         reservaService = new ReservaService(reservas, titulos, clientes, exemplares, locacoes, relogio);
+        dashboardService = new DashboardService(locacoes, titulos, reservas, relogio);
+        buscaService = new BuscaService(titulos, clientes, exemplares);
     }
 
     public String cpf() {
