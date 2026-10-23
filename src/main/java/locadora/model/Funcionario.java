@@ -1,6 +1,14 @@
 package locadora.model;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.HexFormat;
+
 public class Funcionario extends Pessoa {
+
+    private static final SecureRandom ALEATORIO = new SecureRandom();
 
     private final String login;
     private String senhaHash;
@@ -17,19 +25,27 @@ public class Funcionario extends Pessoa {
     }
 
     public void definirSenha(String senha) {
-        throw new UnsupportedOperationException();
+        byte[] bytes = new byte[16];
+        ALEATORIO.nextBytes(bytes);
+        sal = HexFormat.of().formatHex(bytes);
+        senhaHash = hash(sal, senha);
     }
 
     public boolean senhaConfere(String senha) {
-        throw new UnsupportedOperationException();
+        return senhaHash != null && senhaHash.equals(hash(sal, senha));
     }
 
     public boolean gerente() {
-        throw new UnsupportedOperationException();
+        return cargo == Cargo.GERENTE;
     }
 
     static String hash(String sal, String senha) {
-        throw new UnsupportedOperationException();
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest((sal + senha).getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(digest);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 indisponivel nesta JVM", e);
+        }
     }
 
     public String getLogin() {
