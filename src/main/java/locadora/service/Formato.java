@@ -1,6 +1,7 @@
 package locadora.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -9,11 +10,14 @@ import java.util.Locale;
 /* Formatos brasileiros usados nas mensagens e nas telas.
    dinheiro: R$ 1.234,50
    data: 01/10/2026 (vazio para data nula)
+   dataPorExtenso: quinta-feira, 1 de outubro de 2026
+   lerDinheiro: valor digitado (29,90 ou R$ 1.234,50) em BigDecimal, ou erro amigavel
    normalizar: texto sem acento, sem espacos nas pontas e em minusculas, para comparar em buscas */
 public final class Formato {
 
     private static final Locale BRASIL = Locale.forLanguageTag("pt-BR");
     private static final DateTimeFormatter DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter POR_EXTENSO = DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy", BRASIL);
 
     private Formato() {
     }
@@ -27,11 +31,16 @@ public final class Formato {
     }
 
     public static BigDecimal lerDinheiro(String texto) {
-        return null;
+        String numero = texto == null ? "" : texto.replace("R$", "").replace(".", "").replace(",", ".").trim();
+        try {
+            return new BigDecimal(numero).setScale(2, RoundingMode.HALF_UP);
+        } catch (NumberFormatException e) {
+            throw new RegraException("Informe um valor como 29,90.");
+        }
     }
 
     public static String dataPorExtenso(LocalDate data) {
-        return "";
+        return data.format(POR_EXTENSO);
     }
 
     public static String normalizar(String texto) {
