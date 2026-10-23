@@ -17,6 +17,10 @@ import locadora.model.Exemplar;
 import locadora.model.Funcionario;
 import locadora.model.Situacao;
 import locadora.model.Titulo;
+import locadora.service.AuthService;
+import locadora.service.ClienteService;
+import locadora.service.FuncionarioService;
+import locadora.service.TituloService;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
@@ -24,13 +28,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/* Banco de teste num arquivo temporario, com os DAOs prontos e atalhos para criar dados.
+/* Banco de teste num arquivo temporario, com DAOs, services e um relogio controlado.
    - Dados:
      cpf: devolve um cpf valido ainda nao usado neste banco
      dvd: grava um DVD com prazo de 5 dias
      cliente: grava um cliente ativo
      funcionario: grava um funcionario com a senha "123"
-     adquirir: grava uma aquisicao com N exemplares disponiveis de custo 30,00 */
+     adquirir: grava uma aquisicao com N exemplares disponiveis de custo 30,00
+   - Sessao:
+     logarGerente, logarAtendente: entram com um funcionario do cargo, criando se preciso */
 public class BancoTeste {
 
     public static final LocalDate HOJE = LocalDate.of(2026, 10, 1);
@@ -41,6 +47,7 @@ public class BancoTeste {
             "668.990.851-86", "113.630.343-08", "968.042.622-04", "349.437.637-90",
             "052.384.578-20", "568.849.112-47", "041.324.506-35", "838.923.203-06");
 
+    public final RelogioTeste relogio = new RelogioTeste(HOJE);
     public final Conexao conexao;
     public final TituloDao titulos;
     public final ClienteDao clientes;
@@ -50,9 +57,14 @@ public class BancoTeste {
     public final AquisicaoDao aquisicoes;
     public final LocacaoDao locacoes;
     public final PerdaDao perdas;
+    public final AuthService auth;
+    public final TituloService tituloService;
+    public final ClienteService clienteService;
+    public final FuncionarioService funcionarioService;
     private int proximoCpf;
 
     public BancoTeste(Path dir) {
+        AuthService.sair();
         conexao = new Conexao(dir.resolve("teste.db"));
         conexao.criarSchemaSeVazio();
         titulos = new TituloDao(conexao);
@@ -63,6 +75,10 @@ public class BancoTeste {
         aquisicoes = new AquisicaoDao(conexao, titulos, funcionarios, exemplares, reservas);
         locacoes = new LocacaoDao(conexao, exemplares, clientes, funcionarios, reservas);
         perdas = new PerdaDao(conexao, exemplares, funcionarios, locacoes, reservas);
+        auth = new AuthService(funcionarios);
+        tituloService = new TituloService(titulos, exemplares, aquisicoes, locacoes, perdas, relogio);
+        clienteService = new ClienteService(clientes, locacoes, reservas);
+        funcionarioService = new FuncionarioService(funcionarios);
     }
 
     public String cpf() {
@@ -96,5 +112,19 @@ public class BancoTeste {
             novos.add(new Exemplar(0, Exemplar.codigo(titulo.getId(), sequencia + i), titulo, custo, Situacao.DISPONIVEL));
         aquisicoes.registrar(new Aquisicao(0, titulo, quantidade, custo, "Distribuidora Teste", HOJE, funcionario), novos, List.of());
         return novos;
+    }
+
+    public Funcionario logarGerente() {
+        return logar("gerente", Cargo.GERENTE);
+    }
+
+    public Funcionario logarAtendente() {
+        return logar("atendente", Cargo.ATENDENTE);
+    }
+
+    private Funcionario logar(String login, Cargo cargo) {
+        if (funcionarios.buscarPorLogin(login) == null)
+            funcionario(login, cargo);
+        return auth.entrar(login, "123");
     }
 }
