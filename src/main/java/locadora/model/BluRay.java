@@ -4,22 +4,26 @@ import java.math.BigDecimal;
 
 public class BluRay extends Titulo {
 
+    public static final String TIPO = "Blu-ray";
+    private static final BigDecimal MULTA_DIARIA = new BigDecimal("5.00");
+    private static final BigDecimal LOCACAO = new BigDecimal("12.00");
+
     public BluRay(int id, String nome, String descricao, int ano, int prazoMaximoDias) {
         super(id, nome, descricao, ano, prazoMaximoDias);
     }
 
     @Override
     public BigDecimal valorMultaDiaria() {
-        return BigDecimal.ZERO;
+        return MULTA_DIARIA;
     }
 
     @Override
     public BigDecimal valorLocacao() {
-        return BigDecimal.ZERO;
+        return LOCACAO;
     }
 
     @Override
     public String tipo() {
-        return "";
+        return TIPO;
     }
 }
