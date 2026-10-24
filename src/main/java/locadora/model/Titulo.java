@@ -1,6 +1,7 @@
 package locadora.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public abstract class Titulo {
 
@@ -46,5 +47,9 @@ public abstract class Titulo {
 
     public int getPrazoMaximoDias() {
         return prazoMaximoDias;
+    }
+
+    public LocalDate devolucaoPrevista(LocalDate inicio) {
+        return inicio;
     }
 }

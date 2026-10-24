@@ -3,6 +3,7 @@ package locadora.model;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,5 +36,13 @@ class TituloTest {
         List<String> tipos = List.of(bluRay, dvd, cd, fita).stream().map(Titulo::tipo).toList();
 
         assertEquals(List.of("Blu-ray", "DVD", "CD", "Fita"), tipos);
+    }
+
+    @Test
+    void devolucaoPrevistaSomaOPrazoDoTitulo() {
+        LocalDate hoje = LocalDate.of(2026, 10, 30);
+
+        assertEquals(LocalDate.of(2026, 11, 2), bluRay.devolucaoPrevista(hoje));
+        assertEquals(LocalDate.of(2026, 11, 4), dvd.devolucaoPrevista(hoje));
     }
 }
