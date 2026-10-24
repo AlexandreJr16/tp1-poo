@@ -138,13 +138,13 @@ public class TabelaBusca<T> extends JPanel {
     }
 
     private void aplicarFiltros() {
-        String termo = Formato.normalizar(busca.getText());
+        String termo = busca.getText();
         ordenador.setRowFilter(new RowFilter<>() {
             @Override
             public boolean include(Entry<? extends ModeloTabela<T>, ? extends Integer> entrada) {
                 int linha = entrada.getIdentifier();
                 return filtroExtra.test(modelo.linha(linha))
-                        && (termo.isEmpty() || Formato.normalizar(modelo.textoDaLinha(linha)).contains(termo));
+                        && Formato.parecido(termo, modelo.textoDaLinha(linha));
             }
         });
         cartoes.show(conteudo, modelo.getRowCount() == 0 ? VAZIA : tabela.getRowCount() == 0 ? SEM_RESULTADO : TABELA);

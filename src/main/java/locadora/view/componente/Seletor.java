@@ -88,10 +88,10 @@ public class Seletor<T> extends JPanel {
 
     private void filtrar() {
         T anterior = selecionado();
-        String termo = Formato.normalizar(busca.getText());
+        String termo = busca.getText();
         visiveis.clear();
         itens.stream()
-                .filter(item -> Formato.normalizar(rotulo.apply(item) + " " + detalhe.apply(item)).contains(termo))
+                .filter(item -> Formato.parecido(termo, rotulo.apply(item) + " " + detalhe.apply(item)))
                 .forEach(visiveis::addElement);
         if (anterior != null && visiveis.contains(anterior))
             lista.setSelectedValue(anterior, true);
