@@ -25,6 +25,9 @@ public abstract class Titulo {
 
     public abstract String tipo();
 
+    // o tipo de obra gravada na midia (filme ou album), usado para buscar a capa
+    public abstract String categoria();
+
     public int getId() {
         return id;
     }

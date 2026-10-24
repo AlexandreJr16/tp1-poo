@@ -45,4 +45,11 @@ class TituloTest {
         assertEquals(LocalDate.of(2026, 11, 2), bluRay.devolucaoPrevista(hoje));
         assertEquals(LocalDate.of(2026, 11, 4), dvd.devolucaoPrevista(hoje));
     }
+
+    @Test
+    void categoriaDizSeAMidiaGuardaFilmeOuAlbum() {
+        List<String> categorias = List.of(bluRay, dvd, cd, fita).stream().map(Titulo::categoria).toList();
+
+        assertEquals(List.of("filme", "filme", "álbum", "filme"), categorias);
+    }
 }
