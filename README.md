@@ -1,6 +1,6 @@
 # Locadora — Sistema de Gestão de Locadora
 
-![CI](https://github.com/AleJr16/locadora/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/AlexandreJr16/tp1-poo/actions/workflows/ci.yml/badge.svg)
 ![Java 17](https://img.shields.io/badge/Java-17-007396)
 ![Testes](https://img.shields.io/badge/testes-173%20passando-brightgreen)
 ![Cobertura](https://img.shields.io/badge/cobertura%20(model%2C%20dao%2C%20service)-97%25-brightgreen)
