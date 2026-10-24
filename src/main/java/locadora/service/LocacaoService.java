@@ -24,6 +24,7 @@ import java.util.stream.Stream;
      previaMulta: multa que a devolucao cobraria hoje
      devolver: fecha a locacao com o funcionario logado e separa o exemplar para o primeiro da fila
      pagarMulta: registra o pagamento da multa hoje
+     pagarMultasDoCliente: quita de uma vez todas as multas pendentes de um cliente
      renovar: estende o prazo uma vez, se nao estiver atrasada nem houver fila
    - Consulta:
      alugaveisPara: exemplares disponiveis mais os separados para o proprio cliente
@@ -95,6 +96,11 @@ public class LocacaoService {
     }
 
     public void pagarMultasDoCliente(int clienteId) {
+        AuthService.exigirLogado();
+        List<Locacao> pendentes = locacoes.doCliente(clienteId).stream().filter(Locacao::multaPendente).toList();
+        RegraException.se(pendentes.isEmpty(), "O cliente não tem multas pendentes.");
+        pendentes.forEach(l -> l.pagarMulta(hoje()));
+        locacoes.atualizarTodas(pendentes);
     }
 
     public Locacao renovar(int locacaoId) {

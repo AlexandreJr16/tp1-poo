@@ -152,9 +152,7 @@ public class ClienteDetalheDialog extends JDialog {
         String pergunta = "Registrar o pagamento de " + Formato.dinheiro(devendo) + " em multas de " + cliente.getNome() + "?";
         if (!Mensagens.confirmar(this, "Pagamento de multas", pergunta, "Registrar pagamento"))
             return;
-        boolean pago = Mensagens.executar(this, () -> servicos.clientes().historico(cliente.getId()).stream()
-                .filter(Locacao::multaPendente)
-                .forEach(l -> servicos.locacoes().pagarMulta(l.getId())));
+        boolean pago = Mensagens.executar(this, () -> servicos.locacoes().pagarMultasDoCliente(cliente.getId()));
         carregar();
         if (pago)
             Toast.mostrar(this, "Pagamento registrado");

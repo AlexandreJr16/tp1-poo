@@ -15,6 +15,7 @@ import java.util.List;
      registrar: grava a locacao, o exemplar alugado e a reserva atendida
      registrarDevolucao: grava a devolucao, a situacao do exemplar e a reserva que ficou pronta
      atualizar: grava prazo, devolucao, multa, pagamento e renovacao
+     atualizarTodas: grava varias locacoes de uma vez
    - Consulta:
      buscar: locacao pelo id
      listar: todas, da mais recente para a mais antiga
@@ -73,6 +74,14 @@ public class LocacaoDao {
     public void atualizar(Locacao locacao) {
         conexao.transacao(c -> {
             atualizar(c, locacao);
+            return null;
+        });
+    }
+
+    public void atualizarTodas(List<Locacao> locacoes) {
+        conexao.transacao(c -> {
+            for (Locacao locacao : locacoes)
+                atualizar(c, locacao);
             return null;
         });
     }
