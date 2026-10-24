@@ -83,6 +83,14 @@ class PainelServiceTest {
     }
 
     @Test
+    void buscaGlobalToleraErroDeDigitacao() {
+        banco.dvd("Star Wars: O Império Contra-Ataca");
+
+        assertEquals(List.of("Star Wars: O Império Contra-Ataca"), banco.buscaService.buscar("estar wars").stream().map(BuscaService.Resultado::rotulo).toList());
+        assertEquals(List.of("Matrix"), banco.buscaService.buscar("matirx").stream().map(BuscaService.Resultado::rotulo).toList());
+    }
+
+    @Test
     void buscaGlobalAchaClientePorNomeOuCpf() {
         String cpfFormatado = ana.cpfFormatado();
 

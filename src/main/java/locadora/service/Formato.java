@@ -44,6 +44,10 @@ public final class Formato {
         return data.format(POR_EXTENSO);
     }
 
+    public static boolean parecido(String termo, String texto) {
+        return false;
+    }
+
     public static String normalizar(String texto) {
         String semAcento = Normalizer.normalize(texto == null ? "" : texto.trim(), Normalizer.Form.NFD).replaceAll("\\p{M}", "");
         return semAcento.toLowerCase(BRASIL);
