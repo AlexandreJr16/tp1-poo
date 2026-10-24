@@ -103,6 +103,21 @@ class LocacaoServiceTest {
     }
 
     @Test
+    void pagarMultasDoClienteQuitaTodasDeUmaVez() {
+        Locacao primeira = servico.locar(ana.getId(), idDo(0));
+        Locacao segunda = servico.locar(ana.getId(), idDo(1));
+        banco.relogio.avancar(8);
+        servico.devolver(primeira.getId());
+        servico.devolver(segunda.getId());
+
+        servico.pagarMultasDoCliente(ana.getId());
+
+        assertTrue(servico.comMultaPendente().isEmpty());
+        assertEquals(LocalDate.of(2026, 10, 9), servico.buscar(segunda.getId()).getDataPagamentoMulta());
+        assertRegra("O cliente não tem multas pendentes.", () -> servico.pagarMultasDoCliente(ana.getId()));
+    }
+
+    @Test
     void clienteAlugaNoMaximoTresAoMesmoTempo() {
         servico.locar(ana.getId(), idDo(0));
         servico.locar(ana.getId(), idDo(1));

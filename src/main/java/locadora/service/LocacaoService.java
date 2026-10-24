@@ -94,6 +94,9 @@ public class LocacaoService {
         locacoes.atualizar(locacao);
     }
 
+    public void pagarMultasDoCliente(int clienteId) {
+    }
+
     public Locacao renovar(int locacaoId) {
         AuthService.exigirLogado();
         Locacao locacao = ativa(locacaoId);
