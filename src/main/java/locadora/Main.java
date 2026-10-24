@@ -29,7 +29,7 @@ import javax.swing.SwingUtilities;
 import java.nio.file.Path;
 import java.time.Clock;
 
-/* Ponto de entrada: liga o tema, prepara o banco (cria e popula na primeira execucao) e abre o login.
+/* Ponto de entrada: liga o tema, prepara o banco (cria e popula com dados e capas na primeira execucao) e abre o login.
    montar: cria a conexao, os DAOs e os services ja ligados entre si */
 public class Main {
 
@@ -50,9 +50,13 @@ public class Main {
 
     public static Servicos montar(Path arquivo, Clock relogio) {
         Conexao conexao = new Conexao(arquivo);
-        if (conexao.criarSchemaSeVazio())
+        boolean novo = conexao.criarSchemaSeVazio();
+        if (novo)
             conexao.executarScript("/seed.sql");
         TituloDao titulos = new TituloDao(conexao);
+        CapaService capas = new CapaService(titulos, WIKIPEDIA);
+        if (novo)
+            capas.carregarEmbutidas();
         ClienteDao clientes = new ClienteDao(conexao);
         FuncionarioDao funcionarios = new FuncionarioDao(conexao);
         ExemplarDao exemplares = new ExemplarDao(conexao, titulos);
@@ -68,6 +72,6 @@ public class Main {
                 new FuncionarioService(funcionarios), locacaoService, new AquisicaoService(aquisicoes, titulos, exemplares, reservas, relogio),
                 new PerdaService(perdas, exemplares, locacoes, reservas, relogio), reservaService,
                 new DashboardService(locacaoService, reservaService, tituloService), new BuscaService(titulos, clientes, exemplares),
-                new ArquivoService(conexao, relogio), new CapaService(titulos, WIKIPEDIA));
+                new ArquivoService(conexao, relogio), capas);
     }
 }
