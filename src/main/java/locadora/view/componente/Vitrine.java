@@ -68,9 +68,9 @@ public class Vitrine extends JPanel {
 
     private JComponent cartao(Recomendacao recomendacao, byte[] capa) {
         int larguraDoTexto = larguraDoCartao - larguraDaCapa - Tema.ESPACO_2;
-        JLabel nome = new JLabel(quebrando(recomendacao.titulo().getNome(), larguraDoTexto));
+        JLabel nome = new JLabel(Descricoes.quebrando(recomendacao.titulo().getNome(), larguraDoTexto));
         nome.putClientProperty(FlatClientProperties.STYLE, "font: -1 bold");
-        JLabel motivo = new JLabel(quebrando(recomendacao.porque() == null ? "Popular na locadora"
+        JLabel motivo = new JLabel(Descricoes.quebrando(recomendacao.porque() == null ? "Popular na locadora"
                 : "Porque alugou " + recomendacao.porque().getNome(), larguraDoTexto));
         motivo.putClientProperty(FlatClientProperties.STYLE, "font: -2; foreground: $Locadora.suave");
         JPanel textos = new JPanel();
@@ -99,10 +99,5 @@ public class Vitrine extends JPanel {
             });
         }
         return cartao;
-    }
-
-    // no HTML do Swing, pt equivale a 1 pixel
-    private static String quebrando(String texto, int largura) {
-        return "<html><div style='width: " + largura + "pt'>" + texto + "</div></html>";
     }
 }

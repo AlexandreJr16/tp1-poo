@@ -104,13 +104,14 @@ public class TituloDialog extends Formulario {
     private void buscarCapa() {
         String procurado = nome.getText().trim();
         String tipoProcurado = (String) tipo.getSelectedItem();
+        String categoria = servicos.titulos().amostra(tipoProcurado).categoria();
         if (capaSalva || procurado.length() < MINIMO_DE_LETRAS)
             return;
         situacaoDaCapa.setText("Buscando capa…");
         new SwingWorker<Optional<CapaService.Achado>, Void>() {
             @Override
             protected Optional<CapaService.Achado> doInBackground() {
-                return servicos.capas().buscar(procurado, tipoProcurado);
+                return servicos.capas().buscar(procurado, categoria);
             }
 
             @Override

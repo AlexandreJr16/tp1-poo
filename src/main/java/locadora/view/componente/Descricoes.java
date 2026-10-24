@@ -7,7 +7,8 @@ import java.time.LocalDate;
 
 /* Textos curtos repetidos em varias telas.
    situacao: como uma locacao esta hoje (em aberto, atrasada, multa pendente...)
-   exemplar: codigo e nome do titulo do exemplar */
+   exemplar: codigo e nome do titulo do exemplar
+   quebrando: texto puro que quebra linha na largura dada (escapa <, > e & para o HTML do rotulo) */
 public final class Descricoes {
 
     private Descricoes() {
@@ -29,5 +30,11 @@ public final class Descricoes {
 
     private static String dias(long quantidade) {
         return quantidade + (quantidade == 1 ? " dia" : " dias");
+    }
+
+    // no HTML do Swing, pt equivale a 1 pixel
+    public static String quebrando(String texto, int largura) {
+        String seguro = texto.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+        return "<html><div style='width: " + largura + "pt'>" + seguro + "</div></html>";
     }
 }

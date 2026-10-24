@@ -23,7 +23,8 @@ import java.util.regex.Pattern;
 
 /* Capa e sinopse dos titulos. A internet e opcional: sem ela a busca so nao acha nada.
    - Busca (Wikipedia em portugues):
-     buscar: capa e sinopse do primeiro resultado com imagem, ou vazio (offline, bloqueado ou nada encontrado)
+     buscar: capa e sinopse do primeiro resultado com imagem para "nome categoria" (ex.: "Matrix filme"),
+             ou vazio (offline, bloqueado ou nada encontrado)
    - Guarda (o banco serve de cache):
      guardar: grava a capa de um titulo
      capa: capa de um titulo, ou nulo
@@ -60,10 +61,10 @@ public class CapaService {
         this.endereco = endereco;
     }
 
-    public Optional<Achado> buscar(String nome, String tipo) {
+    public Optional<Achado> buscar(String nome, String categoria) {
         if (nome == null || nome.isBlank())
             return Optional.empty();
-        String termo = nome.trim() + " " + TituloDao.instanciar(tipo, 0, nome, "", TituloService.ANO_MINIMO, 1).categoria();
+        String termo = nome.trim() + " " + categoria;
         try {
             Optional<Pagina> pagina = ler(new String(baixar(endereco + CONSULTA + URLEncoder.encode(termo, StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
             if (pagina.isEmpty())

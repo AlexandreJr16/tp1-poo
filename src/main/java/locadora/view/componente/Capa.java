@@ -36,10 +36,6 @@ public class Capa implements Icon {
         this.imagem = recortar(ler(bytes), largura * NITIDEZ, altura * NITIDEZ);
     }
 
-    public boolean temImagem() {
-        return imagem != null;
-    }
-
     @Override
     public void paintIcon(Component componente, Graphics g, int x, int y) {
         Graphics2D g2 = (Graphics2D) g.create();

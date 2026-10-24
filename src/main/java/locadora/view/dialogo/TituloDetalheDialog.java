@@ -11,6 +11,7 @@ import locadora.view.Icone;
 import locadora.view.Tema;
 import locadora.view.componente.Botoes;
 import locadora.view.componente.Capa;
+import locadora.view.componente.Descricoes;
 import locadora.view.componente.Eventos;
 import locadora.view.componente.Fileira;
 import locadora.view.componente.LinhaDoTempo;
@@ -44,7 +45,6 @@ public class TituloDetalheDialog extends JDialog {
 
     private static final int LARGURA_DA_CAPA = 120;
     private static final int ALTURA_DA_CAPA = 176;
-    // no HTML do Swing, pt equivale a 1 pixel
     private static final int LARGURA_DA_DESCRICAO = 640;
 
     private final Main.Servicos servicos;
@@ -100,7 +100,7 @@ public class TituloDetalheDialog extends JDialog {
         JLabel ficha = new JLabel(titulo.tipo() + " · " + titulo.getAno() + " · prazo de " + titulo.getPrazoMaximoDias() + " dias · locação "
                 + Formato.dinheiro(titulo.valorLocacao()) + " · multa " + Formato.dinheiro(titulo.valorMultaDiaria()) + " por dia de atraso");
         ficha.putClientProperty(FlatClientProperties.STYLE, "foreground: $Locadora.suave");
-        JLabel descricao = new JLabel("<html><div style='width: " + LARGURA_DA_DESCRICAO + "pt'>" + titulo.getDescricao() + "</div></html>");
+        JLabel descricao = new JLabel(Descricoes.quebrando(titulo.getDescricao(), LARGURA_DA_DESCRICAO));
         descricao.setBorder(BorderFactory.createEmptyBorder(Tema.ESPACO_2, 0, 0, 0));
 
         Estoque estoque = servicos.titulos().estoqueDe(titulo.getId());

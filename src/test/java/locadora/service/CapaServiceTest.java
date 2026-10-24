@@ -1,7 +1,6 @@
 package locadora.service;
 
 import locadora.BancoTeste;
-import locadora.model.Dvd;
 import locadora.model.Titulo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,10 +72,10 @@ class CapaServiceTest {
     void semInternetABuscaDevolveVazioSemErro() {
         CapaService offline = new CapaService(banco.titulos, "http://127.0.0.1:9");
 
-        Optional<CapaService.Achado> achado = assertTimeout(Duration.ofSeconds(8), () -> offline.buscar("Matrix", Dvd.TIPO));
+        Optional<CapaService.Achado> achado = assertTimeout(Duration.ofSeconds(8), () -> offline.buscar("Matrix", "filme"));
 
         assertEquals(Optional.empty(), achado);
-        assertEquals(Optional.empty(), offline.buscar("  ", Dvd.TIPO));
+        assertEquals(Optional.empty(), offline.buscar("  ", "filme"));
     }
 
     @Test
