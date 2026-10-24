@@ -1,6 +1,7 @@
 package locadora.dao;
 
 import locadora.BancoTeste;
+import locadora.Main;
 import locadora.model.Locacao;
 import locadora.model.Pessoa;
 import locadora.model.Situacao;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
@@ -84,5 +86,12 @@ class SeedTest {
                 .filter(r -> r.getSituacao() == SituacaoReserva.AGUARDANDO)
                 .forEach(r -> assertTrue(banco.exemplares.listarPorTitulo(r.getTitulo().getId()).stream().noneMatch(e -> e.disponivel()),
                         r.getTitulo().getNome()));
+    }
+
+    @Test
+    void bancoNovoJaVemComACapaDeTodosOsTitulosDoSeed() {
+        Main.Servicos servicos = Main.montar(dir.resolve("novo.db"), Clock.systemDefaultZone());
+
+        assertEquals(servicos.titulos().listar().size(), servicos.capas().capas().size());
     }
 }
