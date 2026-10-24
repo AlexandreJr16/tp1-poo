@@ -21,6 +21,7 @@ import locadora.service.AquisicaoService;
 import locadora.service.ArquivoService;
 import locadora.service.AuthService;
 import locadora.service.BuscaService;
+import locadora.service.CapaService;
 import locadora.service.ClienteService;
 import locadora.service.DashboardService;
 import locadora.service.FuncionarioService;
@@ -82,6 +83,7 @@ public class BancoTeste {
     public final DashboardService dashboardService;
     public final BuscaService buscaService;
     public final ArquivoService arquivoService;
+    public final CapaService capaService;
     private int proximoCpf;
 
     public BancoTeste(Path dir) {
@@ -107,6 +109,7 @@ public class BancoTeste {
         dashboardService = new DashboardService(locacaoService, reservaService, tituloService);
         buscaService = new BuscaService(titulos, clientes, exemplares);
         arquivoService = new ArquivoService(conexao, relogio);
+        capaService = new CapaService(titulos, "http://127.0.0.1:9");
     }
 
     public String cpf() {
