@@ -11,10 +11,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /* - Cadastro:
      inserir: grava um titulo novo e preenche o id
      atualizar: grava tipo, nome, descricao, ano e prazo
+   - Capa:
+     salvarCapa: grava a imagem da capa do titulo
+     capa: imagem da capa, ou nulo se o titulo nao tem
+     capas: imagens de todos os titulos que tem capa, pelo id
    - Consulta:
      buscar: titulo pelo id, ja na subclasse certa
      listar: todos os titulos em ordem de nome
@@ -60,14 +65,17 @@ public class TituloDao {
     }
 
     public void salvarCapa(int tituloId, byte[] imagem) {
+        conexao.executar("UPDATE titulo SET capa = ? WHERE id = ?", imagem, tituloId);
     }
 
     public byte[] capa(int tituloId) {
-        return new byte[0];
+        return conexao.buscar("SELECT capa FROM titulo WHERE id = ?", (rs, c) -> rs.getBytes("capa"), tituloId);
     }
 
     public Map<Integer, byte[]> capas() {
-        return Map.of();
+        return conexao.listar("SELECT id, capa FROM titulo WHERE capa IS NOT NULL", (rs, c) -> Map.entry(rs.getInt("id"), rs.getBytes("capa")))
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     Titulo buscar(Connection c, int id) throws SQLException {
