@@ -7,12 +7,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-/* Formatos brasileiros usados nas mensagens e nas telas.
-   dinheiro: R$ 1.234,50
-   data: 01/10/2026 (vazio para data nula)
-   dataPorExtenso: quinta-feira, 1 de outubro de 2026
-   lerDinheiro: valor digitado (29,90 ou R$ 1.234,50) em BigDecimal, ou erro amigavel
-   normalizar: texto sem acento, sem espacos nas pontas e em minusculas, para comparar em buscas */
+/* - Exibicao (padrao brasileiro, usado nas mensagens e nas telas):
+     dinheiro: R$ 1.234,50
+     data: 01/10/2026 (vazio para data nula)
+     dataPorExtenso: quinta-feira, 1 de outubro de 2026
+   - Leitura:
+     lerDinheiro: valor digitado (29,90 ou R$ 1.234,50) em BigDecimal, ou erro amigavel
+     normalizar: texto sem acento, sem espacos nas pontas e em minusculas, para comparar em buscas */
 public final class Formato {
 
     private static final Locale BRASIL = Locale.forLanguageTag("pt-BR");

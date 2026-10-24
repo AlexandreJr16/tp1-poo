@@ -54,10 +54,6 @@ public class ModeloTabela<T> extends AbstractTableModel {
         return linhas.get(indice);
     }
 
-    public List<T> linhas() {
-        return linhas;
-    }
-
     public List<String> titulos() {
         return colunas.stream().map(Coluna::titulo).toList();
     }

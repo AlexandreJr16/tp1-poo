@@ -17,7 +17,7 @@ import java.util.List;
      listar: todos os funcionarios em ordem de nome */
 public class FuncionarioService {
 
-    private static final int TAMANHO_MINIMO_SENHA = 6;
+    public static final int TAMANHO_MINIMO_SENHA = 6;
 
     private final FuncionarioDao funcionarios;
 

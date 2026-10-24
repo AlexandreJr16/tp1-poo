@@ -150,11 +150,14 @@ public class Conexao {
     }
 
     static <T> List<T> listar(Connection c, String sql, Leitor<T> leitor, Object... parametros) throws SQLException {
-        try (PreparedStatement comando = preparar(c, sql, parametros); ResultSet rs = comando.executeQuery()) {
-            List<T> lista = new ArrayList<>();
-            while (rs.next())
-                lista.add(leitor.ler(rs, c));
-            return lista;
+        try (PreparedStatement comando = c.prepareStatement(sql)) {
+            preencher(comando, parametros);
+            try (ResultSet rs = comando.executeQuery()) {
+                List<T> lista = new ArrayList<>();
+                while (rs.next())
+                    lista.add(leitor.ler(rs, c));
+                return lista;
+            }
         }
     }
 
@@ -169,7 +172,8 @@ public class Conexao {
     }
 
     static void executar(Connection c, String sql, Object... parametros) throws SQLException {
-        try (PreparedStatement comando = preparar(c, sql, parametros)) {
+        try (PreparedStatement comando = c.prepareStatement(sql)) {
+            preencher(comando, parametros);
             comando.executeUpdate();
         }
     }
@@ -182,11 +186,9 @@ public class Conexao {
         return texto == null ? null : LocalDate.parse(texto);
     }
 
-    private static PreparedStatement preparar(Connection c, String sql, Object... parametros) throws SQLException {
-        PreparedStatement comando = c.prepareStatement(sql);
+    private static void preencher(PreparedStatement comando, Object... parametros) throws SQLException {
         for (int i = 0; i < parametros.length; i++)
             comando.setObject(i + 1, paraBanco(parametros[i]));
-        return comando;
     }
 
     // dinheiro vira centavos, data vira texto ISO, enum vira o nome e booleano vira 0 ou 1

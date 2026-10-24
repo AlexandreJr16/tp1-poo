@@ -11,6 +11,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import java.awt.Component;
+import java.time.Year;
 
 // cadastro e edicao de titulo; os valores de multa e locacao mudam na tela conforme o tipo escolhido
 public class TituloDialog extends Formulario {
@@ -20,8 +21,8 @@ public class TituloDialog extends Formulario {
     private final JComboBox<String> tipo = new JComboBox<>(TituloService.TIPOS.toArray(String[]::new));
     private final JTextField nome = new JTextField(28);
     private final JTextField descricao = new JTextField(28);
-    private final JSpinner ano = new JSpinner(new SpinnerNumberModel(2000, 1800, 2200, 1));
-    private final JSpinner prazo = new JSpinner(new SpinnerNumberModel(5, 1, 30, 1));
+    private final JSpinner ano = new JSpinner(new SpinnerNumberModel(2000, TituloService.ANO_MINIMO, Year.now().getValue() + 1, 1));
+    private final JSpinner prazo = new JSpinner(new SpinnerNumberModel(5, 1, TituloService.PRAZO_MAXIMO_DIAS, 1));
     private final JLabel valores = new JLabel();
 
     public TituloDialog(Component origem, TituloService servico, Titulo existente) {

@@ -58,15 +58,13 @@ class AcervoDaoTest {
     }
 
     @Test
-    void atualizarSituacaoPersisteEBuscarPorCodigoAcha() {
+    void atualizarSituacaoPersiste() {
         Exemplar exemplar = banco.adquirir(matrix, 1, gerente).get(0);
 
         exemplar.alugar();
         banco.exemplares.atualizarSituacao(exemplar);
 
         assertEquals(Situacao.ALUGADO, banco.exemplares.buscar(exemplar.getId()).getSituacao());
-        assertEquals(exemplar.getId(), banco.exemplares.buscarPorCodigo("T1-001").getId());
-        assertNull(banco.exemplares.buscarPorCodigo("T9-999"));
     }
 
     @Test

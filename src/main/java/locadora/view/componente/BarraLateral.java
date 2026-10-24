@@ -112,7 +112,7 @@ public class BarraLateral extends JPanel {
     private JComponent rodape(Funcionario logado) {
         JLabel nome = new JLabel(logado.getNome());
         nome.putClientProperty(FlatClientProperties.STYLE_CLASS, "semibold");
-        JLabel cargo = new JLabel(logado.gerente() ? "Gerente" : "Atendente");
+        JLabel cargo = new JLabel(logado.getCargo().toString());
         cargo.putClientProperty(FlatClientProperties.STYLE, "foreground: $Locadora.suave; font: -1");
         JPanel quem = new JPanel();
         quem.setOpaque(false);

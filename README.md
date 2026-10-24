@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/AleJr16/locadora/actions/workflows/ci.yml/badge.svg)
 ![Java 17](https://img.shields.io/badge/Java-17-007396)
-![Testes](https://img.shields.io/badge/testes-154%20passando-brightgreen)
+![Testes](https://img.shields.io/badge/testes-156%20passando-brightgreen)
 ![Cobertura](https://img.shields.io/badge/cobertura%20(model%2C%20dao%2C%20service)-98%25-brightgreen)
 
 Sistema desktop para a gestão de uma locadora de **Blu-rays, DVDs, CDs e fitas de vídeo**: acervo, clientes,

@@ -15,7 +15,7 @@ import java.awt.Color;
      escuro: diz se o tema atual e o escuro
    - Cores (lidas do UIManager na hora, para acompanhar a troca de tema):
      cor: cor de uma chave do tema
-     perigo, sucesso, aviso, destaque, suave
+     perigo, destaque, suave
    - Espacamento:
      borda: margem vazia igual nos quatro lados */
 public final class Tema {
@@ -25,7 +25,6 @@ public final class Tema {
     public static final int ESPACO_3 = 12;
     public static final int ESPACO_4 = 16;
     public static final int ESPACO_5 = 24;
-    public static final int ESPACO_6 = 32;
     public static final int LARGURA_BARRA_LATERAL = 232;
 
     private Tema() {
@@ -54,14 +53,6 @@ public final class Tema {
 
     public static Color perigo() {
         return cor("Locadora.perigo");
-    }
-
-    public static Color sucesso() {
-        return cor("Locadora.sucesso");
-    }
-
-    public static Color aviso() {
-        return cor("Locadora.aviso");
     }
 
     public static Color destaque() {

@@ -41,8 +41,8 @@ import java.util.stream.Stream;
 public class TituloService {
 
     public static final List<String> TIPOS = List.of(BluRay.TIPO, Dvd.TIPO, Cd.TIPO, FitaVideo.TIPO);
-    private static final int ANO_MINIMO = 1900;
-    private static final int PRAZO_MAXIMO_DIAS = 30;
+    public static final int ANO_MINIMO = 1900;
+    public static final int PRAZO_MAXIMO_DIAS = 30;
 
     private final TituloDao titulos;
     private final ExemplarDao exemplares;

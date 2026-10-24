@@ -3,6 +3,7 @@ package locadora.view.dialogo;
 import com.formdev.flatlaf.FlatClientProperties;
 import locadora.Main;
 import locadora.model.Titulo;
+import locadora.service.AquisicaoService;
 import locadora.service.Formato;
 import locadora.service.RegraException;
 import locadora.service.TituloService;
@@ -24,6 +25,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.math.BigDecimal;
+import java.time.Year;
 
 /* Registro de aquisicao: titulo ja cadastrado ou um titulo novo, quantidade, custo unitario e fornecedor.
    Os exemplares novos recebem codigos sequenciais e atendem primeiro a fila de reservas. */
@@ -36,9 +38,9 @@ public class AquisicaoDialog extends Formulario {
     private final Seletor<Titulo> titulo = new Seletor<>("Buscar título", Titulo::getNome, (Titulo t) -> t.tipo() + " · " + t.getAno());
     private final JComboBox<String> tipo = new JComboBox<>(TituloService.TIPOS.toArray(String[]::new));
     private final JTextField nome = new JTextField(10);
-    private final JSpinner ano = new JSpinner(new SpinnerNumberModel(2024, 1800, 2200, 1));
-    private final JSpinner prazo = new JSpinner(new SpinnerNumberModel(5, 1, 30, 1));
-    private final JSpinner quantidade = new JSpinner(new SpinnerNumberModel(2, 1, 100, 1));
+    private final JSpinner ano = new JSpinner(new SpinnerNumberModel(2024, TituloService.ANO_MINIMO, Year.now().getValue() + 1, 1));
+    private final JSpinner prazo = new JSpinner(new SpinnerNumberModel(5, 1, TituloService.PRAZO_MAXIMO_DIAS, 1));
+    private final JSpinner quantidade = new JSpinner(new SpinnerNumberModel(2, 1, AquisicaoService.QUANTIDADE_MAXIMA, 1));
     private final JTextField custo = new JTextField(10);
     private final JTextField fornecedor = new JTextField(24);
     private final JLabel total = new JLabel("Total: —");

@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 /* - Consulta:
      buscar: exemplar pelo id, com o titulo
-     buscarPorCodigo: exemplar pelo codigo (ex.: T12-004), ou nulo
      listarPorTitulo: exemplares de um titulo na ordem em que foram adquiridos
      listarPorCodigo: exemplares cujo codigo comeca com o texto dado
      listarPorSituacao: exemplares numa situacao, em ordem de titulo
@@ -35,10 +34,6 @@ public class ExemplarDao {
 
     public Exemplar buscar(int id) {
         return conexao.transacao(c -> buscar(c, id));
-    }
-
-    public Exemplar buscarPorCodigo(String codigo) {
-        return conexao.buscar(SELECIONAR + " WHERE e.codigo = ?", this::ler, codigo);
     }
 
     public List<Exemplar> listarPorTitulo(int tituloId) {

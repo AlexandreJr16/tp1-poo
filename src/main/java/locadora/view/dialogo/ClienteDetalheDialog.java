@@ -70,7 +70,7 @@ public class ClienteDetalheDialog extends JDialog {
                 texto("Título", (Reserva r) -> r.getTitulo().getNome()),
                 data("Reservada em", Reserva::getData),
                 texto("Situação", Reserva::getSituacao),
-                texto("Posição na fila", (Reserva r) -> servicos.reservas().posicao(r) == 0 ? "—" : servicos.reservas().posicao(r) + "º")));
+                texto("Posição na fila", (Reserva r) -> posicao(servicos.reservas().posicao(r)))));
         tabelaDeLocacoes = new JTable(historico);
         tabelaDeReservas = new JTable(filas);
 
@@ -88,10 +88,11 @@ public class ClienteDetalheDialog extends JDialog {
 
     private void carregar() {
         List<Locacao> locacoes = servicos.clientes().historico(cliente.getId());
-        List<Reserva> ativas = servicos.clientes().reservas(cliente.getId()).stream().filter(Reserva::ativa).toList();
+        List<Reserva> todas = servicos.clientes().reservas(cliente.getId());
+        List<Reserva> ativas = todas.stream().filter(Reserva::ativa).toList();
         BigDecimal devendo = servicos.clientes().multasPendentes(cliente.getId());
         historico.setLinhas(locacoes);
-        filas.setLinhas(servicos.clientes().reservas(cliente.getId()));
+        filas.setLinhas(todas);
         CelulaTabela.ajustarLarguras(tabelaDeLocacoes);
         CelulaTabela.ajustarLarguras(tabelaDeReservas);
         abertas.setValor(String.valueOf(locacoes.stream().filter(Locacao::ativa).count()));
@@ -163,5 +164,9 @@ public class ClienteDetalheDialog extends JDialog {
             carregar();
             Toast.mostrar(this, "Locação registrada");
         }
+    }
+
+    private static String posicao(int lugar) {
+        return lugar == 0 ? "—" : lugar + "º";
     }
 }

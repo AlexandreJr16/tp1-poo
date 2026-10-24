@@ -24,7 +24,7 @@ public class SenhaDialog extends Formulario {
         if (alvo == null)
             campo("Senha atual", atual);
         campos("Nova senha", nova, "Repita a nova senha", confirmacao);
-        nota("A senha precisa ter pelo menos 6 caracteres e é guardada apenas como hash.");
+        nota("A senha precisa ter pelo menos " + FuncionarioService.TAMANHO_MINIMO_SENHA + " caracteres e é guardada apenas como hash.");
     }
 
     @Override
