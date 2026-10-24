@@ -17,6 +17,7 @@ import locadora.view.componente.Fileira;
 import locadora.view.componente.Mensagens;
 import locadora.view.componente.ModeloTabela;
 import locadora.view.componente.Toast;
+import locadora.view.componente.Vitrine;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -27,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -39,8 +41,11 @@ import static locadora.view.componente.ModeloTabela.data;
 import static locadora.view.componente.ModeloTabela.dinheiro;
 import static locadora.view.componente.ModeloTabela.texto;
 
-// ficha do cliente: contato, numeros, historico de locacoes, reservas e pagamento das multas pendentes
+// ficha do cliente: contato, numeros, titulos recomendados, historico de locacoes, reservas e pagamento das multas pendentes
 public class ClienteDetalheDialog extends JDialog {
+
+    private static final int LARGURA_DA_CAPA = 48;
+    private static final int LARGURA_DO_CARTAO = 172;
 
     private final Main.Servicos servicos;
     private final Cliente cliente;
@@ -51,6 +56,7 @@ public class ClienteDetalheDialog extends JDialog {
     private final ModeloTabela<Reserva> filas;
     private final JTable tabelaDeLocacoes;
     private final JTable tabelaDeReservas;
+    private final Vitrine sugestoes = new Vitrine(LARGURA_DA_CAPA, LARGURA_DO_CARTAO);
     private final JButton pagar = Botoes.secundario("Registrar pagamento das multas", Icone.DINHEIRO, this::pagarMultas);
 
     public ClienteDetalheDialog(Component origem, Main.Servicos servicos, Cliente cliente) {
@@ -81,7 +87,7 @@ public class ClienteDetalheDialog extends JDialog {
         conteudo.add(rodape(), BorderLayout.SOUTH);
         setContentPane(conteudo);
         Eventos.tecla(getRootPane(), "ESCAPE", this::dispose);
-        setSize(980, 640);
+        setSize(980, 720);
         setLocationRelativeTo(getOwner());
         carregar();
     }
@@ -99,6 +105,7 @@ public class ClienteDetalheDialog extends JDialog {
         multas.setValor(Formato.dinheiro(devendo));
         multas.setAlerta(devendo.signum() > 0);
         reservas.setValor(String.valueOf(ativas.size()));
+        sugestoes.setRecomendacoes(servicos.locacoes().recomendacoes(cliente.getId()), servicos.capas().capas());
         pagar.setEnabled(devendo.signum() > 0);
     }
 
@@ -120,9 +127,18 @@ public class ClienteDetalheDialog extends JDialog {
         cards.add(abertas);
         cards.add(multas);
         cards.add(reservas);
-        JPanel topo = new JPanel(new BorderLayout(0, Tema.ESPACO_4));
+        JLabel tituloDasSugestoes = new JLabel("Recomendados para " + cliente.getNome().split(" ")[0],
+                Icone.DISCO.de(18, "Component.accentColor"), SwingConstants.LEADING);
+        tituloDasSugestoes.setIconTextGap(Tema.ESPACO_2);
+        tituloDasSugestoes.putClientProperty(FlatClientProperties.STYLE_CLASS, "h4");
+        sugestoes.setAvisoSemItens("Ainda não há recomendações para este cliente.");
+        JPanel recomendados = new JPanel(new BorderLayout(0, Tema.ESPACO_3));
+        recomendados.add(tituloDasSugestoes, BorderLayout.NORTH);
+        recomendados.add(sugestoes, BorderLayout.CENTER);
+        JPanel topo = new JPanel(new BorderLayout(0, Tema.ESPACO_5));
         topo.add(textos, BorderLayout.NORTH);
         topo.add(cards, BorderLayout.CENTER);
+        topo.add(recomendados, BorderLayout.SOUTH);
         return topo;
     }
 

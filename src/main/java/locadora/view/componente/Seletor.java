@@ -20,12 +20,15 @@ import java.awt.Dimension;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 /* Escolha de um item numa lista com busca, usada nos dialogos (cliente, exemplar, titulo).
    A lista nunca fica em branco: sem itens, mostra um aviso no lugar.
    setItens: troca os itens oferecidos
    setAvisoSemItens: frase mostrada quando nao ha nada para escolher
    selecionado: item escolhido, ou nulo
+   selecionar: limpa a busca e escolhe o primeiro item que atende ao criterio
    aoSelecionar: acao a cada troca de escolha */
 public class Seletor<T> extends JPanel {
 
@@ -77,6 +80,17 @@ public class Seletor<T> extends JPanel {
 
     public T selecionado() {
         return lista.getSelectedValue();
+    }
+
+    public void selecionar(Predicate<T> criterio) {
+        busca.setText("");
+        IntStream.range(0, visiveis.size())
+                .filter(indice -> criterio.test(visiveis.get(indice)))
+                .findFirst()
+                .ifPresent(indice -> {
+                    lista.setSelectedIndex(indice);
+                    lista.ensureIndexIsVisible(indice);
+                });
     }
 
     public void aoSelecionar(Consumer<T> acao) {
