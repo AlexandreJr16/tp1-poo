@@ -13,6 +13,7 @@ import locadora.service.AquisicaoService;
 import locadora.service.ArquivoService;
 import locadora.service.AuthService;
 import locadora.service.BuscaService;
+import locadora.service.CapaService;
 import locadora.service.ClienteService;
 import locadora.service.DashboardService;
 import locadora.service.FuncionarioService;
@@ -33,10 +34,11 @@ import java.time.Clock;
 public class Main {
 
     private static final Path BANCO = Path.of("locadora.db");
+    private static final String WIKIPEDIA = "https://pt.wikipedia.org/w/api.php";
 
     public record Servicos(AuthService auth, TituloService titulos, ClienteService clientes, FuncionarioService funcionarios,
                            LocacaoService locacoes, AquisicaoService aquisicoes, PerdaService perdas, ReservaService reservas,
-                           DashboardService painel, BuscaService busca, ArquivoService arquivos) {
+                           DashboardService painel, BuscaService busca, ArquivoService arquivos, CapaService capas) {
     }
 
     public static void main(String[] args) {
@@ -66,6 +68,6 @@ public class Main {
                 new FuncionarioService(funcionarios), locacaoService, new AquisicaoService(aquisicoes, titulos, exemplares, reservas, relogio),
                 new PerdaService(perdas, exemplares, locacoes, reservas, relogio), reservaService,
                 new DashboardService(locacaoService, reservaService, tituloService), new BuscaService(titulos, clientes, exemplares),
-                new ArquivoService(conexao, relogio));
+                new ArquivoService(conexao, relogio), new CapaService(titulos, WIKIPEDIA));
     }
 }
