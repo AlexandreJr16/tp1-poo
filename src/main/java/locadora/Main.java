@@ -62,7 +62,7 @@ public class Main {
         ExemplarDao exemplares = new ExemplarDao(conexao, titulos);
         ReservaDao reservas = new ReservaDao(conexao, titulos, clientes, funcionarios, exemplares);
         AquisicaoDao aquisicoes = new AquisicaoDao(conexao, titulos, funcionarios, exemplares, reservas);
-        LocacaoDao locacoes = new LocacaoDao(conexao, exemplares, clientes, funcionarios, reservas);
+        LocacaoDao locacoes = new LocacaoDao(conexao, exemplares, clientes, funcionarios, reservas, titulos);
         PerdaDao perdas = new PerdaDao(conexao, exemplares, funcionarios, locacoes, reservas);
 
         TituloService tituloService = new TituloService(titulos, exemplares, aquisicoes, locacoes, perdas, relogio);

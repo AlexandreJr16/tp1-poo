@@ -96,7 +96,7 @@ public class BancoTeste {
         exemplares = new ExemplarDao(conexao, titulos);
         reservas = new ReservaDao(conexao, titulos, clientes, funcionarios, exemplares);
         aquisicoes = new AquisicaoDao(conexao, titulos, funcionarios, exemplares, reservas);
-        locacoes = new LocacaoDao(conexao, exemplares, clientes, funcionarios, reservas);
+        locacoes = new LocacaoDao(conexao, exemplares, clientes, funcionarios, reservas, titulos);
         perdas = new PerdaDao(conexao, exemplares, funcionarios, locacoes, reservas);
         auth = new AuthService(funcionarios);
         tituloService = new TituloService(titulos, exemplares, aquisicoes, locacoes, perdas, relogio);

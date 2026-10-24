@@ -17,7 +17,10 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /* - Locacao:
@@ -36,7 +39,10 @@ import java.util.stream.Stream;
      comMultaPendente: locacoes devolvidas com multa ainda nao paga
      multasEmAberto: soma das multas nao pagas
      faturamentoDoMes: locacoes feitas mais multas pagas no mes atual
-     hoje: dia atual pelo relogio do sistema */
+     hoje: dia atual pelo relogio do sistema
+   - Recomendacao:
+     recomendacoes: ate 5 titulos que o cliente ainda nao alugou, primeiro os de quem tem gosto parecido,
+                    depois os mais alugados da locadora */
 public class LocacaoService {
 
     public static final int LIMITE_DE_RECOMENDACOES = 5;
@@ -157,7 +163,14 @@ public class LocacaoService {
     }
 
     public List<Recomendacao> recomendacoes(int clienteId) {
-        return List.of();
+        Set<Integer> jaVistos = locacoes.doCliente(clienteId).stream()
+                .map(l -> l.getExemplar().getTitulo().getId())
+                .collect(Collectors.toCollection(HashSet::new));
+        Stream<Recomendacao> populares = locacoes.maisAlugados().stream().map(titulo -> new Recomendacao(titulo, null));
+        return Stream.concat(locacoes.recomendacoes(clienteId, LIMITE_DE_RECOMENDACOES).stream(), populares)
+                .filter(recomendacao -> jaVistos.add(recomendacao.titulo().getId()))
+                .limit(LIMITE_DE_RECOMENDACOES)
+                .toList();
     }
 
     public LocalDate hoje() {

@@ -2,7 +2,9 @@ package locadora.dao;
 
 import locadora.model.Funcionario;
 import locadora.model.Locacao;
+import locadora.model.Recomendacao;
 import locadora.model.Reserva;
+import locadora.model.Titulo;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -25,7 +27,10 @@ import java.util.List;
      ativaDoExemplar: locacao em aberto de um exemplar, ou nulo
      comMultaPendente: devolvidas com multa ainda nao paga
      multasPendentesDoCliente: soma do que um cliente ainda deve de multa
-     faturamentoEntre: locacoes feitas mais multas pagas no periodo */
+     faturamentoEntre: locacoes feitas mais multas pagas no periodo
+   - Recomendacao:
+     recomendacoes: titulos alugados por quem tem gosto parecido com o do cliente, com o titulo em comum
+     maisAlugados: titulos do mais alugado para o menos alugado */
 public class LocacaoDao {
 
     private static final String SELECIONAR = """
@@ -38,9 +43,12 @@ public class LocacaoDao {
     private final ClienteDao clientes;
     private final FuncionarioDao funcionarios;
     private final ReservaDao reservas;
+    private final TituloDao titulos;
 
-    public LocacaoDao(Conexao conexao, ExemplarDao exemplares, ClienteDao clientes, FuncionarioDao funcionarios, ReservaDao reservas) {
+    public LocacaoDao(Conexao conexao, ExemplarDao exemplares, ClienteDao clientes, FuncionarioDao funcionarios, ReservaDao reservas,
+                      TituloDao titulos) {
         this.conexao = conexao;
+        this.titulos = titulos;
         this.exemplares = exemplares;
         this.clientes = clientes;
         this.funcionarios = funcionarios;
@@ -117,6 +125,44 @@ public class LocacaoDao {
     public BigDecimal multasPendentesDoCliente(int clienteId) {
         return conexao.buscar("SELECT COALESCE(SUM(multa_centavos), 0) FROM locacao WHERE cliente_id = ? AND data_pagamento_multa IS NULL",
                 (rs, c) -> Conexao.reais(rs.getLong(1)), clienteId);
+    }
+
+    // "quem alugou isso tambem alugou": os titulos que os clientes com algum titulo em comum alugaram e este ainda nao,
+    // pela quantidade desses clientes; a ponte e o titulo em comum que mais pesou na sugestao
+    public List<Recomendacao> recomendacoes(int clienteId, int limite) {
+        String sql = """
+                WITH meus AS (
+                    SELECT DISTINCT e.titulo_id
+                    FROM locacao l JOIN exemplar e ON e.id = l.exemplar_id
+                    WHERE l.cliente_id = ?),
+                vizinhos AS (
+                    SELECT DISTINCT l.cliente_id, e.titulo_id AS ponte
+                    FROM locacao l JOIN exemplar e ON e.id = l.exemplar_id
+                    WHERE l.cliente_id <> ? AND e.titulo_id IN (SELECT titulo_id FROM meus)),
+                pares AS (
+                    SELECT e.titulo_id AS candidato, v.ponte, COUNT(DISTINCT v.cliente_id) AS clientes
+                    FROM vizinhos v
+                    JOIN locacao l ON l.cliente_id = v.cliente_id
+                    JOIN exemplar e ON e.id = l.exemplar_id
+                    WHERE e.titulo_id NOT IN (SELECT titulo_id FROM meus)
+                    GROUP BY e.titulo_id, v.ponte)
+                SELECT p.candidato,
+                       (SELECT outro.ponte FROM pares outro WHERE outro.candidato = p.candidato
+                        ORDER BY outro.clientes DESC, outro.ponte LIMIT 1) AS ponte
+                FROM pares p
+                GROUP BY p.candidato
+                ORDER BY SUM(p.clientes) DESC, p.candidato
+                LIMIT ?""";
+        return conexao.listar(sql, (rs, c) -> new Recomendacao(titulos.buscar(c, rs.getInt("candidato")), titulos.buscar(c, rs.getInt("ponte"))),
+                clienteId, clienteId, limite);
+    }
+
+    public List<Titulo> maisAlugados() {
+        return conexao.listar("""
+                SELECT e.titulo_id
+                FROM locacao l JOIN exemplar e ON e.id = l.exemplar_id
+                GROUP BY e.titulo_id
+                ORDER BY COUNT(*) DESC, e.titulo_id""", (rs, c) -> titulos.buscar(c, rs.getInt("titulo_id")));
     }
 
     public BigDecimal faturamentoEntre(LocalDate inicio, LocalDate fim) {
