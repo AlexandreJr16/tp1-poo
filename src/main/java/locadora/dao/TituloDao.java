@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 /* - Cadastro:
      inserir: grava um titulo novo e preenche o id
@@ -56,6 +57,17 @@ public class TituloDao {
 
     public List<Titulo> listar() {
         return conexao.listar(SELECIONAR + " ORDER BY nome COLLATE NOCASE", TituloDao::ler);
+    }
+
+    public void salvarCapa(int tituloId, byte[] imagem) {
+    }
+
+    public byte[] capa(int tituloId) {
+        return new byte[0];
+    }
+
+    public Map<Integer, byte[]> capas() {
+        return Map.of();
     }
 
     Titulo buscar(Connection c, int id) throws SQLException {

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.nio.file.Path;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -84,5 +85,21 @@ class TituloDaoTest {
     @Test
     void instanciarRecusaTipoDesconhecido() {
         assertThrows(IllegalArgumentException.class, () -> TituloDao.instanciar("VHS", 0, "X", "", 2000, 3));
+    }
+
+    @Test
+    void capaGravadaVoltaIgualESoTitulosComCapaAparecemNoMapa() {
+        Titulo comCapa = new Dvd(0, "Matrix", "", 1999, 5);
+        Titulo semCapa = new Dvd(0, "Bacurau", "", 2019, 5);
+        titulos.inserir(comCapa);
+        titulos.inserir(semCapa);
+        byte[] imagem = {1, 2, 3, 4};
+
+        titulos.salvarCapa(comCapa.getId(), imagem);
+
+        assertArrayEquals(imagem, titulos.capa(comCapa.getId()));
+        assertNull(titulos.capa(semCapa.getId()));
+        assertEquals(List.of(comCapa.getId()), List.copyOf(titulos.capas().keySet()));
+        assertArrayEquals(imagem, titulos.capas().get(comCapa.getId()));
     }
 }

@@ -7,7 +7,8 @@ CREATE TABLE titulo (
     nome              TEXT    NOT NULL,
     descricao         TEXT    NOT NULL DEFAULT '',
     ano               INTEGER NOT NULL,
-    prazo_maximo_dias INTEGER NOT NULL CHECK (prazo_maximo_dias > 0)
+    prazo_maximo_dias INTEGER NOT NULL CHECK (prazo_maximo_dias > 0),
+    capa              BLOB
 );
 
 CREATE TABLE cliente (
