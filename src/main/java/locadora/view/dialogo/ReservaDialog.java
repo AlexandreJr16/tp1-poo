@@ -26,7 +26,7 @@ public class ReservaDialog extends Formulario {
         this.fixo = fixo;
         Map<Integer, Estoque> estoque = servicos.titulos().estoque();
         titulo = new Seletor<>("Buscar título", Titulo::getNome,
-                (Titulo t) -> t.tipo() + " · " + estoque.getOrDefault(t.getId(), Estoque.VAZIO).disponiveis() + " disponíveis");
+                (Titulo t) -> t.tipo() + " · " + disponiveis(estoque.getOrDefault(t.getId(), Estoque.VAZIO).disponiveis()));
         cliente.setItens(servicos.clientes().listar().stream().filter(Cliente::isAtivo).toList());
         campo("Cliente", cliente);
         if (fixo == null) {
@@ -38,6 +38,10 @@ public class ReservaDialog extends Formulario {
             campo("Título", escolhido);
         }
         nota("A reserva entra na fila do título. Quando um exemplar voltar ou for comprado, ele fica separado para o primeiro da fila.");
+    }
+
+    private static String disponiveis(int quantidade) {
+        return quantidade + (quantidade == 1 ? " disponível" : " disponíveis");
     }
 
     @Override

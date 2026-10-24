@@ -16,13 +16,15 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Predicate;
 
-/* Celula padrao das tabelas: valores ja formatados, numeros a direita e linhas em destaque em vermelho.
+/* Celula padrao das tabelas: valores ja formatados, numeros a direita, travessao cinza na celula vazia
+   e linhas em destaque em vermelho.
    aplicar: configura a tabela inteira (celulas e cabecalho) com o visual da locadora e devolve a celula usada
    ajustarLarguras: reparte a largura das colunas conforme o tamanho do conteudo
    destacar: escolhe quais linhas ficam em vermelho */
 public class CelulaTabela<T> extends DefaultTableCellRenderer {
 
     private static final int LINHAS_MEDIDAS = 60;
+    private static final String VAZIO = "—";
 
     private final ModeloTabela<T> modelo;
     private Predicate<T> destaque = item -> false;
@@ -63,9 +65,9 @@ public class CelulaTabela<T> extends DefaultTableCellRenderer {
                     .getTableCellRendererComponent(tabela, atual.getHeaderValue(), false, false, -1, coluna).getPreferredSize().width;
             for (int linha = 0; linha < Math.min(tabela.getRowCount(), LINHAS_MEDIDAS); linha++)
                 largura = Math.max(largura, tabela.prepareRenderer(tabela.getCellRenderer(linha, coluna), linha, coluna).getPreferredSize().width);
-            atual.setPreferredWidth(largura + Tema.ESPACO_4);
+            atual.setPreferredWidth(largura);
             if (tabela.getColumnClass(coluna) != String.class)
-                atual.setMinWidth(largura + Tema.ESPACO_4);
+                atual.setMinWidth(largura);
         }
     }
 
@@ -75,12 +77,13 @@ public class CelulaTabela<T> extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable tabela, Object valor, boolean selecionada, boolean foco, int linha, int coluna) {
-        super.getTableCellRendererComponent(tabela, ModeloTabela.formatar(valor), selecionada, false, linha, coluna);
-        setHorizontalAlignment(valor instanceof Number ? RIGHT : LEFT);
+        String texto = ModeloTabela.formatar(valor);
+        super.getTableCellRendererComponent(tabela, texto.isEmpty() ? VAZIO : texto, selecionada, false, linha, coluna);
+        setHorizontalAlignment(Number.class.isAssignableFrom(tabela.getColumnClass(coluna)) ? RIGHT : LEFT);
         setBorder(BorderFactory.createEmptyBorder(0, Tema.ESPACO_3, 0, Tema.ESPACO_3));
         if (!selecionada) {
             boolean emDestaque = destaque.test(modelo.linha(tabela.convertRowIndexToModel(linha)));
-            setForeground(emDestaque ? Tema.perigo() : tabela.getForeground());
+            setForeground(emDestaque ? Tema.perigo() : texto.isEmpty() ? Tema.suave() : tabela.getForeground());
             setBackground(emDestaque ? Tema.cor("Locadora.perigoFundo") : tabela.getBackground());
         }
         return this;

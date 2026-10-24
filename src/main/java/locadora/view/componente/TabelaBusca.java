@@ -16,7 +16,6 @@ import javax.swing.RowFilter;
 import javax.swing.table.TableRowSorter;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.FlowLayout;
 import java.io.File;
 import java.util.List;
 import java.util.function.Consumer;
@@ -45,8 +44,8 @@ public class TabelaBusca<T> extends JPanel {
     private final JTable tabela;
     private final TableRowSorter<ModeloTabela<T>> ordenador;
     private final JTextField busca = new JTextField(24);
-    private final JPanel filtros = new JPanel(new FlowLayout(FlowLayout.LEFT, Tema.ESPACO_2, 0));
-    private final JPanel acoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, Tema.ESPACO_2, 0));
+    private final Fileira filtros = new Fileira(Tema.ESPACO_2);
+    private final Fileira acoes = new Fileira(Tema.ESPACO_2);
     private final CardLayout cartoes = new CardLayout();
     private final JPanel conteudo = new JPanel(cartoes);
     private Predicate<T> filtroExtra = item -> true;
@@ -65,9 +64,7 @@ public class TabelaBusca<T> extends JPanel {
         busca.putClientProperty(FlatClientProperties.TEXT_FIELD_LEADING_ICON, Icone.LUPA.de(16, "Locadora.suave"));
         busca.putClientProperty(FlatClientProperties.TEXT_FIELD_SHOW_CLEAR_BUTTON, true);
         Eventos.aoDigitar(busca, this::aplicarFiltros);
-        filtros.setOpaque(false);
-        filtros.add(busca);
-        acoes.setOpaque(false);
+        filtros.adicionar(busca);
         JPanel barra = new JPanel(new BorderLayout());
         barra.setOpaque(false);
         barra.add(filtros, BorderLayout.WEST);
@@ -78,7 +75,8 @@ public class TabelaBusca<T> extends JPanel {
         conteudo.setOpaque(false);
         conteudo.add(rolagem, TABELA);
         conteudo.add(vazio, VAZIA);
-        conteudo.add(new EstadoVazio(Icone.LUPA, "Nada encontrado", "Tente outro termo ou limpe a busca.", null), SEM_RESULTADO);
+        conteudo.add(new EstadoVazio(Icone.LUPA, "Nada encontrado", "Tente outro termo ou limpe a busca.",
+                Botoes.secundario("Limpar busca", Icone.FECHAR, () -> busca.setText(""))), SEM_RESULTADO);
 
         add(barra, BorderLayout.NORTH);
         add(conteudo, BorderLayout.CENTER);
@@ -132,11 +130,11 @@ public class TabelaBusca<T> extends JPanel {
     }
 
     public void adicionarNaBarra(JComponent componente) {
-        filtros.add(componente);
+        filtros.adicionar(componente);
     }
 
     public void permitirExportar(ArquivoService arquivos, String nomeDoArquivo) {
-        acoes.add(Botoes.discreto("Exportar CSV", Icone.EXPORTAR, () -> exportar(arquivos, nomeDoArquivo)));
+        acoes.adicionar(Botoes.discreto("Exportar CSV", Icone.EXPORTAR, () -> exportar(arquivos, nomeDoArquivo)));
     }
 
     private void aplicarFiltros() {

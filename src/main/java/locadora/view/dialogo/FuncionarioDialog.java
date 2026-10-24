@@ -20,7 +20,7 @@ public class FuncionarioDialog extends Formulario {
     private final JTextField nome = new JTextField(28);
     private final JTextField cpf = new JTextField(14);
     private final JTextField telefone = new JTextField(14);
-    private final JTextField email = new JTextField(28);
+    private final JTextField email = new JTextField(14);
     private final JComboBox<Cargo> cargo = new JComboBox<>(Cargo.values());
     private final JTextField login = new JTextField(14);
     private final JPasswordField senha = new JPasswordField(14);

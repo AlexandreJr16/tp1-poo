@@ -19,8 +19,12 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.RoundRectangle2D;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -43,7 +47,7 @@ public class BuscaGlobalDialog extends JDialog {
 
         campo.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Buscar título, cliente, CPF ou código do exemplar (ex.: T4-001)");
         campo.putClientProperty(FlatClientProperties.TEXT_FIELD_LEADING_ICON, Icone.LUPA.de(20, "Locadora.suave"));
-        campo.putClientProperty(FlatClientProperties.STYLE, "font: +4; margin: 8,10,8,10; borderWidth: 0; focusWidth: 0");
+        campo.putClientProperty(FlatClientProperties.STYLE, "font: +4; margin: 8,12,8,12; borderWidth: 0; focusWidth: 0");
         Eventos.aoDigitar(campo, this::buscar);
         Eventos.teclaNoComponente(campo, "DOWN", () -> mover(1));
         Eventos.teclaNoComponente(campo, "UP", () -> mover(-1));
@@ -52,7 +56,6 @@ public class BuscaGlobalDialog extends JDialog {
 
         lista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         lista.setCellRenderer(new Linha());
-        lista.putClientProperty(FlatClientProperties.STYLE, "selectionArc: 10; selectionInsets: 2,6,2,6");
         Eventos.duploClique(lista, this::escolher);
         aviso.putClientProperty(FlatClientProperties.STYLE, "foreground: $Locadora.suave");
         aviso.setBorder(BorderFactory.createEmptyBorder(Tema.ESPACO_2, Tema.ESPACO_4, Tema.ESPACO_3, Tema.ESPACO_4));
@@ -102,16 +105,18 @@ public class BuscaGlobalDialog extends JDialog {
         aoEscolher.accept(escolhido);
     }
 
-    // linha do resultado: icone do tipo, nome em destaque e detalhe embaixo
+    // linha do resultado: icone do tipo, nome em destaque e detalhe embaixo; a escolhida ganha um fundo arredondado suave
     private static class Linha extends JPanel implements ListCellRenderer<BuscaService.Resultado> {
 
         private final JLabel icone = new JLabel();
         private final JLabel rotulo = new JLabel();
         private final JLabel detalhe = new JLabel();
         private final JLabel tipo = new JLabel();
+        private boolean escolhida;
 
         Linha() {
             super(new BorderLayout(Tema.ESPACO_3, 0));
+            setOpaque(false);
             setBorder(BorderFactory.createEmptyBorder(Tema.ESPACO_2, Tema.ESPACO_4, Tema.ESPACO_2, Tema.ESPACO_4));
             rotulo.putClientProperty(FlatClientProperties.STYLE_CLASS, "semibold");
             JPanel textos = new JPanel(new BorderLayout());
@@ -131,15 +136,26 @@ public class BuscaGlobalDialog extends JDialog {
                 case CLIENTE -> Icone.PESSOA;
                 case EXEMPLAR -> Icone.CAIXA;
             };
-            icone.setIcon(forma.de(22, selecionada ? "List.selectionForeground" : "Component.accentColor"));
+            icone.setIcon(forma.de(22, "Component.accentColor"));
             rotulo.setText(resultado.rotulo());
             detalhe.setText(resultado.detalhe());
             tipo.setText(resultado.tipo().toString());
-            setBackground(selecionada ? lista.getSelectionBackground() : lista.getBackground());
-            rotulo.setForeground(selecionada ? lista.getSelectionForeground() : lista.getForeground());
-            detalhe.setForeground(selecionada ? lista.getSelectionForeground() : Tema.suave());
-            tipo.setForeground(selecionada ? lista.getSelectionForeground() : Tema.suave());
+            escolhida = selecionada;
+            rotulo.setForeground(lista.getForeground());
+            detalhe.setForeground(Tema.suave());
+            tipo.setForeground(selecionada ? Tema.destaque() : Tema.suave());
             return this;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            if (!escolhida)
+                return;
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(Tema.cor("Locadora.selecao"));
+            g2.fill(new RoundRectangle2D.Float(Tema.ESPACO_2, 2, getWidth() - 2 * Tema.ESPACO_2, getHeight() - 4, 10, 10));
+            g2.dispose();
         }
     }
 }

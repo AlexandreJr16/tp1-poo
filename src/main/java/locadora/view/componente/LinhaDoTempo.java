@@ -19,8 +19,13 @@ import java.awt.RenderingHints;
 import java.util.List;
 
 /* Lista vertical dos eventos de um exemplar, com um trilho e uma bolinha por evento.
+   A descricao quebra linha numa largura fixa, entao a lista nunca precisa de rolagem lateral.
    setEventos: troca os eventos mostrados */
 public class LinhaDoTempo extends JList<Evento> {
+
+    public static final int LARGURA = 328;
+    private static final int RECUO = 28;
+    private static final int LARGURA_DO_TEXTO = LARGURA - RECUO - Tema.ESPACO_2 - Tema.ESPACO_3;
 
     private final DefaultListModel<Evento> eventos = new DefaultListModel<>();
 
@@ -38,8 +43,6 @@ public class LinhaDoTempo extends JList<Evento> {
 
     // um passo da linha do tempo: data pequena, descricao e quem registrou
     private static class Passo extends JPanel implements ListCellRenderer<Evento> {
-
-        private static final int RECUO = 28;
 
         private final JLabel data = new JLabel();
         private final JLabel descricao = new JLabel();
@@ -62,7 +65,7 @@ public class LinhaDoTempo extends JList<Evento> {
         @Override
         public Component getListCellRendererComponent(JList<? extends Evento> lista, Evento evento, int indice, boolean selecionado, boolean foco) {
             data.setText(Formato.data(evento.data()));
-            descricao.setText("<html>" + evento.descricao() + "</html>");
+            descricao.setText("<html><div style='width: " + LARGURA_DO_TEXTO + "pt'>" + evento.descricao() + "</div></html>");
             autor.setText("por " + evento.funcionario());
             primeiro = indice == 0;
             ultimo = indice == lista.getModel().getSize() - 1;

@@ -60,12 +60,13 @@ public class PerdaDialog extends Formulario {
             consequencia.setText("Escolha o exemplar.");
         } else if (escolhido.getSituacao() == Situacao.ALUGADO) {
             BigDecimal cobranca = servicos.perdas().previaCobranca(escolhido.getId());
-            consequencia.setText("<html>Está alugado: a locação será encerrada e o cliente cobrado em <b>" + Formato.dinheiro(cobranca)
-                    + "</b> (custo do exemplar mais a multa até hoje).</html>");
+            consequencia.setText(paragrafo("Está alugado: a locação será encerrada e o cliente cobrado em <b>" + Formato.dinheiro(cobranca)
+                    + "</b> (custo do exemplar mais a multa até hoje)."));
         } else if (escolhido.getSituacao() == Situacao.RESERVADO) {
-            consequencia.setText("<html>Está separado para uma reserva: ela volta para a fila, na mesma posição.</html>");
+            consequencia.setText(paragrafo("Está separado para uma reserva: ela volta para a fila, na mesma posição."));
         } else {
             consequencia.setText("O exemplar sai do acervo para sempre.");
         }
+        reajustar();
     }
 }

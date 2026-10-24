@@ -60,7 +60,7 @@ public class BarraLateral extends JPanel {
         botao.setSelectedIcon(icone.de(18, "Component.accentColor"));
         botao.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_TOOLBAR_BUTTON);
         botao.putClientProperty(FlatClientProperties.STYLE, "toolbar.selectedBackground: $Locadora.selecao;"
-                + " toolbar.selectedForeground: $Component.accentColor; margin: 0,12,0,12; iconTextGap: 12; font: +1");
+                + " toolbar.selectedForeground: $Component.accentColor; toolbar.margin: 0,10,0,10; iconTextGap: 12; font: +1");
         botao.setHorizontalAlignment(SwingConstants.LEADING);
         botao.setMaximumSize(new Dimension(Integer.MAX_VALUE, ALTURA_DO_ITEM));
         botao.setAlignmentX(LEFT_ALIGNMENT);

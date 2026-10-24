@@ -13,6 +13,7 @@ import locadora.view.componente.CardNumero;
 import locadora.view.componente.CelulaTabela;
 import locadora.view.componente.Descricoes;
 import locadora.view.componente.Eventos;
+import locadora.view.componente.Fileira;
 import locadora.view.componente.Mensagens;
 import locadora.view.componente.ModeloTabela;
 import locadora.view.componente.Toast;
@@ -29,7 +30,6 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -136,13 +136,14 @@ public class ClienteDetalheDialog extends JDialog {
     }
 
     private JComponent rodape() {
-        JPanel rodape = new JPanel(new FlowLayout(FlowLayout.RIGHT, Tema.ESPACO_2, 0));
-        rodape.add(pagar);
+        Fileira botoes = new Fileira(Tema.ESPACO_2, pagar);
         if (cliente.isAtivo())
-            rodape.add(Botoes.secundario("Nova locação", Icone.MAIS, this::novaLocacao));
+            botoes.adicionar(Botoes.secundario("Nova locação", Icone.MAIS, this::novaLocacao));
         JButton fechar = Botoes.primario("Fechar", null, this::dispose);
         getRootPane().setDefaultButton(fechar);
-        rodape.add(fechar);
+        botoes.adicionar(fechar);
+        JPanel rodape = new JPanel(new BorderLayout());
+        rodape.add(botoes, BorderLayout.EAST);
         return rodape;
     }
 

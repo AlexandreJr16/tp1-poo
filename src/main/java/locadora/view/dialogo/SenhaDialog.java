@@ -13,9 +13,9 @@ public class SenhaDialog extends Formulario {
 
     private final FuncionarioService servico;
     private final Funcionario alvo;
-    private final JPasswordField atual = new JPasswordField(20);
-    private final JPasswordField nova = new JPasswordField(20);
-    private final JPasswordField confirmacao = new JPasswordField(20);
+    private final JPasswordField atual = new JPasswordField(14);
+    private final JPasswordField nova = new JPasswordField(14);
+    private final JPasswordField confirmacao = new JPasswordField(14);
 
     public SenhaDialog(Component origem, FuncionarioService servico, Funcionario alvo) {
         super(origem, alvo == null ? "Trocar minha senha" : "Redefinir senha de " + alvo.getNome(), "Salvar senha");

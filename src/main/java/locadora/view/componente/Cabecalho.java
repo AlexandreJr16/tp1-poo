@@ -9,7 +9,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 
 // topo de cada tela: titulo grande e subtitulo a esquerda, botoes de acao a direita
 public class Cabecalho extends JPanel {
@@ -29,10 +28,9 @@ public class Cabecalho extends JPanel {
         textos.add(rotulo);
         textos.add(apoio);
 
-        JPanel botoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, Tema.ESPACO_2, 0));
+        JPanel botoes = new JPanel(new BorderLayout());
         botoes.setOpaque(false);
-        for (JComponent acao : acoes)
-            botoes.add(acao);
+        botoes.add(new Fileira(Tema.ESPACO_2, acoes), BorderLayout.NORTH);
 
         add(textos, BorderLayout.WEST);
         add(botoes, BorderLayout.EAST);

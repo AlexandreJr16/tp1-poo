@@ -14,8 +14,10 @@ import locadora.view.componente.CardNumero;
 import locadora.view.componente.Quadro;
 import locadora.view.dialogo.NovaLocacaoDialog;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.List;
 
@@ -24,7 +26,8 @@ import static locadora.view.componente.ModeloTabela.dinheiro;
 import static locadora.view.componente.ModeloTabela.numero;
 import static locadora.view.componente.ModeloTabela.texto;
 
-/* Tela inicial: saudacao, seis cards de numeros e tres quadros (proximas devolucoes, atrasadas e reservas prontas).
+/* Tela inicial: saudacao, seis cards de numeros e tres quadros: proximas devolucoes em duas colunas da grade,
+   atrasadas e reservas prontas empilhadas na terceira.
    atualizar: recarrega os numeros e as listas */
 public class DashboardPanel extends Painel {
 
@@ -44,6 +47,7 @@ public class DashboardPanel extends Painel {
         proximas = new Quadro<>("Próximas devoluções", Icone.RELOGIO, "Component.accentColor", List.of(
                 texto("Cliente", (Locacao l) -> l.getCliente().getNome()),
                 texto("Título", (Locacao l) -> l.getExemplar().getTitulo().getNome()),
+                texto("Exemplar", (Locacao l) -> l.getExemplar().getCodigo()),
                 data("Prevista", Locacao::getDataPrevista)), "Nenhuma devolução prevista.");
         vencidas = new Quadro<>("Atrasadas", Icone.ALERTA, "Locadora.perigo", List.of(
                 texto("Cliente", (Locacao l) -> l.getCliente().getNome()),
@@ -65,11 +69,10 @@ public class DashboardPanel extends Painel {
         cards.setOpaque(false);
         for (CardNumero card : List.of(ativas, atrasadas, multas, faturamento, titulos, reservas))
             cards.add(card);
-        JPanel quadros = new JPanel(new GridLayout(1, 3, Tema.ESPACO_4, 0));
+        JPanel quadros = new JPanel(new BorderLayout(Tema.ESPACO_4, 0));
         quadros.setOpaque(false);
-        quadros.add(proximas);
-        quadros.add(vencidas);
-        quadros.add(prontas);
+        quadros.add(proximas, BorderLayout.CENTER);
+        quadros.add(colunaDaDireita(vencidas, prontas), BorderLayout.EAST);
         JPanel corpo = new JPanel(new BorderLayout(0, Tema.ESPACO_4));
         corpo.setOpaque(false);
         corpo.add(cards, BorderLayout.NORTH);
@@ -90,6 +93,20 @@ public class DashboardPanel extends Painel {
         proximas.setDados(servicos.painel().proximasDevolucoes());
         vencidas.setDados(servicos.locacoes().atrasadas());
         prontas.setDados(servicos.reservas().prontas());
+    }
+
+    // coluna com a largura de um card, para os quadros seguirem a grade de tres colunas dos cards
+    private static JPanel colunaDaDireita(JComponent... quadros) {
+        JPanel coluna = new JPanel(new GridLayout(quadros.length, 1, 0, Tema.ESPACO_4)) {
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(Math.max(0, (getParent().getWidth() - 2 * Tema.ESPACO_4) / 3), 0);
+            }
+        };
+        coluna.setOpaque(false);
+        for (JComponent quadro : quadros)
+            coluna.add(quadro);
+        return coluna;
     }
 
     private void novaLocacao() {

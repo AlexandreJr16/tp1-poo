@@ -33,6 +33,7 @@ public class NovaLocacaoDialog extends Formulario {
         if (fixo == null) {
             cliente.setItens(servicos.clientes().listar().stream().filter(Cliente::isAtivo).toList());
             cliente.aoSelecionar(c -> carregarExemplares());
+            carregarExemplares();
             campo("Cliente", cliente);
         } else {
             JLabel escolhido = new JLabel(fixo.getNome() + " · CPF " + fixo.cpfFormatado());
@@ -58,6 +59,8 @@ public class NovaLocacaoDialog extends Formulario {
 
     private void carregarExemplares() {
         Cliente escolhido = clienteEscolhido();
+        exemplar.setAvisoSemItens(escolhido == null ? "Escolha o cliente para ver os exemplares que ele pode levar."
+                : "Nenhum exemplar disponível para " + escolhido.getNome() + ".");
         exemplar.setItens(escolhido == null ? List.of() : servicos.locacoes().alugaveisPara(escolhido.getId()));
         mostrarResumo();
     }

@@ -19,7 +19,6 @@ import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -71,8 +70,8 @@ public class LoginFrame extends JFrame {
         }
         entrar.setMaximumSize(new Dimension(Integer.MAX_VALUE, entrar.getPreferredSize().height + 6));
 
-        JPanel topo = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        topo.add(BotaoTema.criar());
+        JPanel topo = new JPanel(new BorderLayout());
+        topo.add(BotaoTema.criar(), BorderLayout.EAST);
         JPanel centro = new JPanel(new GridBagLayout());
         centro.add(caixa);
         JPanel lado = new JPanel(new BorderLayout());

@@ -16,10 +16,12 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-/* Card do painel com titulo, contador e uma tabela curta, ou um aviso quando a lista esta vazia.
+/* Card com titulo, contador e uma tabela curta, ou um aviso quando a lista esta vazia.
    setDados: troca as linhas e o contador
    destacar: linhas em vermelho
-   aoAbrir: acao do duplo clique numa linha */
+   aoAbrir: acao do duplo clique numa linha
+   aoSelecionar: acao a cada troca de linha escolhida (recebe nulo quando nao ha escolha)
+   selecionarPrimeira: escolhe a primeira linha, se houver */
 public class Quadro<T> extends JPanel {
 
     private final ModeloTabela<T> modelo;
@@ -48,7 +50,7 @@ public class Quadro<T> extends JPanel {
 
         JScrollPane rolagem = new JScrollPane(tabela);
         rolagem.setBorder(BorderFactory.createEmptyBorder());
-        JLabel vazio = new JLabel(textoVazio, Icone.CONFIRMAR.de(18, "Locadora.sucesso"), SwingConstants.CENTER);
+        JLabel vazio = new JLabel(textoVazio, icone.de(18, "Locadora.suave"), SwingConstants.CENTER);
         vazio.setIconTextGap(Tema.ESPACO_2);
         vazio.putClientProperty(FlatClientProperties.STYLE, "foreground: $Locadora.suave");
         corpo.setOpaque(false);
@@ -72,8 +74,25 @@ public class Quadro<T> extends JPanel {
 
     public void aoAbrir(Consumer<T> acao) {
         Eventos.duploClique(tabela, () -> {
-            if (tabela.getSelectedRow() >= 0)
-                acao.accept(modelo.linha(tabela.convertRowIndexToModel(tabela.getSelectedRow())));
+            if (selecionado() != null)
+                acao.accept(selecionado());
         });
+    }
+
+    public void aoSelecionar(Consumer<T> acao) {
+        tabela.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting())
+                acao.accept(selecionado());
+        });
+    }
+
+    public void selecionarPrimeira() {
+        if (tabela.getRowCount() > 0)
+            tabela.setRowSelectionInterval(0, 0);
+    }
+
+    private T selecionado() {
+        int linha = tabela.getSelectedRow();
+        return linha < 0 ? null : modelo.linha(tabela.convertRowIndexToModel(linha));
     }
 }

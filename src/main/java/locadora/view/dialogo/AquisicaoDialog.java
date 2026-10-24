@@ -8,10 +8,12 @@ import locadora.service.RegraException;
 import locadora.service.TituloService;
 import locadora.view.Tema;
 import locadora.view.componente.Eventos;
+import locadora.view.componente.Fileira;
 import locadora.view.componente.Seletor;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -19,9 +21,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.math.BigDecimal;
 
@@ -32,8 +32,7 @@ public class AquisicaoDialog extends Formulario {
     private final Main.Servicos servicos;
     private final JRadioButton existente = new JRadioButton("Título já cadastrado", true);
     private final JRadioButton novo = new JRadioButton("Título novo");
-    private final CardLayout cartoes = new CardLayout();
-    private final JPanel escolha = new JPanel(cartoes);
+    private final JPanel escolha = new JPanel(new BorderLayout());
     private final Seletor<Titulo> titulo = new Seletor<>("Buscar título", Titulo::getNome, (Titulo t) -> t.tipo() + " · " + t.getAno());
     private final JComboBox<String> tipo = new JComboBox<>(TituloService.TIPOS.toArray(String[]::new));
     private final JTextField nome = new JTextField(10);
@@ -50,7 +49,7 @@ public class AquisicaoDialog extends Formulario {
         this.servicos = servicos;
         titulo.setItens(servicos.titulos().listar());
         ano.setEditor(new JSpinner.NumberEditor(ano, "#"));
-        custo.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "29,90");
+        custo.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "0,00");
         total.putClientProperty(FlatClientProperties.STYLE_CLASS, "h4");
         Eventos.aoDigitar(custo, this::mostrarTotal);
         quantidade.addChangeListener(e -> mostrarTotal());
@@ -58,13 +57,12 @@ public class AquisicaoDialog extends Formulario {
         ButtonGroup grupo = new ButtonGroup();
         grupo.add(existente);
         grupo.add(novo);
-        existente.addActionListener(e -> cartoes.show(escolha, "existente"));
-        novo.addActionListener(e -> cartoes.show(escolha, "novo"));
-        JPanel opcoes = new JPanel(new FlowLayout(FlowLayout.LEFT, Tema.ESPACO_4, 0));
-        opcoes.add(existente);
-        opcoes.add(novo);
-        escolha.add(titulo, "existente");
-        escolha.add(formularioDeTituloNovo(), "novo");
+        JPanel tituloNovo = formularioDeTituloNovo();
+        existente.addActionListener(e -> mostrar(titulo));
+        novo.addActionListener(e -> mostrar(tituloNovo));
+        escolha.add(titulo);
+        JPanel opcoes = new JPanel(new BorderLayout());
+        opcoes.add(new Fileira(Tema.ESPACO_5, existente, novo), BorderLayout.WEST);
         JPanel blocoDoTitulo = new JPanel(new BorderLayout(0, Tema.ESPACO_2));
         blocoDoTitulo.add(opcoes, BorderLayout.NORTH);
         blocoDoTitulo.add(escolha, BorderLayout.CENTER);
@@ -91,14 +89,23 @@ public class AquisicaoDialog extends Formulario {
         return criado;
     }
 
+    private void mostrar(JComponent bloco) {
+        escolha.removeAll();
+        escolha.add(bloco);
+        escolha.revalidate();
+        escolha.repaint();
+        reajustar();
+    }
+
+    // nome na largura toda; tipo, ano e prazo lado a lado
     private JPanel formularioDeTituloNovo() {
-        JPanel campos = new JPanel(new GridLayout(2, 4, Tema.ESPACO_3, Tema.ESPACO_1));
-        for (String rotulo : new String[]{"Tipo", "Nome", "Ano", "Prazo (dias)"})
-            campos.add(new JLabel(rotulo));
-        campos.add(tipo);
-        campos.add(nome);
-        campos.add(ano);
-        campos.add(prazo);
+        JPanel numeros = new JPanel(new GridLayout(1, 3, Tema.ESPACO_3, 0));
+        numeros.add(bloco("Tipo de mídia", tipo));
+        numeros.add(bloco("Ano", ano));
+        numeros.add(bloco("Prazo (dias)", prazo));
+        JPanel campos = new JPanel(new BorderLayout(0, Tema.ESPACO_3));
+        campos.add(bloco("Nome do título", nome), BorderLayout.NORTH);
+        campos.add(numeros, BorderLayout.CENTER);
         return campos;
     }
 
