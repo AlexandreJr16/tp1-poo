@@ -41,7 +41,7 @@ public class Locacao {
     public static Locacao abrir(Exemplar exemplar, Cliente cliente, Funcionario funcionario, LocalDate data) {
         exemplar.alugar();
         Titulo titulo = exemplar.getTitulo();
-        return new Locacao(0, exemplar, cliente, funcionario, null, data, data.plusDays(titulo.getPrazoMaximoDias()), null,
+        return new Locacao(0, exemplar, cliente, funcionario, null, data, titulo.devolucaoPrevista(data), null,
                 titulo.valorLocacao(), SEM_MULTA, null, false);
     }
 
@@ -106,7 +106,7 @@ public class Locacao {
     public void renovar(LocalDate hoje) {
         if (!podeRenovar(hoje))
             throw new IllegalStateException("Esta locação não pode ser renovada.");
-        dataPrevista = dataPrevista.plusDays(exemplar.getTitulo().getPrazoMaximoDias());
+        dataPrevista = exemplar.getTitulo().devolucaoPrevista(dataPrevista);
         renovada = true;
     }
 

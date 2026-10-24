@@ -129,7 +129,7 @@ public class LocacoesPanel extends Painel {
 
     private void renovar() {
         Locacao locacao = tabela.selecionado();
-        LocalDate novaData = locacao.getDataPrevista().plusDays(locacao.getExemplar().getTitulo().getPrazoMaximoDias());
+        LocalDate novaData = locacao.getExemplar().getTitulo().devolucaoPrevista(locacao.getDataPrevista());
         String pergunta = "Renovar a locação de " + locacao.getCliente().getNome() + " até " + Formato.data(novaData) + "? A renovação só pode ser feita uma vez.";
         if (Mensagens.confirmar(this, "Renovação", pergunta, "Renovar") && Mensagens.executar(this, () -> servicos.locacoes().renovar(locacao.getId()))) {
             atualizar();

@@ -50,6 +50,6 @@ public abstract class Titulo {
     }
 
     public LocalDate devolucaoPrevista(LocalDate inicio) {
-        return inicio;
+        return inicio.plusDays(prazoMaximoDias);
     }
 }

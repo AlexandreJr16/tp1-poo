@@ -68,7 +68,7 @@ public class NovaLocacaoDialog extends Formulario {
     private void mostrarResumo() {
         Exemplar escolhido = exemplar.selecionado();
         resumo.setText(escolhido == null ? "Escolha o cliente e o exemplar."
-                : "Devolver até " + Formato.data(servicos.locacoes().hoje().plusDays(escolhido.getTitulo().getPrazoMaximoDias()))
+                : "Devolver até " + Formato.data(escolhido.getTitulo().devolucaoPrevista(servicos.locacoes().hoje()))
                 + " · " + Formato.dinheiro(escolhido.getTitulo().valorLocacao()));
     }
 
