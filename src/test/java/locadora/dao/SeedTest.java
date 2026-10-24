@@ -2,6 +2,7 @@ package locadora.dao;
 
 import locadora.BancoTeste;
 import locadora.Main;
+import locadora.model.Cliente;
 import locadora.model.Locacao;
 import locadora.model.Pessoa;
 import locadora.model.Situacao;
@@ -13,10 +14,12 @@ import org.junit.jupiter.api.io.TempDir;
 import java.nio.file.Path;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SeedTest {
@@ -93,5 +96,26 @@ class SeedTest {
         Main.Servicos servicos = Main.montar(dir.resolve("novo.db"), Clock.systemDefaultZone());
 
         assertEquals(servicos.titulos().listar().size(), servicos.capas().capas().size());
+    }
+
+    @Test
+    void todoClienteAtivoRecebeRecomendacaoComMotivo() {
+        banco.logarGerente();
+
+        banco.clientes.listar().stream()
+                .filter(Cliente::isAtivo)
+                .forEach(cliente -> assertNotNull(banco.locacaoService.recomendacoes(cliente.getId()).get(0).porque(), cliente.getNome()));
+    }
+
+    @Test
+    void nenhumExemplarFoiAlugadoDuasVezesAoMesmoTempo() {
+        banco.titulos.listar().forEach(titulo -> banco.exemplares.listarPorTitulo(titulo.getId()).forEach(exemplar -> {
+            List<Locacao> historico = banco.locacoes.doExemplar(exemplar.getId());
+            for (int i = 1; i < historico.size(); i++) {
+                Locacao anterior = historico.get(i - 1);
+                assertNotNull(anterior.getDataDevolucao(), exemplar.getCodigo());
+                assertTrue(anterior.getDataDevolucao().isBefore(historico.get(i).getDataLocacao().plusDays(1)), exemplar.getCodigo());
+            }
+        }));
     }
 }
