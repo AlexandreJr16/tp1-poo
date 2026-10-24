@@ -10,7 +10,7 @@ import java.util.Locale;
 
 /* - Busca global (Ctrl+K):
      buscar: acha titulos pelo nome, clientes pelo nome ou cpf e exemplares pelo codigo,
-             ignorando acentos e maiusculas; o id de um exemplar encontrado e o do titulo dele */
+             ignorando acentos, maiusculas e pequenos erros de digitacao; o id de um exemplar encontrado e o do titulo dele */
 public class BuscaService {
 
     public static final int LIMITE = 12;
@@ -54,10 +54,10 @@ public class BuscaService {
         String digitos = termo.replaceAll("\\D", "");
         List<Resultado> resultados = new ArrayList<>();
         titulos.listar().stream()
-                .filter(t -> Formato.normalizar(t.getNome()).contains(termo))
+                .filter(t -> Formato.parecido(termo, t.getNome()))
                 .forEach(t -> resultados.add(new Resultado(Tipo.TITULO, t.getId(), t.getNome(), t.tipo() + " · " + t.getAno())));
         clientes.listar().stream()
-                .filter(c -> Formato.normalizar(c.getNome()).contains(termo) || digitos.length() >= MINIMO_DE_DIGITOS_DO_CPF && c.getCpf().contains(digitos))
+                .filter(c -> Formato.parecido(termo, c.getNome()) || digitos.length() >= MINIMO_DE_DIGITOS_DO_CPF && c.getCpf().contains(digitos))
                 .forEach(c -> resultados.add(new Resultado(Tipo.CLIENTE, c.getId(), c.getNome(), "CPF " + c.cpfFormatado())));
         if (termo.matches("t\\d.*")) {
             exemplares.listarPorCodigo(termo.toUpperCase(Locale.ROOT))

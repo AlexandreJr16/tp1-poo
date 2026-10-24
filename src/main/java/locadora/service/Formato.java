@@ -1,5 +1,7 @@
 package locadora.service;
 
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.Normalizer;
@@ -13,9 +15,13 @@ import java.util.Locale;
      dataPorExtenso: quinta-feira, 1 de outubro de 2026
    - Leitura:
      lerDinheiro: valor digitado (29,90 ou R$ 1.234,50) em BigDecimal, ou erro amigavel
-     normalizar: texto sem acento, sem espacos nas pontas e em minusculas, para comparar em buscas */
+     normalizar: texto sem acento, sem espacos nas pontas e em minusculas, para comparar em buscas
+   - Busca:
+     parecido: o texto contem o termo ou se parece com ele (tolera acento, pontuacao e erro de digitacao) */
 public final class Formato {
 
+    private static final int MINIMO_PARA_APROXIMAR = 4;
+    private static final int SEMELHANCA_MINIMA = 80;
     private static final Locale BRASIL = Locale.forLanguageTag("pt-BR");
     private static final DateTimeFormatter DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter POR_EXTENSO = DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy", BRASIL);
@@ -45,11 +51,19 @@ public final class Formato {
     }
 
     public static boolean parecido(String termo, String texto) {
-        return false;
+        String procurado = paraComparar(termo);
+        String alvo = paraComparar(texto);
+        return alvo.contains(procurado)
+                || procurado.length() >= MINIMO_PARA_APROXIMAR && FuzzySearch.tokenSetPartialRatio(procurado, alvo) >= SEMELHANCA_MINIMA;
     }
 
     public static String normalizar(String texto) {
         String semAcento = Normalizer.normalize(texto == null ? "" : texto.trim(), Normalizer.Form.NFD).replaceAll("\\p{M}", "");
         return semAcento.toLowerCase(BRASIL);
+    }
+
+    // pontuacao e hifen viram espaco, para "contra-ataca" e "contra ataca" serem o mesmo texto
+    private static String paraComparar(String texto) {
+        return normalizar(texto).replaceAll("[^\\p{Alnum}]+", " ").trim();
     }
 }
