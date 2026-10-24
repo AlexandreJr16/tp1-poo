@@ -7,6 +7,7 @@ import locadora.service.TituloService;
 import locadora.view.Icone;
 import locadora.view.componente.Botoes;
 import locadora.view.componente.Cabecalho;
+import locadora.view.componente.Capa;
 import locadora.view.componente.EstadoVazio;
 import locadora.view.componente.TabelaBusca;
 import locadora.view.componente.Toast;
@@ -18,25 +19,31 @@ import javax.swing.JComboBox;
 import java.awt.BorderLayout;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static locadora.view.componente.ModeloTabela.dinheiro;
 import static locadora.view.componente.ModeloTabela.numero;
 import static locadora.view.componente.ModeloTabela.texto;
 
-/* Tela de titulos: tabela com busca e filtro por tipo, cadastro, edicao e detalhe com exemplares e linha do tempo.
+/* Tela de titulos: tabela com capa, busca e filtro por tipo, cadastro, edicao e detalhe com exemplares e linha do tempo.
    atualizar: recarrega titulos e estoque
    abrir: seleciona um titulo e abre o detalhe dele (usado pela busca global) */
 public class TitulosPanel extends Painel {
 
     private static final String TODOS = "Todos os tipos";
+    private static final int LARGURA_DA_MINIATURA = 28;
+    private static final int ALTURA_DA_MINIATURA = 40;
+    private static final int ALTURA_DA_LINHA = 48;
 
     private final Main.Servicos servicos;
     private final TabelaBusca<Titulo> tabela;
     private final JComboBox<String> tipo = new JComboBox<>(Stream.concat(Stream.of(TODOS), TituloService.TIPOS.stream()).toArray(String[]::new));
     private final JButton editar = Botoes.secundario("Editar", Icone.LAPIS, this::editar);
     private final JButton detalhe = Botoes.secundario("Exemplares", Icone.LISTA, () -> detalhar(tabelaSelecionado()));
+    private final Capa semCapa = new Capa(null, LARGURA_DA_MINIATURA, ALTURA_DA_MINIATURA);
     private Map<Integer, Estoque> estoque = Map.of();
+    private Map<Integer, Capa> miniaturas = Map.of();
 
     public TitulosPanel(Main.Servicos servicos) {
         this.servicos = servicos;
@@ -53,6 +60,7 @@ public class TitulosPanel extends Painel {
                 new EstadoVazio(Icone.DISCO, "Nenhum título no acervo", "Cadastre o primeiro título para começar.",
                         Botoes.primario("Novo título", Icone.MAIS, this::novo)));
         tipo.addActionListener(e -> tabela.filtrar(t -> tipo.getSelectedIndex() == 0 || t.tipo().equals(tipo.getSelectedItem())));
+        tabela.comMiniatura(t -> miniaturas.getOrDefault(t.getId(), semCapa), ALTURA_DA_LINHA);
         tabela.adicionarNaBarra(tipo);
         tabela.permitirExportar(servicos.arquivos(), "titulos");
         tabela.aoAbrir(this::detalhar);
@@ -71,6 +79,8 @@ public class TitulosPanel extends Painel {
     @Override
     public void atualizar() {
         estoque = servicos.titulos().estoque();
+        miniaturas = servicos.capas().capas().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, capa -> new Capa(capa.getValue(), LARGURA_DA_MINIATURA, ALTURA_DA_MINIATURA)));
         tabela.setDados(servicos.titulos().listar());
     }
 
@@ -89,14 +99,14 @@ public class TitulosPanel extends Painel {
     }
 
     private void novo() {
-        if (new TituloDialog(this, servicos.titulos(), null).abrir()) {
+        if (new TituloDialog(this, servicos, null).abrir()) {
             atualizar();
             Toast.mostrar(this, "Título cadastrado");
         }
     }
 
     private void editar() {
-        if (new TituloDialog(this, servicos.titulos(), tabela.selecionado()).abrir()) {
+        if (new TituloDialog(this, servicos, tabela.selecionado()).abrir()) {
             atualizar();
             Toast.mostrar(this, "Título atualizado");
         }

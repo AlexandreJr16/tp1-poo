@@ -6,6 +6,7 @@ import locadora.service.Formato;
 import locadora.view.Icone;
 import locadora.view.Tema;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -19,10 +20,11 @@ import java.awt.CardLayout;
 import java.io.File;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
-/* Tabela com busca sem acento, filtro extra, linhas em destaque, exportacao CSV e estado vazio.
+/* Tabela com busca aproximada (tolera acento e erro de digitacao), filtro extra, linhas em destaque, exportacao CSV e estado vazio.
    - Dados:
      setDados: troca as linhas e reaplica busca e filtro
      selecionado: objeto da linha selecionada, ou nulo
@@ -32,6 +34,7 @@ import java.util.stream.IntStream;
      aoSelecionar: acao a cada troca de selecao (para ligar e desligar botoes)
      filtrar: filtro extra combinado com a busca (ex.: tipo de midia)
      destacar: linhas mostradas em vermelho (ex.: atrasadas)
+     comMiniatura: mostra uma imagem antes do texto da primeira coluna, com linhas mais altas
      adicionarNaBarra: poe um componente ao lado da busca
      permitirExportar: mostra o botao de exportar CSV com as linhas visiveis */
 public class TabelaBusca<T> extends JPanel {
@@ -127,6 +130,11 @@ public class TabelaBusca<T> extends JPanel {
     public void destacar(Predicate<T> criterio) {
         celula.destacar(criterio);
         tabela.repaint();
+    }
+
+    public void comMiniatura(Function<T, Icon> miniatura, int alturaDaLinha) {
+        celula.iconeNaPrimeiraColuna(miniatura);
+        tabela.setRowHeight(alturaDaLinha);
     }
 
     public void adicionarNaBarra(JComponent componente) {

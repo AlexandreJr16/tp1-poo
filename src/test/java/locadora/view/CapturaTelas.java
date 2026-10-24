@@ -77,7 +77,7 @@ public class CapturaTelas {
         Cliente ana = servicos.clientes().buscar(1);
         capturar(new TituloDetalheDialog(principal, servicos, matrix), pasta, "titulo-detalhe", tema);
         capturar(new ClienteDetalheDialog(principal, servicos, ana), pasta, "cliente-ficha", tema);
-        capturar(new TituloDialog(principal, servicos.titulos(), matrix), pasta, "titulo-formulario", tema);
+        capturar(new TituloDialog(principal, servicos, matrix), pasta, "titulo-formulario", tema);
         capturar(new ClienteDialog(principal, servicos.clientes(), null), pasta, "cliente-formulario", tema);
         capturar(new NovaLocacaoDialog(principal, servicos, null), pasta, "nova-locacao", tema);
         capturar(new AquisicaoDialog(principal, servicos), pasta, "aquisicao", tema);

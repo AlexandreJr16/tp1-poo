@@ -4,6 +4,7 @@ import com.formdev.flatlaf.FlatClientProperties;
 import locadora.view.Tema;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -14,13 +15,15 @@ import java.awt.Component;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /* Celula padrao das tabelas: valores ja formatados, numeros a direita, travessao cinza na celula vazia
    e linhas em destaque em vermelho.
    aplicar: configura a tabela inteira (celulas e cabecalho) com o visual da locadora e devolve a celula usada
    ajustarLarguras: reparte a largura das colunas conforme o tamanho do conteudo
-   destacar: escolhe quais linhas ficam em vermelho */
+   destacar: escolhe quais linhas ficam em vermelho
+   iconeNaPrimeiraColuna: mostra um icone (ex.: a capa) antes do texto da primeira coluna */
 public class CelulaTabela<T> extends DefaultTableCellRenderer {
 
     private static final int LINHAS_MEDIDAS = 60;
@@ -28,6 +31,7 @@ public class CelulaTabela<T> extends DefaultTableCellRenderer {
 
     private final ModeloTabela<T> modelo;
     private Predicate<T> destaque = item -> false;
+    private Function<T, Icon> icone = item -> null;
 
     private CelulaTabela(ModeloTabela<T> modelo) {
         this.modelo = modelo;
@@ -75,12 +79,18 @@ public class CelulaTabela<T> extends DefaultTableCellRenderer {
         destaque = criterio;
     }
 
+    public void iconeNaPrimeiraColuna(Function<T, Icon> icone) {
+        this.icone = icone;
+    }
+
     @Override
     public Component getTableCellRendererComponent(JTable tabela, Object valor, boolean selecionada, boolean foco, int linha, int coluna) {
         String texto = ModeloTabela.formatar(valor);
         super.getTableCellRendererComponent(tabela, texto.isEmpty() ? VAZIO : texto, selecionada, false, linha, coluna);
         setHorizontalAlignment(Number.class.isAssignableFrom(tabela.getColumnClass(coluna)) ? RIGHT : LEFT);
         setBorder(BorderFactory.createEmptyBorder(0, Tema.ESPACO_3, 0, Tema.ESPACO_3));
+        setIcon(coluna == 0 ? icone.apply(modelo.linha(tabela.convertRowIndexToModel(linha))) : null);
+        setIconTextGap(Tema.ESPACO_3);
         if (!selecionada) {
             boolean emDestaque = destaque.test(modelo.linha(tabela.convertRowIndexToModel(linha)));
             setForeground(emDestaque ? Tema.perigo() : texto.isEmpty() ? Tema.suave() : tabela.getForeground());

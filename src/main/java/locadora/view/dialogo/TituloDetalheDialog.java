@@ -10,6 +10,7 @@ import locadora.service.Formato;
 import locadora.view.Icone;
 import locadora.view.Tema;
 import locadora.view.componente.Botoes;
+import locadora.view.componente.Capa;
 import locadora.view.componente.Eventos;
 import locadora.view.componente.Fileira;
 import locadora.view.componente.LinhaDoTempo;
@@ -38,8 +39,13 @@ import static locadora.view.componente.ModeloTabela.data;
 import static locadora.view.componente.ModeloTabela.dinheiro;
 import static locadora.view.componente.ModeloTabela.texto;
 
-// detalhe do titulo: valores do tipo, contagem por situacao, exemplares e a linha do tempo do exemplar escolhido
+// detalhe do titulo: capa, valores do tipo, contagem por situacao, exemplares e a linha do tempo do exemplar escolhido
 public class TituloDetalheDialog extends JDialog {
+
+    private static final int LARGURA_DA_CAPA = 120;
+    private static final int ALTURA_DA_CAPA = 176;
+    // no HTML do Swing, pt equivale a 1 pixel
+    private static final int LARGURA_DA_DESCRICAO = 640;
 
     private final Main.Servicos servicos;
     private final Titulo titulo;
@@ -68,7 +74,7 @@ public class TituloDetalheDialog extends JDialog {
         conteudo.add(rodape(), BorderLayout.SOUTH);
         setContentPane(conteudo);
         Eventos.tecla(getRootPane(), "ESCAPE", this::dispose);
-        setSize(1000, 620);
+        setSize(1000, 720);
         setLocationRelativeTo(getOwner());
         carregar();
     }
@@ -94,24 +100,27 @@ public class TituloDetalheDialog extends JDialog {
         JLabel ficha = new JLabel(titulo.tipo() + " · " + titulo.getAno() + " · prazo de " + titulo.getPrazoMaximoDias() + " dias · locação "
                 + Formato.dinheiro(titulo.valorLocacao()) + " · multa " + Formato.dinheiro(titulo.valorMultaDiaria()) + " por dia de atraso");
         ficha.putClientProperty(FlatClientProperties.STYLE, "foreground: $Locadora.suave");
-        JLabel descricao = new JLabel(titulo.getDescricao());
-        descricao.setBorder(BorderFactory.createEmptyBorder(Tema.ESPACO_1, 0, 0, 0));
-        JPanel textos = new JPanel();
-        textos.setLayout(new BoxLayout(textos, BoxLayout.Y_AXIS));
-        textos.add(nome);
-        textos.add(ficha);
-        textos.add(descricao);
+        JLabel descricao = new JLabel("<html><div style='width: " + LARGURA_DA_DESCRICAO + "pt'>" + titulo.getDescricao() + "</div></html>");
+        descricao.setBorder(BorderFactory.createEmptyBorder(Tema.ESPACO_2, 0, 0, 0));
 
         Estoque estoque = servicos.titulos().estoqueDe(titulo.getId());
-        JPanel contagem = new JPanel(new BorderLayout());
-        contagem.add(new Fileira(Tema.ESPACO_2,
+        Fileira contagem = new Fileira(Tema.ESPACO_2,
                 etiqueta(estoque.disponiveis(), "disponível", "disponíveis", "Locadora.sucesso"),
                 etiqueta(estoque.alugados(), "alugado", "alugados", "Component.accentColor"),
                 etiqueta(estoque.reservados(), "reservado", "reservados", "Locadora.aviso"),
-                etiqueta(estoque.perdidos(), "perdido", "perdidos", "Locadora.perigo")), BorderLayout.NORTH);
-        JPanel topo = new JPanel(new BorderLayout(Tema.ESPACO_4, 0));
+                etiqueta(estoque.perdidos(), "perdido", "perdidos", "Locadora.perigo"));
+        contagem.setBorder(BorderFactory.createEmptyBorder(Tema.ESPACO_4, 0, 0, 0));
+        contagem.setMaximumSize(contagem.getPreferredSize());
+
+        JPanel textos = new JPanel();
+        textos.setLayout(new BoxLayout(textos, BoxLayout.Y_AXIS));
+        for (JComponent parte : List.of(nome, ficha, descricao, contagem)) {
+            parte.setAlignmentX(Component.LEFT_ALIGNMENT);
+            textos.add(parte);
+        }
+        JPanel topo = new JPanel(new BorderLayout(Tema.ESPACO_5, 0));
+        topo.add(new JLabel(new Capa(servicos.capas().capa(titulo.getId()), LARGURA_DA_CAPA, ALTURA_DA_CAPA)), BorderLayout.WEST);
         topo.add(textos, BorderLayout.CENTER);
-        topo.add(contagem, BorderLayout.EAST);
         return topo;
     }
 
