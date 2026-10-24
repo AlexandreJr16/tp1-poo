@@ -29,6 +29,6 @@ public class BluRay extends Titulo {
 
     @Override
     public String categoria() {
-        return "";
+        return "filme";
     }
 }

@@ -29,6 +29,6 @@ public class Cd extends Titulo {
 
     @Override
     public String categoria() {
-        return "";
+        return "álbum";
     }
 }

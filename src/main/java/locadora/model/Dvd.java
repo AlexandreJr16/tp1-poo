@@ -29,6 +29,6 @@ public class Dvd extends Titulo {
 
     @Override
     public String categoria() {
-        return "";
+        return "filme";
     }
 }

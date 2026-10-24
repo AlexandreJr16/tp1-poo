@@ -29,6 +29,6 @@ public class FitaVideo extends Titulo {
 
     @Override
     public String categoria() {
-        return "";
+        return "filme";
     }
 }
