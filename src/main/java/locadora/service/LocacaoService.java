@@ -8,6 +8,7 @@ import locadora.model.Cliente;
 import locadora.model.Exemplar;
 import locadora.model.Funcionario;
 import locadora.model.Locacao;
+import locadora.model.Recomendacao;
 import locadora.model.Reserva;
 import locadora.model.Situacao;
 import locadora.model.SituacaoReserva;
@@ -38,6 +39,7 @@ import java.util.stream.Stream;
      hoje: dia atual pelo relogio do sistema */
 public class LocacaoService {
 
+    public static final int LIMITE_DE_RECOMENDACOES = 5;
     private static final int LIMITE_LOCACOES_ATIVAS = 3;
 
     private final LocacaoDao locacoes;
@@ -152,6 +154,10 @@ public class LocacaoService {
     public BigDecimal faturamentoDoMes() {
         LocalDate hoje = hoje();
         return locacoes.faturamentoEntre(hoje.withDayOfMonth(1), hoje.withDayOfMonth(hoje.lengthOfMonth()));
+    }
+
+    public List<Recomendacao> recomendacoes(int clienteId) {
+        return List.of();
     }
 
     public LocalDate hoje() {
