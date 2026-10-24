@@ -2,8 +2,8 @@
 
 ![CI](https://github.com/AleJr16/locadora/actions/workflows/ci.yml/badge.svg)
 ![Java 17](https://img.shields.io/badge/Java-17-007396)
-![Testes](https://img.shields.io/badge/testes-156%20passando-brightgreen)
-![Cobertura](https://img.shields.io/badge/cobertura%20(model%2C%20dao%2C%20service)-98%25-brightgreen)
+![Testes](https://img.shields.io/badge/testes-173%20passando-brightgreen)
+![Cobertura](https://img.shields.io/badge/cobertura%20(model%2C%20dao%2C%20service)-97%25-brightgreen)
 
 Sistema desktop para a gestão de uma locadora de **Blu-rays, DVDs, CDs e fitas de vídeo**: acervo, clientes,
 locações e devoluções com multa, fila de reservas, aquisições, perdas e controle de acesso por cargo.
@@ -19,13 +19,15 @@ Autor: **Alexandre Pereira**.
 |---|---|
 | **Login e perfis** | Funcionários entram com login e senha (hash SHA-256 com sal). Gerentes veem tudo; atendentes não registram aquisições, perdas nem funcionários. |
 | **Painel** | Locações em aberto, atrasadas, multas em aberto, faturamento do mês, títulos no acervo e reservas prontas, além das próximas devoluções e das atrasadas. |
-| **Títulos** | Cadastro por tipo de mídia, busca e filtro por tipo, número de exemplares por situação e detalhe com a **linha do tempo** de cada exemplar. |
-| **Clientes** | Cadastro com validação de CPF, ficha com histórico, multas pendentes e reservas. Quem deve multa aparece em vermelho. |
+| **Títulos** | Cadastro por tipo de mídia com **capa e sinopse automáticas** (Wikipédia), busca e filtro por tipo, número de exemplares por situação e detalhe com a **linha do tempo** de cada exemplar. |
+| **Clientes** | Cadastro com validação de CPF, ficha com histórico, multas pendentes, reservas e **recomendações**. Quem deve multa aparece em vermelho. |
+| **Recomendações** | "Quem alugou isso também alugou": sugere títulos que clientes com gosto parecido alugaram, mostrando o porquê ("porque alugou Cidade de Deus"). Sem histórico, sugere os mais alugados. Na nova locação, um clique na sugestão já escolhe o exemplar. |
 | **Locações** | Nova locação (só cliente ativo, sem multa e com até 3 locações abertas), devolução com prévia da multa, pagamento de multa e renovação. |
 | **Reservas** | Fila de espera por título indisponível. Quando um exemplar volta ou é comprado, ele fica separado para o primeiro da fila. |
 | **Aquisições** | Compra de título existente ou novo, gerando exemplares com códigos sequenciais (`T7-004`). |
 | **Perdas** | Exemplar perdido nunca volta a ser alugado. Se estava alugado, o cliente é cobrado do custo mais a multa até a data. |
 | **Busca global** | `Ctrl+K` acha título, cliente (nome ou CPF) ou exemplar (código) e abre a tela certa. |
+| **Busca aproximada** | Todas as buscas ignoram acento e pontuação e toleram erro de digitação: "matirx" acha *Matrix*, "estar wars" acha *Star Wars*. |
 | **Arquivo** | Exportação de qualquer tabela para CSV (abre no Excel com acentos), backup e restauração do banco. |
 | **Interface** | Tema claro e escuro, ícones desenhados em Java2D, atalhos `Ctrl+1…8`, estados vazios e confirmação antes de ações irreversíveis. |
 
@@ -47,7 +49,12 @@ As datas do exemplo são relativas ao dia de hoje, então sempre há locações 
 | `joana` | `joana123` | Atendente |
 | `marcos` | `marcos123` | Atendente |
 
-Para recomeçar do zero, basta apagar o `locadora.db`.
+Para recomeçar do zero, basta apagar o `locadora.db`. Quem rodou uma versão anterior precisa apagá-lo uma vez,
+porque o esquema ganhou a coluna da capa.
+
+**Internet é opcional.** As capas dos títulos de exemplo vêm dentro do jar. Ao cadastrar um título novo, o sistema
+busca a capa e a sinopse na Wikipédia em português depois de uma pausa na digitação. Sem internet, o cadastro
+funciona igual e o título fica com o ícone da mídia no lugar da capa.
 
 ## Arquitetura
 
@@ -147,6 +154,9 @@ SQLite via JDBC puro, sem ORM. O esquema está em `src/main/resources/schema.sql
 - Chaves estrangeiras ligadas em toda conexão.
 - Operações que mexem em várias tabelas (locar, devolver, adquirir, perder, cancelar reserva) rodam numa transação
   só, com `commit` ou `rollback`.
+- A capa do título fica numa coluna `BLOB`, que também serve de cache da busca na internet.
+- As recomendações são **uma consulta SQL** (filtragem colaborativa item a item): pega os títulos que o cliente
+  alugou, acha os outros clientes que alugaram algum deles e conta o que esses clientes alugaram e ele ainda não.
 
 ## Testes
 
@@ -154,7 +164,7 @@ O projeto foi desenvolvido com **TDD**: cada regra nasceu de um teste vermelho (
 até passar (`implementa …`). O histórico do git mostra os dois passos.
 
 ```bash
-mvn verify      # 154 testes + relatório de cobertura em target/site/jacoco/index.html
+mvn verify      # 173 testes + relatório de cobertura em target/site/jacoco/index.html
 ```
 
 - `model`: regras puras (multa polimórfica, CPF, senha, transições).
@@ -167,9 +177,10 @@ O build falha se a cobertura de linhas de `model` ou `service` cair abaixo de 80
 
 | | |
 |---|---|
+| ![Títulos com capa](docs/telas/titulos-claro.png) | ![Nova locação com sugestões](docs/telas/nova-locacao-escolhida-escuro.png) |
 | ![Login](docs/telas/login-claro.png) | ![Locações](docs/telas/locacoes-claro.png) |
-| ![Detalhe do título com linha do tempo](docs/telas/titulo-detalhe-escuro.png) | ![Busca global](docs/telas/busca-global-escuro.png) |
-| ![Ficha do cliente](docs/telas/cliente-ficha-claro.png) | ![Painel no tema escuro](docs/telas/painel-escuro.png) |
+| ![Detalhe do título com capa e linha do tempo](docs/telas/titulo-detalhe-escuro.png) | ![Busca global](docs/telas/busca-global-escuro.png) |
+| ![Ficha do cliente com recomendações](docs/telas/cliente-ficha-claro.png) | ![Painel no tema escuro](docs/telas/painel-escuro.png) |
 
 ## Estrutura
 
@@ -182,6 +193,7 @@ src/main/java/locadora/
   view/            login, janela principal, telas, diálogos e componentes
 src/main/resources/
   schema.sql  seed.sql  locadora/tema/FlatLaf.properties
+  capas/           capas dos títulos de exemplo
 src/test/java/locadora/
   model/  dao/  service/   testes JUnit
   view/CapturaTelas.java   gera as imagens das telas nos dois temas
@@ -189,4 +201,7 @@ src/test/java/locadora/
 
 ## Tecnologias
 
-Java 17 · Swing · [FlatLaf](https://www.formdev.com/flatlaf/) · SQLite (`sqlite-jdbc`) · Maven · JUnit · JaCoCo · GitHub Actions
+Java 17 · Swing · [FlatLaf](https://www.formdev.com/flatlaf/) · SQLite (`sqlite-jdbc`) ·
+[FuzzyWuzzy](https://github.com/xdrop/fuzzywuzzy) (busca aproximada) · Maven · JUnit · JaCoCo · GitHub Actions
+
+Capas e sinopses: [Wikipédia em português](https://pt.wikipedia.org), usadas para fins acadêmicos.
