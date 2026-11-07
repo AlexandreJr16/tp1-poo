@@ -6,7 +6,9 @@ import locadora.view.Tema;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
-// base das telas da janela principal: margem padrao, fundo do conteudo e atualizar chamado sempre que a tela aparece
+/**
+ * Base das telas da janela principal: margem padrao, fundo do conteudo e atualizar chamado sempre que a tela aparece.
+ */
 public abstract class Painel extends JPanel {
 
     protected Painel() {
@@ -15,5 +17,8 @@ public abstract class Painel extends JPanel {
         putClientProperty(FlatClientProperties.STYLE, "background: $Locadora.fundo");
     }
 
+    /**
+     * Recarrega os dados da tela; chamado sempre que ela aparece.
+     */
     public abstract void atualizar();
 }

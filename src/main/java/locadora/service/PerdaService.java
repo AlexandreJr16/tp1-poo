@@ -16,12 +16,9 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
-/* - Perda (so gerente):
-     registrar: marca o exemplar como perdido; se estava alugado, encerra a locacao cobrando custo mais multa;
-                se estava separado para uma reserva, devolve a reserva para a fila
-   - Consulta:
-     previaCobranca: quanto o cliente pagaria se o exemplar alugado fosse dado como perdido hoje
-     listar: historico de perdas, da mais recente para a mais antiga */
+/**
+ * Regras do tratamento de perdas: o exemplar sai do acervo e, se estava alugado, o cliente e cobrado.
+ */
 public class PerdaService {
 
     private final PerdaDao perdas;
@@ -38,11 +35,17 @@ public class PerdaService {
         this.relogio = relogio;
     }
 
+    /**
+     * Quanto o cliente pagaria se o exemplar alugado fosse dado como perdido hoje.
+     */
     public BigDecimal previaCobranca(int exemplarId) {
         Locacao locacao = locacoes.ativaDoExemplar(exemplarId);
         return locacao == null ? Locacao.SEM_MULTA : locacao.multaAte(LocalDate.now(relogio)).add(locacao.getExemplar().getCusto());
     }
 
+    /**
+     * Marca o exemplar como perdido; se estava alugado, encerra a locacao cobrando custo mais multa; se estava separado para uma reserva, devolve a reserva para a fila.
+     */
     public Perda registrar(int exemplarId, String motivo) {
         Funcionario funcionario = AuthService.exigirGerente();
         RegraException.se(motivo.isBlank(), "Informe o motivo da perda.");
@@ -65,6 +68,9 @@ public class PerdaService {
         return perda;
     }
 
+    /**
+     * Historico de perdas, da mais recente para a mais antiga.
+     */
     public List<Perda> listar() {
         return perdas.listar();
     }

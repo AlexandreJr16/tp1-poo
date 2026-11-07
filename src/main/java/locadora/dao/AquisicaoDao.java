@@ -9,11 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-/* - Registro:
-     registrar: grava a aquisicao, os exemplares novos e as reservas que eles atenderam, tudo junto
-   - Consulta:
-     listar: historico de aquisicoes, da mais recente para a mais antiga
-     buscarDoExemplar: aquisicao que trouxe um exemplar */
+/**
+ * Acesso a tabela de aquisicoes. Gravar uma compra grava junto os exemplares novos e as reservas que eles atenderam.
+ */
 public class AquisicaoDao {
 
     private static final String SELECIONAR =
@@ -33,6 +31,9 @@ public class AquisicaoDao {
         this.reservas = reservas;
     }
 
+    /**
+     * Grava a aquisicao, os exemplares novos e as reservas que eles atenderam, tudo junto.
+     */
     public void registrar(Aquisicao aquisicao, List<Exemplar> novos, List<Reserva> preparadas) {
         conexao.transacao(c -> {
             aquisicao.setId(Conexao.inserir(c,
@@ -47,10 +48,16 @@ public class AquisicaoDao {
         });
     }
 
+    /**
+     * Historico de aquisicoes, da mais recente para a mais antiga.
+     */
     public List<Aquisicao> listar() {
         return conexao.listar(SELECIONAR + " ORDER BY a.data DESC, a.id DESC", this::ler);
     }
 
+    /**
+     * Aquisicao que trouxe um exemplar.
+     */
     public Aquisicao buscarDoExemplar(int exemplarId) {
         return conexao.buscar(SELECIONAR + " JOIN exemplar e ON e.aquisicao_id = a.id WHERE e.id = ?", this::ler, exemplarId);
     }

@@ -5,15 +5,17 @@ import locadora.view.Icone;
 
 import javax.swing.JButton;
 
-/* Botoes padrao das telas.
-   primario: acao principal, na cor de destaque
-   secundario: acao comum, com borda
-   discreto: acao leve, sem borda (barras e rodapes) */
+/**
+ * Botoes padrao das telas.
+ */
 public final class Botoes {
 
     private Botoes() {
     }
 
+    /**
+     * Acao principal, na cor de destaque.
+     */
     public static JButton primario(String texto, Icone icone, Runnable acao) {
         JButton botao = criar(texto, icone, "Button.default.foreground", acao);
         botao.putClientProperty(FlatClientProperties.STYLE,
@@ -23,12 +25,18 @@ public final class Botoes {
         return botao;
     }
 
+    /**
+     * Acao comum, com borda.
+     */
     public static JButton secundario(String texto, Icone icone, Runnable acao) {
         JButton botao = criar(texto, icone, "Label.foreground", acao);
         botao.putClientProperty(FlatClientProperties.STYLE, "margin: 6,14,6,14");
         return botao;
     }
 
+    /**
+     * Acao leve, sem borda (barras e rodapes).
+     */
     public static JButton discreto(String texto, Icone icone, Runnable acao) {
         JButton botao = criar(texto, icone, "Label.foreground", acao);
         botao.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_TOOLBAR_BUTTON);

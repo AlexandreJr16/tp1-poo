@@ -11,14 +11,9 @@ import locadora.model.Reserva;
 import java.math.BigDecimal;
 import java.util.List;
 
-/* - Cadastro:
-     salvar: valida e grava um cliente novo (id 0) ou editado; desativar exige gerente
-   - Consulta:
-     buscar: cliente pelo id
-     listar: todos os clientes em ordem de nome
-     historico: locacoes do cliente, da mais recente para a mais antiga
-     multasPendentes: soma das multas que o cliente ainda deve
-     reservas: reservas do cliente, da mais recente para a mais antiga */
+/**
+ * Regras do cadastro de clientes: CPF valido e unico, e desativacao so pelo gerente.
+ */
 public class ClienteService {
 
     private final ClienteDao clientes;
@@ -31,6 +26,9 @@ public class ClienteService {
         this.reservas = reservas;
     }
 
+    /**
+     * Valida e grava um cliente novo (id 0) ou editado; desativar exige gerente.
+     */
     public Cliente salvar(Cliente cliente) {
         AuthService.exigirLogado();
         Cliente limpo = new Cliente(cliente.getId(), cliente.getNome().trim(), cliente.getCpf(), cliente.getTelefone().trim(),
@@ -50,22 +48,37 @@ public class ClienteService {
         return limpo;
     }
 
+    /**
+     * Cliente pelo id.
+     */
     public Cliente buscar(int id) {
         return clientes.buscar(id);
     }
 
+    /**
+     * Todos os clientes em ordem de nome.
+     */
     public List<Cliente> listar() {
         return clientes.listar();
     }
 
+    /**
+     * Locacoes do cliente, da mais recente para a mais antiga.
+     */
     public List<Locacao> historico(int clienteId) {
         return locacoes.doCliente(clienteId);
     }
 
+    /**
+     * Soma das multas que o cliente ainda deve.
+     */
     public BigDecimal multasPendentes(int clienteId) {
         return locacoes.multasPendentesDoCliente(clienteId);
     }
 
+    /**
+     * Reservas do cliente, da mais recente para a mais antiga.
+     */
     public List<Reserva> reservas(int clienteId) {
         return reservas.doCliente(clienteId);
     }

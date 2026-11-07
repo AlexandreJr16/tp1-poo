@@ -24,9 +24,9 @@ import java.time.Year;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-/* Cadastro e edicao de titulo; os valores de multa e locacao mudam na tela conforme o tipo escolhido.
-   Enquanto o nome e digitado, a capa e a sinopse sao buscadas na Wikipedia depois de uma pausa (debounce).
-   Sem internet o cadastro funciona igual, so sem capa. Uma capa ja salva nunca e trocada pela busca. */
+/**
+ * Cadastro e edicao de titulo; os valores de multa e locacao mudam na tela conforme o tipo escolhido. Enquanto o nome e digitado, a capa e a sinopse sao buscadas na Wikipedia depois de uma pausa (debounce). Sem internet o cadastro funciona igual, so sem capa. Uma capa ja salva nunca e trocada pela busca.
+ */
 public class TituloDialog extends Formulario {
 
     private static final int PAUSA_DA_DIGITACAO_MS = 700;
@@ -100,7 +100,9 @@ public class TituloDialog extends Formulario {
         situacaoDaCapa.setText(situacao);
     }
 
-    // a busca roda fora da tela; se o nome mudou enquanto ela rodava, a resposta antiga e descartada
+    /**
+     * A busca roda fora da tela; se o nome mudou enquanto ela rodava, a resposta antiga e descartada.
+     */
     private void buscarCapa() {
         String procurado = nome.getText().trim();
         String tipoProcurado = (String) tipo.getSelectedItem();

@@ -9,9 +9,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
-/* Card do painel com um numero em destaque.
-   setValor: troca o numero mostrado
-   setAlerta: pinta o numero com a cor de perigo quando ele pede atencao */
+/**
+ * Card do painel com um numero em destaque.
+ */
 public class CardNumero extends JPanel {
 
     private final JLabel valor = new JLabel("—");
@@ -30,10 +30,16 @@ public class CardNumero extends JPanel {
         add(valor, BorderLayout.CENTER);
     }
 
+    /**
+     * Troca o numero mostrado.
+     */
     public void setValor(String texto) {
         valor.setText(texto);
     }
 
+    /**
+     * Pinta o numero com a cor de perigo quando ele pede atencao.
+     */
     public void setAlerta(boolean alerta) {
         valor.putClientProperty(FlatClientProperties.STYLE, alerta ? "foreground: $Locadora.perigo" : null);
     }

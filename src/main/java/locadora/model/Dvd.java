@@ -2,6 +2,9 @@ package locadora.model;
 
 import java.math.BigDecimal;
 
+/**
+ * Titulo em DVD: locacao de R$ 8,00 e multa de R$ 3,50 por dia de atraso.
+ */
 public class Dvd extends Titulo {
 
     public static final String TIPO = "DVD";

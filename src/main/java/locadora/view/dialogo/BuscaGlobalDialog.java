@@ -28,8 +28,9 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.List;
 import java.util.function.Consumer;
 
-/* Busca global (Ctrl+K): campo grande no topo e resultados de titulos, clientes e exemplares abaixo.
-   Setas navegam, Enter abre o resultado escolhido, Esc ou clicar fora fecha. */
+/**
+ * Busca global (Ctrl+K): campo grande no topo e resultados de titulos, clientes e exemplares abaixo. Setas navegam, Enter abre o resultado escolhido, Esc ou clicar fora fecha.
+ */
 public class BuscaGlobalDialog extends JDialog {
 
     private final BuscaService busca;
@@ -105,7 +106,9 @@ public class BuscaGlobalDialog extends JDialog {
         aoEscolher.accept(escolhido);
     }
 
-    // linha do resultado: icone do tipo, nome em destaque e detalhe embaixo; a escolhida ganha um fundo arredondado suave
+    /**
+     * Linha do resultado: icone do tipo, nome em destaque e detalhe embaixo; a escolhida ganha um fundo arredondado suave.
+     */
     private static class Linha extends JPanel implements ListCellRenderer<BuscaService.Resultado> {
 
         private final JLabel icone = new JLabel();

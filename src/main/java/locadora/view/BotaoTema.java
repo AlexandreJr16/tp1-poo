@@ -4,7 +4,9 @@ import com.formdev.flatlaf.FlatClientProperties;
 
 import javax.swing.JButton;
 
-// botao que alterna entre tema claro e escuro; mostra a lua no claro e o sol no escuro
+/**
+ * Botao que alterna entre tema claro e escuro; mostra a lua no claro e o sol no escuro.
+ */
 public final class BotaoTema {
 
     private BotaoTema() {

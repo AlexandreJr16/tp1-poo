@@ -20,17 +20,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-/* Base dos formularios em dialogo: rotulo acima de cada campo, Cancelar e o botao principal no rodape,
-   Esc fecha e Enter confirma. O dialogo so fecha quando salvar() termina sem quebrar uma regra.
-   - Montagem (pelas subclasses):
-     bloco: rotulo acima de um campo, para montar grupos de campos dentro do formulario
-     campo: uma linha com um campo na largura toda
-     campos: uma linha com dois campos lado a lado
-     nota: texto de apoio na largura toda
-     paragrafo: HTML que quebra linha na largura do formulario
-     reajustar: refaz o tamanho depois de uma mudanca no conteudo
-   - Uso:
-     abrir: mostra o dialogo e diz se a pessoa confirmou */
+/**
+ * Base dos formularios em dialogo: rotulo acima de cada campo, Cancelar e o botao principal no rodape, Esc fecha e Enter confirma. O dialogo so fecha quando salvar() termina sem quebrar uma regra.
+ */
 public abstract class Formulario extends JDialog {
 
     // largura do conteudo sem as margens; as duas colunas nunca ficam mais estreitas que a metade disso
@@ -63,13 +55,21 @@ public abstract class Formulario extends JDialog {
         setResizable(false);
     }
 
+    /**
+     * Valida e grava o formulario. Se lancar RegraException, a mensagem aparece e o dialogo continua aberto.
+     */
     protected abstract void salvar();
 
-    // chamado antes de salvar; a subclasse pode pedir uma confirmacao e devolver false para desistir
+    /**
+     * Chamado antes de salvar; a subclasse pode pedir uma confirmacao e devolver false para desistir.
+     */
     protected boolean podeSalvar() {
         return true;
     }
 
+    /**
+     * Mostra o dialogo e diz se a pessoa confirmou.
+     */
     public boolean abrir() {
         pack();
         setLocationRelativeTo(getOwner());
@@ -77,28 +77,43 @@ public abstract class Formulario extends JDialog {
         return confirmado;
     }
 
+    /**
+     * HTML que quebra linha na largura do formulario.
+     */
     // texto em HTML que quebra linha na largura do formulario (no HTML do Swing, pt equivale a 1 pixel)
     protected static String paragrafo(String html) {
         return "<html><div style='width: " + LARGURA_DO_CONTEUDO + "pt'>" + html + "</div></html>";
     }
 
+    /**
+     * Refaz o tamanho depois de uma mudanca no conteudo.
+     */
     // reajusta a altura quando um texto ou um bloco muda com o dialogo aberto
     protected void reajustar() {
         if (isDisplayable())
             pack();
     }
 
+    /**
+     * Uma linha com um campo na largura toda.
+     */
     protected void campo(String rotulo, JComponent componente) {
         adicionar(rotulo, componente, 0, 2);
         linha++;
     }
 
+    /**
+     * Uma linha com dois campos lado a lado.
+     */
     protected void campos(String primeiroRotulo, JComponent primeiro, String segundoRotulo, JComponent segundo) {
         adicionar(primeiroRotulo, primeiro, 0, 1);
         adicionar(segundoRotulo, segundo, 1, 1);
         linha++;
     }
 
+    /**
+     * Texto de apoio na largura toda.
+     */
     protected void nota(String texto) {
         JLabel apoio = new JLabel(paragrafo(texto));
         apoio.putClientProperty(FlatClientProperties.STYLE, "foreground: $Locadora.suave");
@@ -106,6 +121,9 @@ public abstract class Formulario extends JDialog {
         linha++;
     }
 
+    /**
+     * Rotulo acima de um campo, para montar grupos de campos dentro do formulario.
+     */
     // rotulo acima do campo, no mesmo padrao de todos os formularios
     protected static JPanel bloco(String rotulo, JComponent componente) {
         JPanel bloco = new JPanel(new BorderLayout(0, Tema.ESPACO_1));

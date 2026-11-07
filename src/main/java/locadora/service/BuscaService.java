@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/* - Busca global (Ctrl+K):
-     buscar: acha titulos pelo nome, clientes pelo nome ou cpf e exemplares pelo codigo,
-             ignorando acentos, maiusculas e pequenos erros de digitacao; o id de um exemplar encontrado e o do titulo dele */
+/**
+ * Busca global por titulo, cliente (nome ou CPF) e exemplar (codigo), tolerando acento e erro de digitacao.
+ */
 public class BuscaService {
 
     public static final int LIMITE = 12;
@@ -47,6 +47,9 @@ public class BuscaService {
         this.exemplares = exemplares;
     }
 
+    /**
+     * Acha titulos pelo nome, clientes pelo nome ou cpf e exemplares pelo codigo, ignorando acentos, maiusculas e pequenos erros de digitacao; o id de um exemplar encontrado e o do titulo dele.
+     */
     public List<Resultado> buscar(String texto) {
         String termo = Formato.normalizar(texto);
         if (termo.length() < MINIMO_DE_LETRAS)

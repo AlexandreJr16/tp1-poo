@@ -18,12 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-/* Faixa de titulos recomendados: cada cartao tem a capa e, ao lado, o nome e o motivo
-   ("porque alugou Matrix" ou "popular na locadora").
-   Sem recomendacoes, mostra um aviso no lugar, sempre com a mesma altura para o dialogo nao pular.
-   setRecomendacoes: troca os titulos mostrados (as capas vem pelo id do titulo)
-   setAvisoSemItens: frase mostrada quando nao ha recomendacao
-   aoEscolher: acao do clique num titulo (sem ela, a faixa so mostra) */
+/**
+ * Faixa de titulos recomendados: cada cartao tem a capa e, ao lado, o nome e o motivo ("porque alugou Matrix" ou "popular na locadora"). Sem recomendacoes, mostra um aviso no lugar, sempre com a mesma altura para o dialogo nao pular.
+ */
 public class Vitrine extends JPanel {
 
     // cabe nome e motivo com ate duas linhas cada, mesmo quando a capa e menor
@@ -49,6 +46,9 @@ public class Vitrine extends JPanel {
         add(aviso, BorderLayout.CENTER);
     }
 
+    /**
+     * Troca os titulos mostrados (as capas vem pelo id do titulo).
+     */
     public void setRecomendacoes(List<Recomendacao> recomendacoes, Map<Integer, byte[]> capas) {
         cartoes.removeAll();
         recomendacoes.forEach(recomendacao -> cartoes.adicionar(cartao(recomendacao, capas.get(recomendacao.titulo().getId()))));
@@ -58,10 +58,16 @@ public class Vitrine extends JPanel {
         repaint();
     }
 
+    /**
+     * Frase mostrada quando nao ha recomendacao.
+     */
     public void setAvisoSemItens(String texto) {
         aviso.setText(texto);
     }
 
+    /**
+     * Acao do clique num titulo (sem ela, a faixa so mostra).
+     */
     public void aoEscolher(Consumer<Titulo> acao) {
         aoEscolher = acao;
     }

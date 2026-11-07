@@ -16,8 +16,9 @@ import javax.swing.JTextArea;
 import java.awt.Component;
 import java.math.BigDecimal;
 
-/* Registro de perda: escolhe o exemplar, informa o motivo e ve antes o que acontece
-   (se estava alugado, o cliente e cobrado do custo mais a multa ate hoje). Pede confirmacao. */
+/**
+ * Registro de perda: escolhe o exemplar, informa o motivo e ve antes o que acontece (se estava alugado, o cliente e cobrado do custo mais a multa ate hoje). Pede confirmacao.
+ */
 public class PerdaDialog extends Formulario {
 
     private final Main.Servicos servicos;

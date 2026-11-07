@@ -24,9 +24,9 @@ import static locadora.view.componente.ModeloTabela.data;
 import static locadora.view.componente.ModeloTabela.dinheiro;
 import static locadora.view.componente.ModeloTabela.texto;
 
-/* Tela de locacoes: nova locacao, devolucao com previa da multa, pagamento de multa e renovacao.
-   Atrasadas e multas pendentes aparecem em vermelho.
-   atualizar: recarrega as locacoes */
+/**
+ * Tela de locacoes: nova locacao, devolucao com previa da multa, pagamento de multa e renovacao. Atrasadas e multas pendentes aparecem em vermelho.
+ */
 public class LocacoesPanel extends Painel {
 
     private static final String[] FILTROS = {"Em aberto", "Atrasadas", "Com multa pendente", "Todas"};
@@ -70,6 +70,9 @@ public class LocacoesPanel extends Painel {
         add(tabela, BorderLayout.CENTER);
     }
 
+    /**
+     * Recarrega as locacoes.
+     */
     @Override
     public void atualizar() {
         tabela.setDados(servicos.locacoes().listar());

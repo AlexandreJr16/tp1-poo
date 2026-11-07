@@ -26,18 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-/* - Cadastro:
-     salvar: valida e grava um titulo novo (id 0) ou editado, ja na subclasse do tipo escolhido
-   - Consulta:
-     buscar: titulo pelo id
-     listar: todos os titulos em ordem de nome
-     estoque: contagem por situacao dos exemplares de cada titulo
-     estoqueDe: contagem de um titulo, vazia se ele ainda nao tem exemplares
-     exemplares: exemplares de um titulo
-     exemplaresNoAcervo: exemplares que ainda nao foram perdidos, em ordem de titulo
-     amostra: titulo vazio de um tipo, para a tela mostrar os valores da midia
-   - Historia:
-     linhaDoTempo: aquisicao, locacoes, devolucoes e perda de um exemplar em ordem cronologica */
+/**
+ * Regras do cadastro de titulos e consultas do acervo.
+ */
 public class TituloService {
 
     public static final List<String> TIPOS = List.of(BluRay.TIPO, Dvd.TIPO, Cd.TIPO, FitaVideo.TIPO);
@@ -60,6 +51,9 @@ public class TituloService {
         this.relogio = relogio;
     }
 
+    /**
+     * Valida e grava um titulo novo (id 0) ou editado, ja na subclasse do tipo escolhido.
+     */
     public Titulo salvar(String tipo, int id, String nome, String descricao, int ano, int prazoMaximoDias) {
         AuthService.exigirLogado();
         int anoMaximo = LocalDate.now(relogio).getYear() + 1;
@@ -75,31 +69,52 @@ public class TituloService {
         return titulo;
     }
 
+    /**
+     * Titulo pelo id.
+     */
     public Titulo buscar(int id) {
         return titulos.buscar(id);
     }
 
+    /**
+     * Todos os titulos em ordem de nome.
+     */
     public List<Titulo> listar() {
         return titulos.listar();
     }
 
+    /**
+     * Contagem por situacao dos exemplares de cada titulo.
+     */
     public Map<Integer, Estoque> estoque() {
         return exemplares.estoquePorTitulo();
     }
 
+    /**
+     * Contagem de um titulo, vazia se ele ainda nao tem exemplares.
+     */
     public Estoque estoqueDe(int tituloId) {
         return estoque().getOrDefault(tituloId, Estoque.VAZIO);
     }
 
+    /**
+     * Exemplares de um titulo.
+     */
     public List<Exemplar> exemplares(int tituloId) {
         return exemplares.listarPorTitulo(tituloId);
     }
 
+    /**
+     * Titulo vazio de um tipo, para a tela mostrar os valores da midia.
+     */
     // titulo vazio do tipo, so para mostrar na tela a multa e o valor que cada midia cobra
     public Titulo amostra(String tipo) {
         return TituloDao.instanciar(tipo, 0, "", "", ANO_MINIMO, 1);
     }
 
+    /**
+     * Exemplares que ainda nao foram perdidos, em ordem de titulo.
+     */
     public List<Exemplar> exemplaresNoAcervo() {
         return Stream.of(Situacao.DISPONIVEL, Situacao.ALUGADO, Situacao.RESERVADO)
                 .flatMap(situacao -> exemplares.listarPorSituacao(situacao).stream())
@@ -107,6 +122,9 @@ public class TituloService {
                 .toList();
     }
 
+    /**
+     * Aquisicao, locacoes, devolucoes e perda de um exemplar em ordem cronologica.
+     */
     public List<Evento> linhaDoTempo(int exemplarId) {
         List<Evento> eventos = new ArrayList<>();
         Aquisicao aquisicao = aquisicoes.buscarDoExemplar(exemplarId);

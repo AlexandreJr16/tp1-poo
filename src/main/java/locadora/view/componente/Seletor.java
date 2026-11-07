@@ -23,13 +23,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
-/* Escolha de um item numa lista com busca, usada nos dialogos (cliente, exemplar, titulo).
-   A lista nunca fica em branco: sem itens, mostra um aviso no lugar.
-   setItens: troca os itens oferecidos
-   setAvisoSemItens: frase mostrada quando nao ha nada para escolher
-   selecionado: item escolhido, ou nulo
-   selecionar: limpa a busca e escolhe o primeiro item que atende ao criterio
-   aoSelecionar: acao a cada troca de escolha */
+/**
+ * Escolha de um item numa lista com busca, usada nos dialogos (cliente, exemplar, titulo). A lista nunca fica em branco: sem itens, mostra um aviso no lugar.
+ */
 public class Seletor<T> extends JPanel {
 
     private final JTextField busca = new JTextField();
@@ -68,20 +64,32 @@ public class Seletor<T> extends JPanel {
         filtrar();
     }
 
+    /**
+     * Troca os itens oferecidos.
+     */
     public void setItens(List<T> itens) {
         this.itens = List.copyOf(itens);
         filtrar();
     }
 
+    /**
+     * Frase mostrada quando nao ha nada para escolher.
+     */
     public void setAvisoSemItens(String texto) {
         avisoSemItens = texto;
         filtrar();
     }
 
+    /**
+     * Item escolhido, ou nulo.
+     */
     public T selecionado() {
         return lista.getSelectedValue();
     }
 
+    /**
+     * Limpa a busca e escolhe o primeiro item que atende ao criterio.
+     */
     public void selecionar(Predicate<T> criterio) {
         busca.setText("");
         IntStream.range(0, visiveis.size())
@@ -93,6 +101,9 @@ public class Seletor<T> extends JPanel {
                 });
     }
 
+    /**
+     * Acao a cada troca de escolha.
+     */
     public void aoSelecionar(Consumer<T> acao) {
         lista.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting())
@@ -123,7 +134,9 @@ public class Seletor<T> extends JPanel {
         }
     }
 
-    // cada linha mostra o rotulo em negrito e o detalhe em cinza; a escolhida ganha o fundo suave de destaque
+    /**
+     * Cada linha mostra o rotulo em negrito e o detalhe em cinza; a escolhida ganha o fundo suave de destaque.
+     */
     private class Linha extends DefaultListCellRenderer {
 
         @Override

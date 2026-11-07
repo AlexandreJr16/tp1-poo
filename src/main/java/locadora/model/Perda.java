@@ -2,6 +2,9 @@ package locadora.model;
 
 import java.time.LocalDate;
 
+/**
+ * Registro de um exemplar perdido, com o motivo e o funcionario. Se estava alugado, guarda a locacao que foi encerrada pela perda.
+ */
 public class Perda {
 
     private int id;

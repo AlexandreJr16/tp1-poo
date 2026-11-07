@@ -10,13 +10,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-/* Modelo de tabela montado a partir de uma lista de objetos e da descricao das colunas.
-   - Colunas:
-     texto, numero, data, dinheiro: criam a coluna com o tipo certo (ordenacao e alinhamento corretos)
-   - Dados:
-     setLinhas: troca as linhas mostradas
-     linha: objeto de uma linha do modelo
-     textoDaCelula: valor ja formatado para exibir, buscar e exportar */
+/**
+ * Modelo de tabela montado a partir de uma lista de objetos e da descricao das colunas.
+ */
 public class ModeloTabela<T> extends AbstractTableModel {
 
     public record Coluna<T>(String titulo, Class<?> tipo, Function<T, ?> valor) {
@@ -29,27 +25,45 @@ public class ModeloTabela<T> extends AbstractTableModel {
         this.colunas = colunas;
     }
 
+    /**
+     * Cria a coluna com o tipo certo (ordenacao e alinhamento corretos).
+     */
     public static <T> Coluna<T> texto(String titulo, Function<T, ?> valor) {
         return new Coluna<>(titulo, String.class, valor);
     }
 
+    /**
+     * Cria a coluna com o tipo certo (ordenacao e alinhamento corretos).
+     */
     public static <T> Coluna<T> numero(String titulo, Function<T, Integer> valor) {
         return new Coluna<>(titulo, Integer.class, valor);
     }
 
+    /**
+     * Cria a coluna com o tipo certo (ordenacao e alinhamento corretos).
+     */
     public static <T> Coluna<T> data(String titulo, Function<T, LocalDate> valor) {
         return new Coluna<>(titulo, LocalDate.class, valor);
     }
 
+    /**
+     * Cria a coluna com o tipo certo (ordenacao e alinhamento corretos).
+     */
     public static <T> Coluna<T> dinheiro(String titulo, Function<T, BigDecimal> valor) {
         return new Coluna<>(titulo, BigDecimal.class, valor);
     }
 
+    /**
+     * Troca as linhas mostradas.
+     */
     public void setLinhas(List<T> linhas) {
         this.linhas = List.copyOf(linhas);
         fireTableDataChanged();
     }
 
+    /**
+     * Objeto de uma linha do modelo.
+     */
     public T linha(int indice) {
         return linhas.get(indice);
     }
@@ -58,6 +72,9 @@ public class ModeloTabela<T> extends AbstractTableModel {
         return colunas.stream().map(Coluna::titulo).toList();
     }
 
+    /**
+     * Valor ja formatado para exibir, buscar e exportar.
+     */
     public String textoDaCelula(int linha, int coluna) {
         return formatar(getValueAt(linha, coluna));
     }

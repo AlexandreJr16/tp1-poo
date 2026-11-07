@@ -18,9 +18,9 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.List;
 
-/* Lista vertical dos eventos de um exemplar, com um trilho e uma bolinha por evento.
-   A descricao quebra linha numa largura fixa, entao a lista nunca precisa de rolagem lateral.
-   setEventos: troca os eventos mostrados */
+/**
+ * Lista vertical dos eventos de um exemplar, com um trilho e uma bolinha por evento. A descricao quebra linha numa largura fixa, entao a lista nunca precisa de rolagem lateral.
+ */
 public class LinhaDoTempo extends JList<Evento> {
 
     public static final int LARGURA = 328;
@@ -36,12 +36,17 @@ public class LinhaDoTempo extends JList<Evento> {
         putClientProperty(FlatClientProperties.STYLE, "background: $Locadora.cartao");
     }
 
+    /**
+     * Troca os eventos mostrados.
+     */
     public void setEventos(List<Evento> novos) {
         eventos.clear();
         novos.forEach(eventos::addElement);
     }
 
-    // um passo da linha do tempo: data pequena, descricao e quem registrou
+    /**
+     * Um passo da linha do tempo: data pequena, descricao e quem registrou.
+     */
     private static class Passo extends JPanel implements ListCellRenderer<Evento> {
 
         private final JLabel data = new JLabel();

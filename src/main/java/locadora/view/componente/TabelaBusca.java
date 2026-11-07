@@ -24,19 +24,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
-/* Tabela com busca aproximada (tolera acento e erro de digitacao), filtro extra, linhas em destaque, exportacao CSV e estado vazio.
-   - Dados:
-     setDados: troca as linhas e reaplica busca e filtro
-     selecionado: objeto da linha selecionada, ou nulo
-     selecionar: seleciona e rola ate a primeira linha que atende ao criterio
-   - Comportamento:
-     aoAbrir: acao do duplo clique ou do Enter numa linha
-     aoSelecionar: acao a cada troca de selecao (para ligar e desligar botoes)
-     filtrar: filtro extra combinado com a busca (ex.: tipo de midia)
-     destacar: linhas mostradas em vermelho (ex.: atrasadas)
-     comMiniatura: mostra uma imagem antes do texto da primeira coluna, com linhas mais altas
-     adicionarNaBarra: poe um componente ao lado da busca
-     permitirExportar: mostra o botao de exportar CSV com as linhas visiveis */
+/**
+ * Tabela com busca aproximada (tolera acento e erro de digitacao), filtro extra, linhas em destaque, exportacao CSV e estado vazio.
+ */
 public class TabelaBusca<T> extends JPanel {
 
     private static final String TABELA = "tabela";
@@ -85,17 +75,26 @@ public class TabelaBusca<T> extends JPanel {
         add(conteudo, BorderLayout.CENTER);
     }
 
+    /**
+     * Troca as linhas e reaplica busca e filtro.
+     */
     public void setDados(List<T> dados) {
         modelo.setLinhas(dados);
         aplicarFiltros();
         CelulaTabela.ajustarLarguras(tabela);
     }
 
+    /**
+     * Objeto da linha selecionada, ou nulo.
+     */
     public T selecionado() {
         int linha = tabela.getSelectedRow();
         return linha < 0 ? null : modelo.linha(tabela.convertRowIndexToModel(linha));
     }
 
+    /**
+     * Seleciona e rola ate a primeira linha que atende ao criterio.
+     */
     public void selecionar(Predicate<T> criterio) {
         IntStream.range(0, tabela.getRowCount())
                 .filter(linha -> criterio.test(modelo.linha(tabela.convertRowIndexToModel(linha))))
@@ -106,6 +105,9 @@ public class TabelaBusca<T> extends JPanel {
                 });
     }
 
+    /**
+     * Acao do duplo clique ou do Enter numa linha.
+     */
     public void aoAbrir(Consumer<T> acao) {
         Runnable abrir = () -> {
             if (selecionado() != null)
@@ -115,6 +117,9 @@ public class TabelaBusca<T> extends JPanel {
         Eventos.teclaNoComponente(tabela, "ENTER", abrir);
     }
 
+    /**
+     * Acao a cada troca de selecao (para ligar e desligar botoes).
+     */
     public void aoSelecionar(Consumer<T> acao) {
         tabela.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting())
@@ -122,25 +127,40 @@ public class TabelaBusca<T> extends JPanel {
         });
     }
 
+    /**
+     * Filtro extra combinado com a busca (ex.: tipo de midia).
+     */
     public void filtrar(Predicate<T> criterio) {
         filtroExtra = criterio;
         aplicarFiltros();
     }
 
+    /**
+     * Linhas mostradas em vermelho (ex.: atrasadas).
+     */
     public void destacar(Predicate<T> criterio) {
         celula.destacar(criterio);
         tabela.repaint();
     }
 
+    /**
+     * Mostra uma imagem antes do texto da primeira coluna, com linhas mais altas.
+     */
     public void comMiniatura(Function<T, Icon> miniatura, int alturaDaLinha) {
         celula.iconeNaPrimeiraColuna(miniatura);
         tabela.setRowHeight(alturaDaLinha);
     }
 
+    /**
+     * Poe um componente ao lado da busca.
+     */
     public void adicionarNaBarra(JComponent componente) {
         filtros.adicionar(componente);
     }
 
+    /**
+     * Mostra o botao de exportar CSV com as linhas visiveis.
+     */
     public void permitirExportar(ArquivoService arquivos, String nomeDoArquivo) {
         acoes.adicionar(Botoes.discreto("Exportar CSV", Icone.EXPORTAR, () -> exportar(arquivos, nomeDoArquivo)));
     }

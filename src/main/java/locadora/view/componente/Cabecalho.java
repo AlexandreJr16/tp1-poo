@@ -10,7 +10,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
-// topo de cada tela: titulo grande e subtitulo a esquerda, botoes de acao a direita
+/**
+ * Topo de cada tela: titulo grande e subtitulo a esquerda, botoes de acao a direita.
+ */
 public class Cabecalho extends JPanel {
 
     public Cabecalho(String titulo, String subtitulo, JComponent... acoes) {

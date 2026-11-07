@@ -3,6 +3,9 @@ package locadora.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * Compra de exemplares de um titulo feita pela locadora, com fornecedor, custo e o funcionario que registrou.
+ */
 public class Aquisicao {
 
     private int id;
@@ -24,6 +27,9 @@ public class Aquisicao {
         this.funcionario = funcionario;
     }
 
+    /**
+     * Custo unitario vezes a quantidade comprada.
+     */
     public BigDecimal custoTotal() {
         return custoUnitario.multiply(BigDecimal.valueOf(quantidade));
     }

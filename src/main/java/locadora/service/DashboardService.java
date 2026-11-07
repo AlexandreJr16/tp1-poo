@@ -6,9 +6,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-/* - Painel (junta numeros dos outros services):
-     resumo: numeros dos cards (ativas, atrasadas, multas em aberto, titulos, faturamento do mes, reservas prontas)
-     proximasDevolucoes: locacoes no prazo, da mais proxima para a mais distante */
+/**
+ * Numeros e listas mostrados no painel inicial.
+ */
 public class DashboardService {
 
     public record Resumo(int locacoesAtivas, int atrasadas, BigDecimal multasEmAberto, int titulos, BigDecimal faturamentoMes,
@@ -27,11 +27,17 @@ public class DashboardService {
         this.titulos = titulos;
     }
 
+    /**
+     * Numeros dos cards (ativas, atrasadas, multas em aberto, titulos, faturamento do mes, reservas prontas).
+     */
     public Resumo resumo() {
         return new Resumo(locacoes.ativas().size(), locacoes.atrasadas().size(), locacoes.multasEmAberto(), titulos.listar().size(),
                 locacoes.faturamentoDoMes(), reservas.prontas().size());
     }
 
+    /**
+     * Locacoes no prazo, da mais proxima para a mais distante.
+     */
     public List<Locacao> proximasDevolucoes() {
         LocalDate hoje = locacoes.hoje();
         return locacoes.ativas().stream().filter(l -> !l.atrasada(hoje)).limit(PROXIMAS_DEVOLUCOES).toList();

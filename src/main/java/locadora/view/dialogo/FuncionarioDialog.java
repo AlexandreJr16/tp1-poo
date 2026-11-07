@@ -12,7 +12,9 @@ import javax.swing.JTextField;
 import java.awt.Component;
 import java.util.Arrays;
 
-// cadastro de funcionario (com login e senha) e edicao de dados e cargo (login e senha ficam como estao)
+/**
+ * Cadastro de funcionario (com login e senha) e edicao de dados e cargo (login e senha ficam como estao).
+ */
 public class FuncionarioDialog extends Formulario {
 
     private final FuncionarioService servico;

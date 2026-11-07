@@ -16,14 +16,9 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
-/* - Reserva:
-     reservar: coloca o cliente na fila de um titulo que nao tem exemplar disponivel
-     cancelar: encerra a reserva; o exemplar que ela segurava vai para o proximo da fila ou volta a ficar disponivel
-   - Consulta:
-     ativas: reservas aguardando ou prontas, em ordem de chegada
-     prontas: reservas com exemplar separado esperando a retirada
-     fila: reservas aguardando de um titulo
-     posicao: lugar da reserva na fila do titulo (0 se ela nao esta aguardando) */
+/**
+ * Regras da fila de reservas: so cliente ativo, so para titulo sem exemplar disponivel e uma reserva ativa por cliente e titulo.
+ */
 public class ReservaService {
 
     private final ReservaDao reservas;
@@ -42,6 +37,9 @@ public class ReservaService {
         this.relogio = relogio;
     }
 
+    /**
+     * Coloca o cliente na fila de um titulo que nao tem exemplar disponivel.
+     */
     public Reserva reservar(int clienteId, int tituloId) {
         Funcionario funcionario = AuthService.exigirLogado();
         Cliente cliente = clientes.buscar(clienteId);
@@ -60,6 +58,9 @@ public class ReservaService {
         return reserva;
     }
 
+    /**
+     * Encerra a reserva; o exemplar que ela segurava vai para o proximo da fila ou volta a ficar disponivel.
+     */
     public void cancelar(int reservaId) {
         AuthService.exigirLogado();
         Reserva reserva = reservas.buscar(reservaId);
@@ -73,18 +74,30 @@ public class ReservaService {
         reservas.registrarCancelamento(reserva, proxima);
     }
 
+    /**
+     * Reservas aguardando ou prontas, em ordem de chegada.
+     */
     public List<Reserva> ativas() {
         return reservas.ativas();
     }
 
+    /**
+     * Reservas com exemplar separado esperando a retirada.
+     */
     public List<Reserva> prontas() {
         return ativas().stream().filter(r -> r.getSituacao() == SituacaoReserva.PRONTA).toList();
     }
 
+    /**
+     * Reservas aguardando de um titulo.
+     */
     public List<Reserva> fila(int tituloId) {
         return reservas.fila(tituloId);
     }
 
+    /**
+     * Lugar da reserva na fila do titulo (0 se ela nao esta aguardando).
+     */
     public int posicao(Reserva reserva) {
         if (reserva.getSituacao() != SituacaoReserva.AGUARDANDO)
             return 0;

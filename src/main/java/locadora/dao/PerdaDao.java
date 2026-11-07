@@ -9,11 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-/* - Registro:
-     registrar: grava a perda, o exemplar perdido, a locacao encerrada e a reserva devolvida a fila, tudo junto
-   - Consulta:
-     listar: historico de perdas, da mais recente para a mais antiga
-     doExemplar: perda de um exemplar, ou nulo */
+/**
+ * Acesso a tabela de perdas. A perda grava junto o exemplar, a locacao encerrada e a reserva afetada.
+ */
 public class PerdaDao {
 
     private static final String SELECIONAR = "SELECT id, exemplar_id, motivo, data, funcionario_id, locacao_id FROM perda";
@@ -32,6 +30,9 @@ public class PerdaDao {
         this.reservas = reservas;
     }
 
+    /**
+     * Grava a perda, o exemplar perdido, a locacao encerrada e a reserva devolvida a fila, tudo junto.
+     */
     public void registrar(Perda perda, Reserva devolvidaAFila) {
         Locacao locacao = perda.getLocacao();
         conexao.transacao(c -> {
@@ -47,10 +48,16 @@ public class PerdaDao {
         });
     }
 
+    /**
+     * Historico de perdas, da mais recente para a mais antiga.
+     */
     public List<Perda> listar() {
         return conexao.listar(SELECIONAR + " ORDER BY data DESC, id DESC", this::ler);
     }
 
+    /**
+     * Perda de um exemplar, ou nulo.
+     */
     public Perda doExemplar(int exemplarId) {
         return conexao.buscar(SELECIONAR + " WHERE exemplar_id = ?", this::ler, exemplarId);
     }

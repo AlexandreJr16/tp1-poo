@@ -2,6 +2,9 @@ package locadora.model;
 
 import java.math.BigDecimal;
 
+/**
+ * Titulo em CD (album): locacao de R$ 5,00 e multa de R$ 2,00 por dia de atraso.
+ */
 public class Cd extends Titulo {
 
     public static final String TIPO = "CD";

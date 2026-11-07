@@ -9,15 +9,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-/* - Exibicao (padrao brasileiro, usado nas mensagens e nas telas):
-     dinheiro: R$ 1.234,50
-     data: 01/10/2026 (vazio para data nula)
-     dataPorExtenso: quinta-feira, 1 de outubro de 2026
-   - Leitura:
-     lerDinheiro: valor digitado (29,90 ou R$ 1.234,50) em BigDecimal, ou erro amigavel
-     normalizar: texto sem acento, sem espacos nas pontas e em minusculas, para comparar em buscas
-   - Busca:
-     parecido: o texto contem o termo ou se parece com ele (tolera acento, pontuacao e erro de digitacao) */
+/**
+ * Formatacao de dinheiro, datas e textos para as telas e comparacao de textos sem acento.
+ */
 public final class Formato {
 
     private static final int MINIMO_PARA_APROXIMAR = 4;
@@ -29,14 +23,23 @@ public final class Formato {
     private Formato() {
     }
 
+    /**
+     * R$ 1.234,50.
+     */
     public static String dinheiro(BigDecimal valor) {
         return "R$ " + String.format(BRASIL, "%,.2f", valor);
     }
 
+    /**
+     * 01/10/2026 (vazio para data nula).
+     */
     public static String data(LocalDate data) {
         return data == null ? "" : data.format(DATA);
     }
 
+    /**
+     * Valor digitado (29,90 ou R$ 1.234,50) em BigDecimal, ou erro amigavel.
+     */
     public static BigDecimal lerDinheiro(String texto) {
         String numero = texto == null ? "" : texto.replace("R$", "").replace(".", "").replace(",", ".").trim();
         try {
@@ -46,10 +49,16 @@ public final class Formato {
         }
     }
 
+    /**
+     * Quinta-feira, 1 de outubro de 2026.
+     */
     public static String dataPorExtenso(LocalDate data) {
         return data.format(POR_EXTENSO);
     }
 
+    /**
+     * O texto contem o termo ou se parece com ele (tolera acento, pontuacao e erro de digitacao).
+     */
     public static boolean parecido(String termo, String texto) {
         String procurado = paraComparar(termo);
         String alvo = paraComparar(texto);
@@ -57,12 +66,17 @@ public final class Formato {
                 || procurado.length() >= MINIMO_PARA_APROXIMAR && FuzzySearch.tokenSetPartialRatio(procurado, alvo) >= SEMELHANCA_MINIMA;
     }
 
+    /**
+     * Texto sem acento, sem espacos nas pontas e em minusculas, para comparar em buscas.
+     */
     public static String normalizar(String texto) {
         String semAcento = Normalizer.normalize(texto == null ? "" : texto.trim(), Normalizer.Form.NFD).replaceAll("\\p{M}", "");
         return semAcento.toLowerCase(BRASIL);
     }
 
-    // pontuacao e hifen viram espaco, para "contra-ataca" e "contra ataca" serem o mesmo texto
+    /**
+     * Pontuacao e hifen viram espaco, para "contra-ataca" e "contra ataca" serem o mesmo texto.
+     */
     private static String paraComparar(String texto) {
         return normalizar(texto).replaceAll("[^\\p{Alnum}]+", " ").trim();
     }

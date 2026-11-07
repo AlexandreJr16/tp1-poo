@@ -27,8 +27,9 @@ import java.awt.GridLayout;
 import java.math.BigDecimal;
 import java.time.Year;
 
-/* Registro de aquisicao: titulo ja cadastrado ou um titulo novo, quantidade, custo unitario e fornecedor.
-   Os exemplares novos recebem codigos sequenciais e atendem primeiro a fila de reservas. */
+/**
+ * Registro de aquisicao: titulo ja cadastrado ou um titulo novo, quantidade, custo unitario e fornecedor. Os exemplares novos recebem codigos sequenciais e atendem primeiro a fila de reservas.
+ */
 public class AquisicaoDialog extends Formulario {
 
     private final Main.Servicos servicos;
@@ -84,7 +85,9 @@ public class AquisicaoDialog extends Formulario {
         servicos.aquisicoes().registrar(escolhido.getId(), (Integer) quantidade.getValue(), valor, fornecedor.getText());
     }
 
-    // guarda o titulo criado para uma nova tentativa nao cadastrar o mesmo titulo duas vezes
+    /**
+     * Guarda o titulo criado para uma nova tentativa nao cadastrar o mesmo titulo duas vezes.
+     */
     private Titulo tituloNovo() {
         if (criado == null)
             criado = servicos.titulos().salvar((String) tipo.getSelectedItem(), 0, nome.getText(), "", (Integer) ano.getValue(), (Integer) prazo.getValue());
@@ -99,7 +102,9 @@ public class AquisicaoDialog extends Formulario {
         reajustar();
     }
 
-    // nome na largura toda; tipo, ano e prazo lado a lado
+    /**
+     * Nome na largura toda; tipo, ano e prazo lado a lado.
+     */
     private JPanel formularioDeTituloNovo() {
         JPanel numeros = new JPanel(new GridLayout(1, 3, Tema.ESPACO_3, 0));
         numeros.add(bloco("Tipo de mídia", tipo));

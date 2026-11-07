@@ -2,6 +2,9 @@ package locadora.model;
 
 import java.math.BigDecimal;
 
+/**
+ * Copia fisica de um titulo, identificada por um codigo como T7-004. As trocas de situacao ficam aqui e recusam transicoes invalidas.
+ */
 public class Exemplar {
 
     private int id;
@@ -18,6 +21,9 @@ public class Exemplar {
         this.situacao = situacao;
     }
 
+    /**
+     * Codigo do exemplar no formato T&lt;titulo&gt;-&lt;sequencia&gt;, por exemplo T7-004.
+     */
     public static String codigo(int tituloId, int sequencia) {
         return String.format("T%d-%03d", tituloId, sequencia);
     }
@@ -26,26 +32,41 @@ public class Exemplar {
         return situacao == Situacao.DISPONIVEL;
     }
 
+    /**
+     * Marca como alugado; so vale para exemplar disponivel ou separado em reserva.
+     */
     public void alugar() {
         exigir(situacao == Situacao.DISPONIVEL || situacao == Situacao.RESERVADO, "alugado");
         situacao = Situacao.ALUGADO;
     }
 
+    /**
+     * Volta para disponivel; so vale para exemplar alugado.
+     */
     public void devolver() {
         exigir(situacao == Situacao.ALUGADO, "devolvido");
         situacao = Situacao.DISPONIVEL;
     }
 
+    /**
+     * Separa o exemplar para uma reserva; so vale para exemplar disponivel.
+     */
     public void reservar() {
         exigir(situacao == Situacao.DISPONIVEL, "reservado");
         situacao = Situacao.RESERVADO;
     }
 
+    /**
+     * Desfaz a separacao da reserva, voltando para disponivel.
+     */
     public void liberar() {
         exigir(situacao == Situacao.RESERVADO, "liberado");
         situacao = Situacao.DISPONIVEL;
     }
 
+    /**
+     * Marca como perdido. Um exemplar perdido nunca mais volta a ser alugado.
+     */
     public void perder() {
         exigir(situacao != Situacao.PERDIDO, "dado como perdido");
         situacao = Situacao.PERDIDO;

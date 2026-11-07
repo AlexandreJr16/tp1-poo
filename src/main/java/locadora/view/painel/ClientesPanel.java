@@ -22,10 +22,9 @@ import java.util.stream.Collectors;
 import static locadora.view.componente.ModeloTabela.dinheiro;
 import static locadora.view.componente.ModeloTabela.texto;
 
-/* Tela de clientes: tabela com busca por nome ou CPF, filtro por situacao, cadastro, edicao e ficha com historico.
-   Clientes com multa pendente aparecem em vermelho.
-   atualizar: recarrega clientes e multas
-   abrir: seleciona um cliente e abre a ficha (usado pela busca global) */
+/**
+ * Tela de clientes: tabela com busca por nome ou CPF, filtro por situacao, cadastro, edicao e ficha com historico. Clientes com multa pendente aparecem em vermelho.
+ */
 public class ClientesPanel extends Painel {
 
     private static final String[] FILTROS = {"Todos os clientes", "Ativos", "Inativos", "Com multa pendente"};
@@ -66,6 +65,9 @@ public class ClientesPanel extends Painel {
         add(tabela, BorderLayout.CENTER);
     }
 
+    /**
+     * Recarrega clientes e multas.
+     */
     @Override
     public void atualizar() {
         List<Cliente> clientes = servicos.clientes().listar();
@@ -73,6 +75,9 @@ public class ClientesPanel extends Painel {
         tabela.setDados(clientes);
     }
 
+    /**
+     * Seleciona um cliente e abre a ficha (usado pela busca global).
+     */
     public void abrir(int clienteId) {
         tabela.selecionar(c -> c.getId() == clienteId);
         abrirSelecionado();

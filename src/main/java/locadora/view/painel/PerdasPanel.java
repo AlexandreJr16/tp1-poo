@@ -17,8 +17,9 @@ import static locadora.view.componente.ModeloTabela.data;
 import static locadora.view.componente.ModeloTabela.dinheiro;
 import static locadora.view.componente.ModeloTabela.texto;
 
-/* Tela de perdas (so gerente): historico de exemplares perdidos e registro de uma perda nova.
-   atualizar: recarrega o historico */
+/**
+ * Tela de perdas (so gerente): historico de exemplares perdidos e registro de uma perda nova.
+ */
 public class PerdasPanel extends Painel {
 
     private final Main.Servicos servicos;
@@ -43,6 +44,9 @@ public class PerdasPanel extends Painel {
         add(tabela, BorderLayout.CENTER);
     }
 
+    /**
+     * Recarrega o historico.
+     */
     @Override
     public void atualizar() {
         tabela.setDados(servicos.perdas().listar());

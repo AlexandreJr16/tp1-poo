@@ -12,7 +12,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-// aviso no lugar de uma lista vazia: icone grande, frase curta, dica e uma acao opcional
+/**
+ * Aviso no lugar de uma lista vazia: icone grande, frase curta, dica e uma acao opcional.
+ */
 public class EstadoVazio extends JPanel {
 
     public EstadoVazio(Icone icone, String titulo, String dica, JButton acao) {

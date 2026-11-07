@@ -1,5 +1,8 @@
 package locadora.model;
 
+/**
+ * Etapas de uma reserva: aguardando na fila, pronta com exemplar separado, atendida ou cancelada.
+ */
 public enum SituacaoReserva {
     AGUARDANDO("Aguardando"),
     PRONTA("Pronta para retirada"),

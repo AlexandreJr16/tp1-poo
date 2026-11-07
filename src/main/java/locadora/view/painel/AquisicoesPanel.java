@@ -18,8 +18,9 @@ import static locadora.view.componente.ModeloTabela.dinheiro;
 import static locadora.view.componente.ModeloTabela.numero;
 import static locadora.view.componente.ModeloTabela.texto;
 
-/* Tela de aquisicoes (so gerente): historico de compras e registro de uma compra nova.
-   atualizar: recarrega o historico */
+/**
+ * Tela de aquisicoes (so gerente): historico de compras e registro de uma compra nova.
+ */
 public class AquisicoesPanel extends Painel {
 
     private final Main.Servicos servicos;
@@ -46,6 +47,9 @@ public class AquisicoesPanel extends Painel {
         add(tabela, BorderLayout.CENTER);
     }
 
+    /**
+     * Recarrega o historico.
+     */
     @Override
     public void atualizar() {
         tabela.setDados(servicos.aquisicoes().listar());

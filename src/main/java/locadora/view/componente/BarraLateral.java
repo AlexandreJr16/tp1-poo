@@ -22,10 +22,9 @@ import java.awt.Graphics;
 import java.util.HashMap;
 import java.util.Map;
 
-/* Barra lateral fixa: marca e atalho de busca no topo, um item por tela e o funcionario logado no rodape.
-   adicionarItem: cria o botao de uma tela
-   marcar: deixa selecionado o item da tela aberta
-   adicionarAcao: botao pequeno no rodape (tema, menu) */
+/**
+ * Barra lateral fixa: marca e atalho de busca no topo, um item por tela e o funcionario logado no rodape.
+ */
 public class BarraLateral extends JPanel {
 
     private static final int ALTURA_DO_ITEM = 40;
@@ -55,6 +54,9 @@ public class BarraLateral extends JPanel {
         add(rodape(logado), BorderLayout.SOUTH);
     }
 
+    /**
+     * Cria o botao de uma tela.
+     */
     public void adicionarItem(String nome, Icone icone, String atalho, Runnable acao) {
         JToggleButton botao = new JToggleButton(nome, icone.normal());
         botao.setSelectedIcon(icone.de(18, "Component.accentColor"));
@@ -72,10 +74,16 @@ public class BarraLateral extends JPanel {
         itens.add(Box.createVerticalStrut(2));
     }
 
+    /**
+     * Deixa selecionado o item da tela aberta.
+     */
     public void marcar(String nome) {
         botoes.get(nome).setSelected(true);
     }
 
+    /**
+     * Botao pequeno no rodape (tema, menu).
+     */
     public void adicionarAcao(JButton acao) {
         acoes.add(acao);
     }

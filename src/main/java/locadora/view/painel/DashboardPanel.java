@@ -26,9 +26,9 @@ import static locadora.view.componente.ModeloTabela.dinheiro;
 import static locadora.view.componente.ModeloTabela.numero;
 import static locadora.view.componente.ModeloTabela.texto;
 
-/* Tela inicial: saudacao, seis cards de numeros e tres quadros: proximas devolucoes em duas colunas da grade,
-   atrasadas e reservas prontas empilhadas na terceira.
-   atualizar: recarrega os numeros e as listas */
+/**
+ * Tela inicial: saudacao, seis cards de numeros e tres quadros: proximas devolucoes em duas colunas da grade, atrasadas e reservas prontas empilhadas na terceira.
+ */
 public class DashboardPanel extends Painel {
 
     private final Main.Servicos servicos;
@@ -80,6 +80,9 @@ public class DashboardPanel extends Painel {
         add(corpo, BorderLayout.CENTER);
     }
 
+    /**
+     * Recarrega os numeros e as listas.
+     */
     @Override
     public void atualizar() {
         DashboardService.Resumo resumo = servicos.painel().resumo();
@@ -95,7 +98,9 @@ public class DashboardPanel extends Painel {
         prontas.setDados(servicos.reservas().prontas());
     }
 
-    // coluna com a largura de um card, para os quadros seguirem a grade de tres colunas dos cards
+    /**
+     * Coluna com a largura de um card, para os quadros seguirem a grade de tres colunas dos cards.
+     */
     private static JPanel colunaDaDireita(JComponent... quadros) {
         JPanel coluna = new JPanel(new GridLayout(quadros.length, 1, 0, Tema.ESPACO_4)) {
             @Override

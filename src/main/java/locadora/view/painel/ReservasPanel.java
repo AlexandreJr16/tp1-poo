@@ -20,9 +20,9 @@ import java.util.List;
 import static locadora.view.componente.ModeloTabela.data;
 import static locadora.view.componente.ModeloTabela.texto;
 
-/* Tela de reservas: fila de espera por titulos sem exemplar disponivel.
-   Uma reserva pronta tem um exemplar separado; a retirada abre a locacao para o cliente dela.
-   atualizar: recarrega as reservas ativas */
+/**
+ * Tela de reservas: fila de espera por titulos sem exemplar disponivel. Uma reserva pronta tem um exemplar separado; a retirada abre a locacao para o cliente dela.
+ */
 public class ReservasPanel extends Painel {
 
     private final Main.Servicos servicos;
@@ -56,6 +56,9 @@ public class ReservasPanel extends Painel {
         add(tabela, BorderLayout.CENTER);
     }
 
+    /**
+     * Recarrega as reservas ativas.
+     */
     @Override
     public void atualizar() {
         tabela.setDados(servicos.reservas().ativas());

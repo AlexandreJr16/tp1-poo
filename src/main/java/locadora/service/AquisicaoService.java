@@ -17,10 +17,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/* - Aquisicao (so gerente):
-     registrar: gera N exemplares com codigos sequenciais, separa os primeiros para a fila de reservas e grava tudo junto
-   - Consulta:
-     listar: historico de aquisicoes, da mais recente para a mais antiga */
+/**
+ * Regras das aquisicoes (so gerente): quantidade, custo e fornecedor validos, exemplares com codigos sequenciais e reservas da fila atendidas na hora.
+ */
 public class AquisicaoService {
 
     public static final int QUANTIDADE_MAXIMA = 100;
@@ -39,6 +38,9 @@ public class AquisicaoService {
         this.relogio = relogio;
     }
 
+    /**
+     * Gera N exemplares com codigos sequenciais, separa os primeiros para a fila de reservas e grava tudo junto.
+     */
     public Aquisicao registrar(int tituloId, int quantidade, BigDecimal custoUnitario, String fornecedor) {
         Funcionario funcionario = AuthService.exigirGerente();
         Titulo titulo = titulos.buscar(tituloId);
@@ -56,6 +58,9 @@ public class AquisicaoService {
         return aquisicao;
     }
 
+    /**
+     * Historico de aquisicoes, da mais recente para a mais antiga.
+     */
     public List<Aquisicao> listar() {
         return aquisicoes.listar();
     }

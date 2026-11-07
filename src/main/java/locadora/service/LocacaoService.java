@@ -23,26 +23,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/* - Locacao:
-     locar: registra a locacao para o funcionario logado, se cliente e exemplar estiverem aptos
-     previaMulta: multa que a devolucao cobraria hoje
-     devolver: fecha a locacao com o funcionario logado e separa o exemplar para o primeiro da fila
-     pagarMulta: registra o pagamento da multa hoje
-     pagarMultasDoCliente: quita de uma vez todas as multas pendentes de um cliente
-     renovar: estende o prazo uma vez, se nao estiver atrasada nem houver fila
-   - Consulta:
-     alugaveisPara: exemplares disponiveis mais os separados para o proprio cliente
-     buscar: locacao pelo id
-     listar: todas as locacoes, da mais recente para a mais antiga
-     ativas: locacoes nao devolvidas, pela data prevista
-     atrasadas: locacoes ativas que ja passaram da data prevista
-     comMultaPendente: locacoes devolvidas com multa ainda nao paga
-     multasEmAberto: soma das multas nao pagas
-     faturamentoDoMes: locacoes feitas mais multas pagas no mes atual
-     hoje: dia atual pelo relogio do sistema
-   - Recomendacao:
-     recomendacoes: ate 5 titulos que o cliente ainda nao alugou, primeiro os de quem tem gosto parecido,
-                    depois os mais alugados da locadora */
+/**
+ * Regras de locacao, devolucao com multa, pagamento, renovacao e recomendacoes. O funcionario logado fica registrado em cada locacao e devolucao.
+ */
 public class LocacaoService {
 
     public static final int LIMITE_DE_RECOMENDACOES = 5;
@@ -62,6 +45,9 @@ public class LocacaoService {
         this.relogio = relogio;
     }
 
+    /**
+     * Registra a locacao para o funcionario logado, se cliente e exemplar estiverem aptos.
+     */
     public Locacao locar(int clienteId, int exemplarId) {
         Funcionario funcionario = AuthService.exigirLogado();
         Cliente cliente = clienteApto(clienteId);
@@ -80,10 +66,16 @@ public class LocacaoService {
         return locacao;
     }
 
+    /**
+     * Multa que a devolucao cobraria hoje.
+     */
     public BigDecimal previaMulta(int locacaoId) {
         return ativa(locacaoId).multaAte(hoje());
     }
 
+    /**
+     * Fecha a locacao com o funcionario logado e separa o exemplar para o primeiro da fila.
+     */
     public Locacao devolver(int locacaoId) {
         Funcionario funcionario = AuthService.exigirLogado();
         Locacao locacao = ativa(locacaoId);
@@ -95,6 +87,9 @@ public class LocacaoService {
         return locacao;
     }
 
+    /**
+     * Registra o pagamento da multa hoje.
+     */
     public void pagarMulta(int locacaoId) {
         AuthService.exigirLogado();
         Locacao locacao = existente(locacaoId);
@@ -103,6 +98,9 @@ public class LocacaoService {
         locacoes.atualizar(locacao);
     }
 
+    /**
+     * Quita de uma vez todas as multas pendentes de um cliente.
+     */
     public void pagarMultasDoCliente(int clienteId) {
         AuthService.exigirLogado();
         List<Locacao> pendentes = locacoes.doCliente(clienteId).stream().filter(Locacao::multaPendente).toList();
@@ -111,6 +109,9 @@ public class LocacaoService {
         locacoes.atualizarTodas(pendentes);
     }
 
+    /**
+     * Estende o prazo uma vez, se nao estiver atrasada nem houver fila.
+     */
     public Locacao renovar(int locacaoId) {
         AuthService.exigirLogado();
         Locacao locacao = ativa(locacaoId);
@@ -122,6 +123,9 @@ public class LocacaoService {
         return locacao;
     }
 
+    /**
+     * Exemplares disponiveis mais os separados para o proprio cliente.
+     */
     public List<Exemplar> alugaveisPara(int clienteId) {
         Stream<Exemplar> separados = reservas.doCliente(clienteId).stream()
                 .filter(r -> r.getSituacao() == SituacaoReserva.PRONTA)
@@ -132,36 +136,60 @@ public class LocacaoService {
                 .toList();
     }
 
+    /**
+     * Locacao pelo id.
+     */
     public Locacao buscar(int id) {
         return locacoes.buscar(id);
     }
 
+    /**
+     * Todas as locacoes, da mais recente para a mais antiga.
+     */
     public List<Locacao> listar() {
         return locacoes.listar();
     }
 
+    /**
+     * Locacoes nao devolvidas, pela data prevista.
+     */
     public List<Locacao> ativas() {
         return locacoes.ativas();
     }
 
+    /**
+     * Locacoes ativas que ja passaram da data prevista.
+     */
     public List<Locacao> atrasadas() {
         LocalDate hoje = hoje();
         return ativas().stream().filter(l -> l.atrasada(hoje)).toList();
     }
 
+    /**
+     * Locacoes devolvidas com multa ainda nao paga.
+     */
     public List<Locacao> comMultaPendente() {
         return locacoes.comMultaPendente();
     }
 
+    /**
+     * Soma das multas nao pagas.
+     */
     public BigDecimal multasEmAberto() {
         return comMultaPendente().stream().map(Locacao::getMulta).reduce(Locacao.SEM_MULTA, BigDecimal::add);
     }
 
+    /**
+     * Locacoes feitas mais multas pagas no mes atual.
+     */
     public BigDecimal faturamentoDoMes() {
         LocalDate hoje = hoje();
         return locacoes.faturamentoEntre(hoje.withDayOfMonth(1), hoje.withDayOfMonth(hoje.lengthOfMonth()));
     }
 
+    /**
+     * Ate 5 titulos que o cliente ainda nao alugou, primeiro os de quem tem gosto parecido, depois os mais alugados da locadora.
+     */
     public List<Recomendacao> recomendacoes(int clienteId) {
         Set<Integer> jaVistos = locacoes.doCliente(clienteId).stream()
                 .map(l -> l.getExemplar().getTitulo().getId())
@@ -173,6 +201,9 @@ public class LocacaoService {
                 .toList();
     }
 
+    /**
+     * Dia atual pelo relogio do sistema.
+     */
     public LocalDate hoje() {
         return LocalDate.now(relogio);
     }

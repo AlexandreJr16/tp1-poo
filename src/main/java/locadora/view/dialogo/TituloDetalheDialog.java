@@ -40,7 +40,9 @@ import static locadora.view.componente.ModeloTabela.data;
 import static locadora.view.componente.ModeloTabela.dinheiro;
 import static locadora.view.componente.ModeloTabela.texto;
 
-// detalhe do titulo: capa, valores do tipo, contagem por situacao, exemplares e a linha do tempo do exemplar escolhido
+/**
+ * Detalhe do titulo: capa, valores do tipo, contagem por situacao, exemplares e a linha do tempo do exemplar escolhido.
+ */
 public class TituloDetalheDialog extends JDialog {
 
     private static final int LARGURA_DA_CAPA = 120;

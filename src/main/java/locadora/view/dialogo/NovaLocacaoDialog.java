@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/* Nova locacao: escolhe o cliente, depois um exemplar disponivel (ou separado para ele) e confirma.
-   Ao escolher o cliente, aparecem as recomendacoes que tem exemplar disponivel; o clique ja escolhe o exemplar.
-   O resumo mostra a data de devolucao e o valor antes de confirmar. */
+/**
+ * Nova locacao: escolhe o cliente, depois um exemplar disponivel (ou separado para ele) e confirma. Ao escolher o cliente, aparecem as recomendacoes que tem exemplar disponivel; o clique ja escolhe o exemplar. O resumo mostra a data de devolucao e o valor antes de confirmar.
+ */
 public class NovaLocacaoDialog extends Formulario {
 
     private static final int LARGURA_DA_CAPA = 40;
@@ -78,7 +78,9 @@ public class NovaLocacaoDialog extends Formulario {
         mostrarResumo();
     }
 
-    // so as recomendacoes que tem exemplar para levar agora; o clique escolhe o exemplar
+    /**
+     * So as recomendacoes que tem exemplar para levar agora; o clique escolhe o exemplar.
+     */
     private void mostrarSugestoes(Cliente escolhido, List<Exemplar> alugaveis) {
         Set<Integer> titulosAlugaveis = alugaveis.stream().map(e -> e.getTitulo().getId()).collect(Collectors.toSet());
         sugestoes.setAvisoSemItens(escolhido == null ? "Escolha o cliente para ver sugestões." : "Nenhuma sugestão disponível agora.");

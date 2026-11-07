@@ -26,7 +26,9 @@ import java.awt.GridBagLayout;
 import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 
-// tela de entrada: arte com a marca a esquerda e o formulario de login a direita
+/**
+ * Tela de entrada: arte com a marca a esquerda e o formulario de login a direita.
+ */
 public class LoginFrame extends JFrame {
 
     private final Main.Servicos servicos;
@@ -109,7 +111,9 @@ public class LoginFrame extends JFrame {
         return (JComponent) Box.createVerticalStrut(altura);
     }
 
-    // painel colorido com a marca: degrade na cor de destaque e circulos translucidos de enfeite
+    /**
+     * Painel colorido com a marca: degrade na cor de destaque e circulos translucidos de enfeite.
+     */
     private static class Arte extends JPanel {
 
         Arte() {

@@ -6,6 +6,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.HexFormat;
 
+/**
+ * Funcionario que usa o sistema. A senha e guardada como hash SHA-256 com sal aleatorio, nunca em texto puro.
+ */
 public class Funcionario extends Pessoa {
 
     private static final SecureRandom ALEATORIO = new SecureRandom();
@@ -24,6 +27,9 @@ public class Funcionario extends Pessoa {
         this.cargo = cargo;
     }
 
+    /**
+     * Gera um sal novo e guarda o hash da senha.
+     */
     public void definirSenha(String senha) {
         byte[] bytes = new byte[16];
         ALEATORIO.nextBytes(bytes);
@@ -31,6 +37,9 @@ public class Funcionario extends Pessoa {
         senhaHash = hash(sal, senha);
     }
 
+    /**
+     * Confere a senha digitada contra o hash guardado.
+     */
     public boolean senhaConfere(String senha) {
         return senhaHash != null && senhaHash.equals(hash(sal, senha));
     }

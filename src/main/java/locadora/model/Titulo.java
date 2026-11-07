@@ -3,6 +3,9 @@ package locadora.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * Titulo do acervo (filme ou album). Cada tipo de midia e uma subclasse que define o valor da locacao e da multa diaria.
+ */
 public abstract class Titulo {
 
     private int id;
@@ -19,13 +22,24 @@ public abstract class Titulo {
         this.prazoMaximoDias = prazoMaximoDias;
     }
 
+    /**
+     * Multa cobrada por dia de atraso, definida por cada tipo de midia.
+     */
     public abstract BigDecimal valorMultaDiaria();
 
+    /**
+     * Preco da locacao, definido por cada tipo de midia.
+     */
     public abstract BigDecimal valorLocacao();
 
+    /**
+     * Nome do tipo de midia, como aparece na tela e no banco.
+     */
     public abstract String tipo();
 
-    // o tipo de obra gravada na midia (filme ou album), usado para buscar a capa
+    /**
+     * O tipo de obra gravada na midia (filme ou album), usado para buscar a capa.
+     */
     public abstract String categoria();
 
     public int getId() {
@@ -52,6 +66,9 @@ public abstract class Titulo {
         return prazoMaximoDias;
     }
 
+    /**
+     * Data de devolucao contando o prazo maximo a partir do inicio.
+     */
     public LocalDate devolucaoPrevista(LocalDate inicio) {
         return inicio.plusDays(prazoMaximoDias);
     }

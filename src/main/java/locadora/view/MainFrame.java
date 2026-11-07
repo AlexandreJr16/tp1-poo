@@ -34,10 +34,9 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/* Janela principal: barra lateral com as telas que o cargo do funcionario pode usar e o conteudo trocado por CardLayout.
-   - Navegacao:
-     mostrar: abre uma tela pelo nome e recarrega os dados dela
-   - Atalhos: Ctrl+K abre a busca global e Ctrl+1 a Ctrl+8 abrem as telas na ordem da barra lateral */
+/**
+ * Janela principal: barra lateral com as telas que o cargo do funcionario pode usar e o conteudo trocado por CardLayout. Atalhos: Ctrl+K abre a busca global e Ctrl+1 a Ctrl+8 abrem as telas na ordem da barra lateral.
+ */
 public class MainFrame extends JFrame {
 
     public static final String PAINEL = "Painel";
@@ -91,6 +90,9 @@ public class MainFrame extends JFrame {
         mostrar(PAINEL);
     }
 
+    /**
+     * Abre uma tela pelo nome e recarrega os dados dela.
+     */
     public void mostrar(String nome) {
         atual = nome;
         Mensagens.executar(this, () -> paineis.get(nome).atualizar());

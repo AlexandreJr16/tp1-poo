@@ -9,15 +9,9 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 import java.awt.Color;
 
-/* - Tema:
-     instalar: registra os tokens da locadora (resources/locadora/tema) e liga o tema claro
-     alternar: troca entre claro e escuro em todas as janelas abertas
-     escuro: diz se o tema atual e o escuro
-   - Cores (lidas do UIManager na hora, para acompanhar a troca de tema):
-     cor: cor de uma chave do tema
-     perigo, destaque, suave
-   - Espacamento:
-     borda: margem vazia igual nos quatro lados */
+/**
+ * Tema visual (claro e escuro), cores lidas do UIManager na hora para acompanhar a troca de tema e espacamentos padrao das telas.
+ */
 public final class Tema {
 
     public static final int ESPACO_1 = 4;
@@ -30,11 +24,17 @@ public final class Tema {
     private Tema() {
     }
 
+    /**
+     * Registra os tokens da locadora (resources/locadora/tema) e liga o tema claro.
+     */
     public static void instalar() {
         FlatLaf.registerCustomDefaultsSource("locadora.tema");
         FlatMacLightLaf.setup();
     }
 
+    /**
+     * Troca entre claro e escuro em todas as janelas abertas.
+     */
     public static void alternar() {
         if (escuro())
             FlatMacLightLaf.setup();
@@ -43,26 +43,44 @@ public final class Tema {
         FlatLaf.updateUI();
     }
 
+    /**
+     * Diz se o tema atual e o escuro.
+     */
     public static boolean escuro() {
         return FlatLaf.isLafDark();
     }
 
+    /**
+     * Cor de uma chave do tema.
+     */
     public static Color cor(String chave) {
         return UIManager.getColor(chave);
     }
 
+    /**
+     * Cor "perigo" do tema atual.
+     */
     public static Color perigo() {
         return cor("Locadora.perigo");
     }
 
+    /**
+     * Cor "destaque" do tema atual.
+     */
     public static Color destaque() {
         return cor("Component.accentColor");
     }
 
+    /**
+     * Cor "suave" do tema atual.
+     */
     public static Color suave() {
         return cor("Locadora.suave");
     }
 
+    /**
+     * Margem vazia igual nos quatro lados.
+     */
     public static Border borda(int espaco) {
         return BorderFactory.createEmptyBorder(espaco, espaco, espaco, espaco);
     }

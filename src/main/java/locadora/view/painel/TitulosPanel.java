@@ -26,9 +26,9 @@ import static locadora.view.componente.ModeloTabela.dinheiro;
 import static locadora.view.componente.ModeloTabela.numero;
 import static locadora.view.componente.ModeloTabela.texto;
 
-/* Tela de titulos: tabela com capa, busca e filtro por tipo, cadastro, edicao e detalhe com exemplares e linha do tempo.
-   atualizar: recarrega titulos e estoque
-   abrir: seleciona um titulo e abre o detalhe dele (usado pela busca global) */
+/**
+ * Tela de titulos: tabela com capa, busca e filtro por tipo, cadastro, edicao e detalhe com exemplares e linha do tempo.
+ */
 public class TitulosPanel extends Painel {
 
     private static final String TODOS = "Todos os tipos";
@@ -76,6 +76,9 @@ public class TitulosPanel extends Painel {
         add(tabela, BorderLayout.CENTER);
     }
 
+    /**
+     * Recarrega titulos e estoque.
+     */
     @Override
     public void atualizar() {
         estoque = servicos.titulos().estoque();
@@ -84,6 +87,9 @@ public class TitulosPanel extends Painel {
         tabela.setDados(servicos.titulos().listar());
     }
 
+    /**
+     * Seleciona um titulo e abre o detalhe dele (usado pela busca global).
+     */
     public void abrir(int tituloId) {
         tabela.selecionar(t -> t.getId() == tituloId);
         if (tabela.selecionado() != null)

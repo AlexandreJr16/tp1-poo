@@ -17,9 +17,9 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/* Capa de um titulo num tamanho fixo, como icone (serve em JLabel e em celula de tabela).
-   A imagem e recortada no centro para preencher o espaco, com cantos arredondados.
-   Sem imagem (ou imagem invalida), mostra um quadro suave com o icone de disco. */
+/**
+ * Capa de um titulo num tamanho fixo, como icone (serve em JLabel e em celula de tabela). A imagem e recortada no centro para preencher o espaco, com cantos arredondados. Sem imagem (ou imagem invalida), mostra um quadro suave com o icone de disco.
+ */
 public class Capa implements Icon {
 
     private static final Logger LOG = Logger.getLogger(Capa.class.getName());
@@ -82,7 +82,9 @@ public class Capa implements Icon {
         }
     }
 
-    // escala para cobrir o espaco todo e corta o que sobra nas bordas
+    /**
+     * Escala para cobrir o espaco todo e corta o que sobra nas bordas.
+     */
     private static BufferedImage recortar(BufferedImage original, int largura, int altura) {
         if (original == null)
             return null;

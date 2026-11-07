@@ -15,10 +15,9 @@ import java.awt.geom.Path2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.function.Consumer;
 
-/* Icones desenhados com Java2D numa grade de 18x18 (o projeto nao usa biblioteca de icones).
-   - Uso:
-     normal: icone de 18 px na cor do texto
-     de: icone no tamanho e na cor (chave do tema) escolhidos */
+/**
+ * Icones desenhados com Java2D numa grade de 18x18 (o projeto nao usa biblioteca de icones).
+ */
 public enum Icone {
 
     PAINEL(g -> {
@@ -144,10 +143,16 @@ public enum Icone {
         this.desenho = desenho;
     }
 
+    /**
+     * Icone de 18 px na cor do texto.
+     */
     public Icon normal() {
         return de(TAMANHO_PADRAO, "Label.foreground");
     }
 
+    /**
+     * Icone no tamanho e na cor (chave do tema) escolhidos.
+     */
     public Icon de(int tamanho, String chaveDaCor) {
         return new Desenho(tamanho, chaveDaCor, desenho);
     }

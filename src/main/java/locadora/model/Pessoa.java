@@ -1,5 +1,8 @@
 package locadora.model;
 
+/**
+ * Dados comuns de clientes e funcionarios, mais a validacao de CPF e e-mail.
+ */
 public abstract class Pessoa {
 
     private int id;
@@ -16,6 +19,9 @@ public abstract class Pessoa {
         this.email = email;
     }
 
+    /**
+     * Confere os dois digitos verificadores do CPF; aceita com ou sem pontuacao.
+     */
     public static boolean cpfValido(String cpf) {
         String digitos = somenteDigitos(cpf);
         if (digitos.length() != 11 || digitos.chars().distinct().count() == 1)
@@ -24,7 +30,9 @@ public abstract class Pessoa {
                 && digitoVerificador(digitos, 10) == digitos.charAt(10) - '0';
     }
 
-    // soma ponderada dos primeiros digitos com pesos decrescentes a partir de quantidade + 1
+    /**
+     * Soma ponderada dos primeiros digitos com pesos decrescentes a partir de quantidade + 1.
+     */
     private static int digitoVerificador(String digitos, int quantidade) {
         int soma = 0;
         for (int i = 0; i < quantidade; i++)
@@ -33,7 +41,9 @@ public abstract class Pessoa {
         return resto < 2 ? 0 : 11 - resto;
     }
 
-    // o e-mail e opcional: vazio conta como valido
+    /**
+     * O e-mail e opcional: vazio conta como valido.
+     */
     public static boolean emailValido(String email) {
         return email == null || email.isBlank() || email.trim().matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+");
     }

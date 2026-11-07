@@ -17,8 +17,9 @@ import java.util.List;
 
 import static locadora.view.componente.ModeloTabela.texto;
 
-/* Tela de funcionarios (so gerente): equipe, cargos e redefinicao de senha.
-   atualizar: recarrega os funcionarios */
+/**
+ * Tela de funcionarios (so gerente): equipe, cargos e redefinicao de senha.
+ */
 public class FuncionariosPanel extends Painel {
 
     private final Main.Servicos servicos;
@@ -50,6 +51,9 @@ public class FuncionariosPanel extends Painel {
         add(tabela, BorderLayout.CENTER);
     }
 
+    /**
+     * Recarrega os funcionarios.
+     */
     @Override
     public void atualizar() {
         tabela.setDados(servicos.funcionarios().listar());

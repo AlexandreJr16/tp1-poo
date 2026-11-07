@@ -8,7 +8,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import java.awt.Component;
 
-// cadastro e edicao de cliente; na edicao aparece a opcao de desativar (so gerente consegue salvar isso)
+/**
+ * Cadastro e edicao de cliente; na edicao aparece a opcao de desativar (so gerente consegue salvar isso).
+ */
 public class ClienteDialog extends Formulario {
 
     private final ClienteService servico;

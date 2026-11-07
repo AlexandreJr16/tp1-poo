@@ -21,15 +21,9 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/* Capa e sinopse dos titulos. A internet e opcional: sem ela a busca so nao acha nada.
-   - Busca (Wikipedia em portugues):
-     buscar: capa e sinopse do primeiro resultado com imagem para "nome categoria" (ex.: "Matrix filme"),
-             ou vazio (offline, bloqueado ou nada encontrado)
-   - Guarda (o banco serve de cache):
-     guardar: grava a capa de um titulo
-     capa: capa de um titulo, ou nulo
-     capas: capas de todos os titulos que tem, pelo id
-     carregarEmbutidas: grava as capas que vem no jar (resources/capas/{id}.jpg), usado depois do seed */
+/**
+ * Capa e sinopse dos titulos. A internet e opcional: sem ela a busca so nao acha nada.
+ */
 public class CapaService {
 
     public static final int TAMANHO_DA_SINOPSE = 300;
@@ -61,6 +55,9 @@ public class CapaService {
         this.endereco = endereco;
     }
 
+    /**
+     * Capa e sinopse do primeiro resultado com imagem para "nome categoria" (ex.: "Matrix filme"), ou vazio (offline, bloqueado ou nada encontrado).
+     */
     public Optional<Achado> buscar(String nome, String categoria) {
         if (nome == null || nome.isBlank())
             return Optional.empty();
@@ -79,18 +76,30 @@ public class CapaService {
         }
     }
 
+    /**
+     * Grava a capa de um titulo.
+     */
     public void guardar(int tituloId, byte[] imagem) {
         titulos.salvarCapa(tituloId, imagem);
     }
 
+    /**
+     * Capa de um titulo, ou nulo.
+     */
     public byte[] capa(int tituloId) {
         return titulos.capa(tituloId);
     }
 
+    /**
+     * Capas de todos os titulos que tem, pelo id.
+     */
     public Map<Integer, byte[]> capas() {
         return titulos.capas();
     }
 
+    /**
+     * Grava as capas que vem no jar (resources/capas/{id}.jpg), usado depois do seed.
+     */
     public void carregarEmbutidas() {
         titulos.listar().forEach(titulo -> {
             try (InputStream entrada = CapaService.class.getResourceAsStream("/capas/" + titulo.getId() + ".jpg")) {
@@ -102,7 +111,9 @@ public class CapaService {
         });
     }
 
-    // resposta da API: escolhe, na ordem da propria Wikipedia, a primeira pagina que tem imagem
+    /**
+     * Resposta da API: escolhe, na ordem da propria Wikipedia, a primeira pagina que tem imagem.
+     */
     static Optional<Pagina> ler(String json) {
         return Arrays.stream(json.split("\\{\"pageid\":"))
                 .skip(1)
@@ -111,7 +122,9 @@ public class CapaService {
                 .map(pagina -> new Pagina(primeiro(IMAGEM, pagina, ""), sinopse(primeiro(EXTRATO, pagina, ""))));
     }
 
-    // texto do JSON sem escapes, cortado no fim de uma frase para caber no cadastro
+    /**
+     * Texto do JSON sem escapes, cortado no fim de uma frase para caber no cadastro.
+     */
     static String sinopse(String extrato) {
         String texto = ESCAPE.matcher(extrato).replaceAll(escape -> Matcher.quoteReplacement(desescapar(escape.group(1))))
                 .replace("\u200b", "")

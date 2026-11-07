@@ -1,5 +1,8 @@
 package locadora.model;
 
+/**
+ * Cliente cadastrado da locadora. So cliente ativo pode alugar.
+ */
 public class Cliente extends Pessoa {
 
     private final String endereco;

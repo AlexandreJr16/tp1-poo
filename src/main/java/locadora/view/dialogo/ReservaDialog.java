@@ -12,7 +12,9 @@ import javax.swing.JLabel;
 import java.awt.Component;
 import java.util.Map;
 
-// nova reserva: escolhe o cliente e o titulo (ou recebe o titulo ja escolhido no detalhe)
+/**
+ * Nova reserva: escolhe o cliente e o titulo (ou recebe o titulo ja escolhido no detalhe).
+ */
 public class ReservaDialog extends Formulario {
 
     private final Main.Servicos servicos;

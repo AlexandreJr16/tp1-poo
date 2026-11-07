@@ -12,13 +12,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/* - Exportacao:
-     paraCsv: monta o texto CSV com separador ; e aspas quando preciso, como o Excel em portugues espera
-     exportarCsv: grava o CSV em UTF-8 com BOM para os acentos aparecerem certos
-   - Banco:
-     fazerBackup: copia o banco inteiro para o arquivo escolhido
-     restaurar: troca o banco atual por um backup, depois de conferir que ele e da locadora (so gerente)
-     nomeSugeridoDeBackup: nome de arquivo com a data de hoje */
+/**
+ * Exportacao de tabelas para CSV e backup e restauracao do arquivo do banco.
+ */
 public class ArquivoService {
 
     private static final String SEPARADOR = ";";
@@ -33,6 +29,9 @@ public class ArquivoService {
         this.relogio = relogio;
     }
 
+    /**
+     * Monta o texto CSV com separador ; e aspas quando preciso, como o Excel em portugues espera.
+     */
     public static String paraCsv(List<String> cabecalho, List<List<String>> linhas) {
         StringBuilder csv = new StringBuilder();
         Stream.concat(Stream.of(cabecalho), linhas.stream())
@@ -40,6 +39,9 @@ public class ArquivoService {
         return csv.toString();
     }
 
+    /**
+     * Grava o CSV em UTF-8 com BOM para os acentos aparecerem certos.
+     */
     public void exportarCsv(Path destino, List<String> cabecalho, List<List<String>> linhas) {
         AuthService.exigirLogado();
         try {
@@ -49,17 +51,26 @@ public class ArquivoService {
         }
     }
 
+    /**
+     * Copia o banco inteiro para o arquivo escolhido.
+     */
     public void fazerBackup(Path destino) {
         AuthService.exigirLogado();
         conexao.copiarPara(destino);
     }
 
+    /**
+     * Troca o banco atual por um backup, depois de conferir que ele e da locadora (so gerente).
+     */
     public void restaurar(Path origem) {
         AuthService.exigirGerente();
         RegraException.se(!Conexao.ehBancoDaLocadora(origem), "O arquivo escolhido não é um backup da locadora.");
         conexao.restaurarDe(origem);
     }
 
+    /**
+     * Nome de arquivo com a data de hoje.
+     */
     public String nomeSugeridoDeBackup() {
         return "locadora-backup-" + LocalDate.now(relogio) + ".db";
     }

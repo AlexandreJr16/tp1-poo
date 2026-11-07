@@ -41,7 +41,9 @@ import static locadora.view.componente.ModeloTabela.data;
 import static locadora.view.componente.ModeloTabela.dinheiro;
 import static locadora.view.componente.ModeloTabela.texto;
 
-// ficha do cliente: contato, numeros, titulos recomendados, historico de locacoes, reservas e pagamento das multas pendentes
+/**
+ * Ficha do cliente: contato, numeros, titulos recomendados, historico de locacoes, reservas e pagamento das multas pendentes.
+ */
 public class ClienteDetalheDialog extends JDialog {
 
     private static final int LARGURA_DA_CAPA = 48;

@@ -10,24 +10,31 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-/* Atalhos para ligar acoes a eventos de teclado, mouse e digitacao.
-   tecla: atalho que vale em qualquer lugar da janela (ex.: "ctrl K", "ESCAPE")
-   teclaNoComponente: atalho que so vale com o componente focado e passa na frente do padrao dele
-   duploClique: acao do duplo clique
-   aoDigitar: acao a cada mudanca no texto do campo */
+/**
+ * Atalhos para ligar acoes a eventos de teclado, mouse e digitacao.
+ */
 public final class Eventos {
 
     private Eventos() {
     }
 
+    /**
+     * Atalho que vale em qualquer lugar da janela (ex.: "ctrl K", "ESCAPE").
+     */
     public static void tecla(JComponent alvo, String tecla, Runnable acao) {
         ligar(alvo, JComponent.WHEN_IN_FOCUSED_WINDOW, tecla, acao);
     }
 
+    /**
+     * Atalho que so vale com o componente focado e passa na frente do padrao dele.
+     */
     public static void teclaNoComponente(JComponent alvo, String tecla, Runnable acao) {
         ligar(alvo, JComponent.WHEN_FOCUSED, tecla, acao);
     }
 
+    /**
+     * Acao do duplo clique.
+     */
     public static void duploClique(JComponent alvo, Runnable acao) {
         alvo.addMouseListener(new MouseAdapter() {
             @Override
@@ -38,6 +45,9 @@ public final class Eventos {
         });
     }
 
+    /**
+     * Acao a cada mudanca no texto do campo.
+     */
     public static void aoDigitar(JTextComponent campo, Runnable acao) {
         campo.getDocument().addDocumentListener(new DocumentListener() {
             @Override

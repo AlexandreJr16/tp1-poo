@@ -16,12 +16,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-/* Card com titulo, contador e uma tabela curta, ou um aviso quando a lista esta vazia.
-   setDados: troca as linhas e o contador
-   destacar: linhas em vermelho
-   aoAbrir: acao do duplo clique numa linha
-   aoSelecionar: acao a cada troca de linha escolhida (recebe nulo quando nao ha escolha)
-   selecionarPrimeira: escolhe a primeira linha, se houver */
+/**
+ * Card com titulo, contador e uma tabela curta, ou um aviso quando a lista esta vazia.
+ */
 public class Quadro<T> extends JPanel {
 
     private final ModeloTabela<T> modelo;
@@ -61,6 +58,9 @@ public class Quadro<T> extends JPanel {
         add(corpo, BorderLayout.CENTER);
     }
 
+    /**
+     * Troca as linhas e o contador.
+     */
     public void setDados(List<T> dados) {
         modelo.setLinhas(dados);
         contador.setText(String.valueOf(dados.size()));
@@ -68,10 +68,16 @@ public class Quadro<T> extends JPanel {
         cartoes.show(corpo, dados.isEmpty() ? "vazio" : "tabela");
     }
 
+    /**
+     * Linhas em vermelho.
+     */
     public void destacar(Predicate<T> criterio) {
         celula.destacar(criterio);
     }
 
+    /**
+     * Acao do duplo clique numa linha.
+     */
     public void aoAbrir(Consumer<T> acao) {
         Eventos.duploClique(tabela, () -> {
             if (selecionado() != null)
@@ -79,6 +85,9 @@ public class Quadro<T> extends JPanel {
         });
     }
 
+    /**
+     * Acao a cada troca de linha escolhida (recebe nulo quando nao ha escolha).
+     */
     public void aoSelecionar(Consumer<T> acao) {
         tabela.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting())
@@ -86,6 +95,9 @@ public class Quadro<T> extends JPanel {
         });
     }
 
+    /**
+     * Escolhe a primeira linha, se houver.
+     */
     public void selecionarPrimeira() {
         if (tabela.getRowCount() > 0)
             tabela.setRowSelectionInterval(0, 0);

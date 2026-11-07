@@ -7,14 +7,9 @@ import locadora.model.Pessoa;
 
 import java.util.List;
 
-/* - Cadastro (so gerente):
-     cadastrar: valida e grava um funcionario novo com a senha em hash
-     atualizar: grava dados e cargo, mantendo login e senha; nunca deixa a locadora sem gerente
-     redefinirSenha: troca a senha de outro funcionario
-   - Conta do logado:
-     trocarSenha: confere a senha atual e grava a nova
-   - Consulta:
-     listar: todos os funcionarios em ordem de nome */
+/**
+ * Regras do cadastro de funcionarios e da troca de senha.
+ */
 public class FuncionarioService {
 
     public static final int TAMANHO_MINIMO_SENHA = 6;
@@ -25,6 +20,9 @@ public class FuncionarioService {
         this.funcionarios = funcionarios;
     }
 
+    /**
+     * Valida e grava um funcionario novo com a senha em hash.
+     */
     public Funcionario cadastrar(String nome, String cpf, String telefone, String email, String login, String senha, Cargo cargo) {
         AuthService.exigirGerente();
         String loginLimpo = AuthService.normalizarLogin(login);
@@ -38,6 +36,9 @@ public class FuncionarioService {
         return novo;
     }
 
+    /**
+     * Grava dados e cargo, mantendo login e senha; nunca deixa a locadora sem gerente.
+     */
     public void atualizar(int id, String nome, String cpf, String telefone, String email, Cargo cargo) {
         AuthService.exigirGerente();
         Funcionario atual = funcionarios.buscar(id);
@@ -50,6 +51,9 @@ public class FuncionarioService {
         funcionarios.atualizar(editado);
     }
 
+    /**
+     * Troca a senha de outro funcionario.
+     */
     public void redefinirSenha(int funcionarioId, String novaSenha) {
         AuthService.exigirGerente();
         validarSenha(novaSenha);
@@ -58,6 +62,9 @@ public class FuncionarioService {
         funcionarios.atualizar(funcionario);
     }
 
+    /**
+     * Confere a senha atual e grava a nova.
+     */
     public void trocarSenha(String senhaAtual, String novaSenha) {
         Funcionario logado = funcionarios.buscar(AuthService.exigirLogado().getId());
         RegraException.se(!logado.senhaConfere(senhaAtual), "A senha atual está incorreta.");
@@ -66,6 +73,9 @@ public class FuncionarioService {
         funcionarios.atualizar(logado);
     }
 
+    /**
+     * Todos os funcionarios em ordem de nome.
+     */
     public List<Funcionario> listar() {
         return funcionarios.listar();
     }

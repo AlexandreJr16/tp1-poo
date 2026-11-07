@@ -1,5 +1,8 @@
 package locadora.model;
 
+/**
+ * Situacao de um exemplar no acervo.
+ */
 public enum Situacao {
     DISPONIVEL("Disponível"),
     ALUGADO("Alugado"),

@@ -18,20 +18,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/* - Banco:
-     criarSchemaSeVazio: cria as tabelas do schema.sql quando o arquivo ainda nao tem tabelas
-     executarScript: roda um arquivo .sql do classpath inteiro numa transacao
-     copiarPara: grava uma copia do banco inteiro em outro arquivo (backup)
-     restaurarDe: troca o arquivo do banco por uma copia
-     ehBancoDaLocadora: confere se um arquivo e um banco SQLite com as tabelas da locadora
-   - Atalhos dos DAOs (abrem e fecham a propria conexao):
-     listar, buscar, inserir, executar: rodam um PreparedStatement com os parametros na ordem
-     transacao: roda varios comandos na mesma conexao, com commit no fim ou rollback no erro
-   - Atalhos dentro de uma transacao (recebem a conexao aberta):
-     listar, buscar, inserir, executar
-   - Conversao:
-     reais: centavos do banco para BigDecimal
-     data: texto ISO do banco para LocalDate */
+/**
+ * Conexao com o banco SQLite da locadora: cria o schema, roda scripts, faz backup e restauracao
+ * e oferece atalhos de PreparedStatement e transacao para os DAOs.
+ */
 public class Conexao {
 
     @FunctionalInterface
@@ -54,6 +44,9 @@ public class Conexao {
         url = "jdbc:sqlite:" + this.arquivo;
     }
 
+    /**
+     * Grava uma copia do banco inteiro em outro arquivo (backup).
+     */
     // VACUUM nao roda dentro de transacao, por isso usa uma conexao em autocommit
     public void copiarPara(Path destino) {
         try (Connection c = abrir()) {
@@ -66,6 +59,9 @@ public class Conexao {
         }
     }
 
+    /**
+     * Troca o arquivo do banco por uma copia.
+     */
     public void restaurarDe(Path origem) {
         try {
             Files.copy(origem, arquivo, StandardCopyOption.REPLACE_EXISTING);
@@ -74,6 +70,9 @@ public class Conexao {
         }
     }
 
+    /**
+     * Confere se um arquivo e um banco SQLite com as tabelas da locadora.
+     */
     public static boolean ehBancoDaLocadora(Path candidato) {
         if (!Files.isRegularFile(candidato))
             return false;
@@ -96,6 +95,9 @@ public class Conexao {
         return conexao;
     }
 
+    /**
+     * Cria as tabelas do schema.sql quando o arquivo ainda nao tem tabelas.
+     */
     public boolean criarSchemaSeVazio() {
         boolean vazio = buscar("SELECT COUNT(*) FROM sqlite_master WHERE type = 'table'", (rs, c) -> rs.getInt(1)) == 0;
         if (vazio)
@@ -103,6 +105,9 @@ public class Conexao {
         return vazio;
     }
 
+    /**
+     * Roda um arquivo .sql do classpath inteiro numa transacao.
+     */
     public void executarScript(String recurso) {
         String script = lerRecurso(recurso).replaceAll("(?m)^\\s*--.*$", "");
         transacao(c -> {
@@ -114,18 +119,31 @@ public class Conexao {
         });
     }
 
+    /**
+     * Roda um PreparedStatement com os parametros na ordem e le cada linha do resultado.
+     * Abre e fecha a propria conexao.
+     */
     <T> List<T> listar(String sql, Leitor<T> leitor, Object... parametros) {
         return transacao(c -> listar(c, sql, leitor, parametros));
     }
 
+    /**
+     * Roda um PreparedStatement com os parametros na ordem.
+     */
     <T> T buscar(String sql, Leitor<T> leitor, Object... parametros) {
         return transacao(c -> buscar(c, sql, leitor, parametros));
     }
 
+    /**
+     * Roda um PreparedStatement com os parametros na ordem.
+     */
     int inserir(String sql, Object... parametros) {
         return transacao(c -> inserir(c, sql, parametros));
     }
 
+    /**
+     * Roda um PreparedStatement com os parametros na ordem.
+     */
     void executar(String sql, Object... parametros) {
         transacao(c -> {
             executar(c, sql, parametros);
@@ -133,6 +151,9 @@ public class Conexao {
         });
     }
 
+    /**
+     * Roda varios comandos na mesma conexao, com commit no fim ou rollback no erro.
+     */
     <T> T transacao(Trabalho<T> trabalho) {
         try (Connection c = abrir()) {
             c.setAutoCommit(false);
@@ -149,6 +170,9 @@ public class Conexao {
         }
     }
 
+    /**
+     * Igual ao metodo de mesmo nome, mas dentro de uma transacao (recebe a conexao aberta).
+     */
     static <T> List<T> listar(Connection c, String sql, Leitor<T> leitor, Object... parametros) throws SQLException {
         try (PreparedStatement comando = c.prepareStatement(sql)) {
             preencher(comando, parametros);
@@ -161,16 +185,25 @@ public class Conexao {
         }
     }
 
+    /**
+     * Igual ao metodo de mesmo nome, mas dentro de uma transacao (recebe a conexao aberta).
+     */
     static <T> T buscar(Connection c, String sql, Leitor<T> leitor, Object... parametros) throws SQLException {
         List<T> lista = listar(c, sql, leitor, parametros);
         return lista.isEmpty() ? null : lista.get(0);
     }
 
+    /**
+     * Igual ao metodo de mesmo nome, mas dentro de uma transacao (recebe a conexao aberta).
+     */
     static int inserir(Connection c, String sql, Object... parametros) throws SQLException {
         executar(c, sql, parametros);
         return buscar(c, "SELECT last_insert_rowid()", (rs, mesma) -> rs.getInt(1));
     }
 
+    /**
+     * Igual ao metodo de mesmo nome, mas dentro de uma transacao (recebe a conexao aberta).
+     */
     static void executar(Connection c, String sql, Object... parametros) throws SQLException {
         try (PreparedStatement comando = c.prepareStatement(sql)) {
             preencher(comando, parametros);
@@ -178,10 +211,16 @@ public class Conexao {
         }
     }
 
+    /**
+     * Centavos do banco para BigDecimal.
+     */
     static BigDecimal reais(long centavos) {
         return BigDecimal.valueOf(centavos, 2);
     }
 
+    /**
+     * Texto ISO do banco para LocalDate.
+     */
     static LocalDate data(String texto) {
         return texto == null ? null : LocalDate.parse(texto);
     }
@@ -191,7 +230,9 @@ public class Conexao {
             comando.setObject(i + 1, paraBanco(parametros[i]));
     }
 
-    // dinheiro vira centavos, data vira texto ISO, enum vira o nome e booleano vira 0 ou 1
+    /**
+     * Dinheiro vira centavos, data vira texto ISO, enum vira o nome e booleano vira 0 ou 1.
+     */
     private static Object paraBanco(Object valor) {
         if (valor instanceof BigDecimal dinheiro)
             return dinheiro.setScale(2, RoundingMode.HALF_UP).movePointRight(2).longValueExact();

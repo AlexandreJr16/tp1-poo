@@ -5,9 +5,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-/* Fileira horizontal (botoes, filtros, etiquetas) com espaco fixo so entre os itens,
-   sem a folga nas pontas do FlowLayout, para alinhar com as bordas da tela.
-   adicionar: poe mais um item no fim da fileira */
+/**
+ * Fileira horizontal (botoes, filtros, etiquetas) com espaco fixo so entre os itens, sem a folga nas pontas do FlowLayout, para alinhar com as bordas da tela.
+ */
 public class Fileira extends JPanel {
 
     private final int espaco;
@@ -20,6 +20,9 @@ public class Fileira extends JPanel {
             adicionar(item);
     }
 
+    /**
+     * Poe mais um item no fim da fileira.
+     */
     public void adicionar(JComponent item) {
         if (getComponentCount() > 0)
             add(Box.createHorizontalStrut(espaco));

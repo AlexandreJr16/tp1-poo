@@ -18,12 +18,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-/* Celula padrao das tabelas: valores ja formatados, numeros a direita, travessao cinza na celula vazia
-   e linhas em destaque em vermelho.
-   aplicar: configura a tabela inteira (celulas e cabecalho) com o visual da locadora e devolve a celula usada
-   ajustarLarguras: reparte a largura das colunas conforme o tamanho do conteudo
-   destacar: escolhe quais linhas ficam em vermelho
-   iconeNaPrimeiraColuna: mostra um icone (ex.: a capa) antes do texto da primeira coluna */
+/**
+ * Celula padrao das tabelas: valores ja formatados, numeros a direita, travessao cinza na celula vazia e linhas em destaque em vermelho.
+ */
 public class CelulaTabela<T> extends DefaultTableCellRenderer {
 
     private static final int LINHAS_MEDIDAS = 60;
@@ -37,6 +34,9 @@ public class CelulaTabela<T> extends DefaultTableCellRenderer {
         this.modelo = modelo;
     }
 
+    /**
+     * Configura a tabela inteira (celulas e cabecalho) com o visual da locadora e devolve a celula usada.
+     */
     public static <T> CelulaTabela<T> aplicar(JTable tabela, ModeloTabela<T> modelo) {
         CelulaTabela<T> celula = new CelulaTabela<>(modelo);
         tabela.setFillsViewportHeight(true);
@@ -49,7 +49,9 @@ public class CelulaTabela<T> extends DefaultTableCellRenderer {
         return celula;
     }
 
-    // cabecalho alinhado como as celulas: numeros a direita, o resto a esquerda
+    /**
+     * Cabecalho alinhado como as celulas: numeros a direita, o resto a esquerda.
+     */
     private static void alinharCabecalho(JTable tabela) {
         TableCellRenderer padrao = tabela.getTableHeader().getDefaultRenderer();
         tabela.getTableHeader().setDefaultRenderer((grade, valor, selecionada, foco, linha, coluna) -> {
@@ -60,6 +62,9 @@ public class CelulaTabela<T> extends DefaultTableCellRenderer {
         });
     }
 
+    /**
+     * Reparte a largura das colunas conforme o tamanho do conteudo.
+     */
     // larguras proporcionais ao conteudo: cada coluna pede o espaco do maior texto entre o cabecalho e as primeiras linhas;
     // datas, numeros e dinheiro nunca encolhem abaixo disso para nao aparecerem cortados
     public static void ajustarLarguras(JTable tabela) {
@@ -75,10 +80,16 @@ public class CelulaTabela<T> extends DefaultTableCellRenderer {
         }
     }
 
+    /**
+     * Escolhe quais linhas ficam em vermelho.
+     */
     public void destacar(Predicate<T> criterio) {
         destaque = criterio;
     }
 
+    /**
+     * Mostra um icone (ex.: a capa) antes do texto da primeira coluna.
+     */
     public void iconeNaPrimeiraColuna(Function<T, Icon> icone) {
         this.icone = icone;
     }

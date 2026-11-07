@@ -8,7 +8,9 @@ import javax.swing.JPasswordField;
 import java.awt.Component;
 import java.util.Arrays;
 
-// troca da propria senha (pede a atual) ou redefinicao da senha de outro funcionario pelo gerente
+/**
+ * Troca da propria senha (pede a atual) ou redefinicao da senha de outro funcionario pelo gerente.
+ */
 public class SenhaDialog extends Formulario {
 
     private final FuncionarioService servico;

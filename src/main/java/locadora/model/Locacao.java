@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Locacao de um exemplar para um cliente, com o funcionario que alugou e o que recebeu a devolucao. Calcula prazo, atraso e multa.
+ */
 public class Locacao {
 
     public static final BigDecimal SEM_MULTA = new BigDecimal("0.00");
@@ -38,6 +41,9 @@ public class Locacao {
         this.renovada = renovada;
     }
 
+    /**
+     * Abre uma locacao nova: aluga o exemplar e calcula a data prevista pelo prazo maximo do titulo.
+     */
     public static Locacao abrir(Exemplar exemplar, Cliente cliente, Funcionario funcionario, LocalDate data) {
         exemplar.alugar();
         Titulo titulo = exemplar.getTitulo();
@@ -45,29 +51,46 @@ public class Locacao {
                 titulo.valorLocacao(), SEM_MULTA, null, false);
     }
 
+    /**
+     * Verdadeiro enquanto o exemplar nao foi devolvido.
+     */
     public boolean ativa() {
         return dataDevolucao == null;
     }
 
+    /**
+     * Ativa e com a data prevista ja vencida.
+     */
     public boolean atrasada(LocalDate hoje) {
         return ativa() && hoje.isAfter(dataPrevista);
     }
 
+    /**
+     * Dias depois da data prevista ate a data informada (zero se nao atrasou).
+     */
     public long diasAtraso(LocalDate ate) {
         return Math.max(0, ChronoUnit.DAYS.between(dataPrevista, ate));
     }
 
+    /**
+     * Multa por atraso ate a data: dias de atraso vezes a multa diaria do tipo de midia.
+     */
     public BigDecimal multaAte(LocalDate data) {
         return exemplar.getTitulo().valorMultaDiaria().multiply(BigDecimal.valueOf(diasAtraso(data)));
     }
 
+    /**
+     * Fecha a locacao, guardando o funcionario da devolucao e a multa do atraso.
+     */
     public void devolver(LocalDate data, Funcionario funcionario) {
         exigirAtiva();
         exemplar.devolver();
         encerrar(data, funcionario, multaAte(data));
     }
 
-    // perda com o exemplar na mao do cliente: cobra o custo do exemplar mais a multa ate a data
+    /**
+     * Perda com o exemplar na mao do cliente: cobra o custo do exemplar mais a multa ate a data.
+     */
     public void encerrarPorPerda(LocalDate data, Funcionario funcionario) {
         exigirAtiva();
         exemplar.perder();
@@ -85,6 +108,9 @@ public class Locacao {
             throw new IllegalStateException("Esta locação já foi encerrada.");
     }
 
+    /**
+     * Tem multa e ela ainda nao foi paga.
+     */
     public boolean multaPendente() {
         return multa.signum() > 0 && dataPagamentoMulta == null;
     }
@@ -93,16 +119,25 @@ public class Locacao {
         return dataPagamentoMulta != null;
     }
 
+    /**
+     * Registra o pagamento da multa pendente na data.
+     */
     public void pagarMulta(LocalDate data) {
         if (!multaPendente())
             throw new IllegalStateException("Não há multa pendente nesta locação.");
         dataPagamentoMulta = data;
     }
 
+    /**
+     * So renova uma vez e antes de atrasar.
+     */
     public boolean podeRenovar(LocalDate hoje) {
         return ativa() && !renovada && !hoje.isAfter(dataPrevista);
     }
 
+    /**
+     * Estende a data prevista por mais um prazo do titulo.
+     */
     public void renovar(LocalDate hoje) {
         if (!podeRenovar(hoje))
             throw new IllegalStateException("Esta locação não pode ser renovada.");

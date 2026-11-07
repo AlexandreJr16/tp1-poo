@@ -29,8 +29,9 @@ import javax.swing.SwingUtilities;
 import java.nio.file.Path;
 import java.time.Clock;
 
-/* Ponto de entrada: liga o tema, prepara o banco (cria e popula com dados e capas na primeira execucao) e abre o login.
-   montar: cria a conexao, os DAOs e os services ja ligados entre si */
+/**
+ * Ponto de entrada: liga o tema, prepara o banco (cria e popula com dados e capas na primeira execucao) e abre o login.
+ */
 public class Main {
 
     private static final Path BANCO = Path.of("locadora.db");
@@ -41,6 +42,9 @@ public class Main {
                            DashboardService painel, BuscaService busca, ArquivoService arquivos, CapaService capas) {
     }
 
+    /**
+     * Liga o tema, prepara o banco e abre a tela de login.
+     */
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler((linha, erro) -> SwingUtilities.invokeLater(() -> Mensagens.inesperado(null, erro)));
         Tema.instalar();
@@ -48,6 +52,9 @@ public class Main {
         SwingUtilities.invokeLater(() -> new LoginFrame(servicos).setVisible(true));
     }
 
+    /**
+     * Cria a conexao, os DAOs e os services ja ligados entre si.
+     */
     public static Servicos montar(Path arquivo, Clock relogio) {
         Conexao conexao = new Conexao(arquivo);
         boolean novo = conexao.criarSchemaSeVazio();

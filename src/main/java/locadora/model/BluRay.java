@@ -2,6 +2,9 @@ package locadora.model;
 
 import java.math.BigDecimal;
 
+/**
+ * Titulo em Blu-ray: locacao de R$ 12,00 e multa de R$ 5,00 por dia de atraso.
+ */
 public class BluRay extends Titulo {
 
     public static final String TIPO = "Blu-ray";

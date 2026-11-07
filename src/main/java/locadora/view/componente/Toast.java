@@ -15,7 +15,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 
-// aviso de sucesso que aparece no canto inferior direito da janela e some sozinho
+/**
+ * Aviso de sucesso que aparece no canto inferior direito da janela e some sozinho.
+ */
 public final class Toast {
 
     private static final int DURACAO_MS = 2600;

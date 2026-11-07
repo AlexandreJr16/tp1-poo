@@ -2,6 +2,9 @@ package locadora.model;
 
 import java.math.BigDecimal;
 
+/**
+ * Titulo em fita de video: locacao de R$ 4,00 e multa de R$ 1,50 por dia de atraso.
+ */
 public class FitaVideo extends Titulo {
 
     public static final String TIPO = "Fita";

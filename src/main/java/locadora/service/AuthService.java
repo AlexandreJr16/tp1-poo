@@ -5,13 +5,9 @@ import locadora.model.Funcionario;
 
 import java.util.Locale;
 
-/* - Sessao (unico estado global do sistema: o funcionario logado):
-     entrar: confere login e senha e abre a sessao
-     sair: encerra a sessao
-     logado: funcionario da sessao, ou nulo
-   - Permissao:
-     exigirLogado: funcionario da sessao, ou erro se ninguem entrou
-     exigirGerente: funcionario da sessao, ou erro se nao for gerente */
+/**
+ * Login e permissoes. Guarda o funcionario logado, unico estado global do sistema.
+ */
 public class AuthService {
 
     private static Funcionario logado;
@@ -22,6 +18,9 @@ public class AuthService {
         this.funcionarios = funcionarios;
     }
 
+    /**
+     * Confere login e senha e abre a sessao.
+     */
     public Funcionario entrar(String login, String senha) {
         Funcionario funcionario = funcionarios.buscarPorLogin(normalizarLogin(login));
         if (funcionario == null || !funcionario.senhaConfere(senha))
@@ -30,20 +29,32 @@ public class AuthService {
         return funcionario;
     }
 
+    /**
+     * Encerra a sessao.
+     */
     public static void sair() {
         logado = null;
     }
 
+    /**
+     * Funcionario da sessao, ou nulo.
+     */
     public static Funcionario logado() {
         return logado;
     }
 
+    /**
+     * Funcionario da sessao, ou erro se ninguem entrou.
+     */
     public static Funcionario exigirLogado() {
         if (logado == null)
             throw new RegraException("Faça login para continuar.");
         return logado;
     }
 
+    /**
+     * Funcionario da sessao, ou erro se nao for gerente.
+     */
     public static Funcionario exigirGerente() {
         if (!exigirLogado().gerente())
             throw new RegraException("Apenas gerentes podem fazer isso.");
